@@ -1,14 +1,24 @@
 import PanoramicImage from '../components/PanoramicImage';
 import ProductCard from '../components/ProductCard';
-import bikeImage from '../assets/bike.png';
 import panoramicImage from '../assets/panoramic.png';
 import { useState } from 'react';
+import {PRODUCTS} from "../assets/products/products.ts";
 
 export default function HomePage() {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
 
-  const onFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
+  const toggleFavorite = (productId: number) => {
+    setFavoriteIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(productId)) {
+        next.delete(productId);
+      } else {
+        next.add(productId);
+      }
+
+      return next;
+    });
   };
 
   return (
@@ -16,15 +26,21 @@ export default function HomePage() {
       <div className="w-full">
         <PanoramicImage image={panoramicImage} title="Deski SUP" />
       </div>
-      <ProductCard
-        name="Rower szosowy"
-        price={89}
-        image={bikeImage}
-        alt="Zdjęcie rowera"
-        onClick={() => alert('Dodano!')}
-        isFavorite={isFavorite}
-        onFavoriteToggle={onFavoriteToggle}
-      />
+      <div className="flex flex-row gap-4 flex-wrap items-center justify-evenly my-4 w-full">
+        {PRODUCTS.map((product) => (
+            <ProductCard
+                key={product.id}
+                name={product.name}
+                price={product.price}
+                image={product.image}
+                alt={product.alt}
+                onClick={() => alert('Dodano ' + product.name)}
+                isFavorite={favoriteIds.has(product.id)}
+                onFavoriteToggle={() => toggleFavorite(product.id)}
+            />
+        ))}
+      </div>
+
     </>
   );
 }

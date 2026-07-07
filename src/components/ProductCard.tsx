@@ -37,7 +37,7 @@ export default function ProductCard({
   );
 
   return (
-    <div className="flex flex-col w-52 bg-neutral-100 pt-6 p-4 gap-2 rounded-xl">
+    <div className="flex h-[400px] w-52 flex-col gap-2 rounded-xl bg-neutral-100 p-4">
       <motion.div
         key={String(isFavorite)}
         initial={{ scale: 0.85 }}
@@ -47,10 +47,17 @@ export default function ProductCard({
       >
         {HeartElem}
       </motion.div>
-      <img src={image} alt={alt} width={200} height={200} />
-      <p className="self-center text-center">{name}</p>
-      <p className="self-center font-bold text-xl text-center">{price}zł / doba</p>
-      <ButtonCore text="Dodaj do koszyka" onClick={() => onClick} className="p-2" />
+
+      <div className="h-44 w-full">
+        <img src={image} alt={alt} className="h-full w-full object-contain" />
+      </div>
+
+      <p className="line-clamp-2 min-h-12 text-center font-medium">{name}</p>
+
+      <div className="mt-auto">
+        <p className="mb-2 text-center text-xl font-bold">{price} zł / doba</p>
+        <ButtonCore text="Dodaj do koszyka" onClick={onClick} className="w-full p-2" />
+      </div>
     </div>
   );
 }
