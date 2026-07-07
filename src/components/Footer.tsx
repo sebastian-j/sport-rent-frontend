@@ -7,7 +7,7 @@ import 'react-social-icons/tiktok';
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white p-20 flex items-center justify-center space-x-52">
+    <footer className="bg-black text-white p-20 flex justify-center space-x-52">
       <div className="flex flex-col max-w-lg">
         <div className="p-2 b-2">
           <img src={footer_logo} />
@@ -21,10 +21,10 @@ export default function Footer() {
           </p>
         </div>
         <div className="flex space-x-6">
-          <SocialIcon url="www.twitter.com" bgColor="black" />
-          <SocialIcon url="www.facebook.com" bgColor="black" />
-          <SocialIcon url="www.tiktok.com" bgColor="black" />
-          <SocialIcon url="www.instagram.com" bgColor="black" />
+          <SocialIcon url="https://www.twitter.com" bgColor="black" />
+          <SocialIcon url="https://www.facebook.com" bgColor="black" />
+          <SocialIcon url="https://www.tiktok.com" bgColor="black" />
+          <SocialIcon url="https://www.instagram.com" bgColor="black" />
         </div>
       </div>
       <div>
