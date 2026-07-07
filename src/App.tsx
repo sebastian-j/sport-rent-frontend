@@ -3,6 +3,7 @@ import bikeImage from './assets/bike.png';
 import panoramicImage from './assets/panoramic.png';
 import * as React from 'react';
 import PanoramicImage from './components/PanoramicImage.tsx';
+import Footer from './components/Footer';
 
 function App() {
   const [isFavorite, setIsFavorite] = React.useState(false);
@@ -26,6 +27,9 @@ function App() {
         onFavoriteToggle={onFavoriteToggle}
       />
     </div>
+    <>
+      <Footer />
+    </>
   );
 }
 
