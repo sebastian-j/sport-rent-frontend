@@ -1,6 +1,6 @@
 import PanoramicImage from '../components/PanoramicImage';
 import ProductCard from '../components/ProductCard';
-import panoramicImage from '../assets/panoramic.png';
+import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';
 import {PRODUCTS} from "../assets/products/products.ts";
 

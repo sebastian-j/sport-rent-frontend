@@ -16,7 +16,7 @@ export default function Header() {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <header className="w-full flex flex-col">
+    <header className="w-full flex flex-col fixed bg-white z-50">
       <div className="grid h-12 grid-cols-3 items-center px-12">
         <img src={headerLogo} alt="Logo" className="w-64 max-w-full h-auto justify-self-start" />
         <div className="flex items-center justify-self-center rounded-lg bg-neutral-200 px-2 min-w-0 w-full">
