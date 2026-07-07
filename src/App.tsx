@@ -1,5 +1,5 @@
 import ProductCard from './components/ProductCard.tsx';
-import bikeImage from './assets/img.png';
+import bikeImage from './assets/bike.png';
 import panoramicImage from './assets/panoramic.png';
 import * as React from 'react';
 import PanoramicImage from './components/PanoramicImage.tsx';
