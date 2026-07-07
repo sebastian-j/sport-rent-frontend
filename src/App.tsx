@@ -25,7 +25,6 @@ function App() {
         isFavorite={isFavorite}
         onFavoriteToggle={onFavoriteToggle}
       />
-
     </div>
   );
 }

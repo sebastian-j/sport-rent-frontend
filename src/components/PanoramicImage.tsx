@@ -1,4 +1,4 @@
-import ButtonCore from "./core/ButtonCore.tsx";
+import ButtonCore from './core/ButtonCore.tsx';
 
 type PanoramicImageProps = {
   image: string;
@@ -13,9 +13,13 @@ export default function PanoramicImage({ image, title }: PanoramicImageProps) {
     >
       <p className="text-white text-8xl font-bold ">{title}</p>
       <div className="">
-        <ButtonCore text="Rezerwuj teraz" onClick={() => {}} inverted className="ps-12 pe-12 p-4 font-bold"/>
+        <ButtonCore
+          text="Rezerwuj teraz"
+          onClick={() => {}}
+          inverted
+          className="ps-12 pe-12 p-4 font-bold"
+        />
       </div>
-
     </div>
   );
 }
