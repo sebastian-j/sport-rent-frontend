@@ -1,7 +1,9 @@
+import Footer from "./components/Footer";
+
 function App() {
   return (
     <>
-      <h1>Sport rent frontend</h1>
+      <Footer />
     </>
   );
 }
