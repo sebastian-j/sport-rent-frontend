@@ -1,7 +1,7 @@
 import PanoramicImage from '../components/PanoramicImage';
 import ProductCard from '../components/ProductCard';
 import bikeImage from '../assets/bike.png';
-import panoramicImage from '../assets/panoramic.png';
+import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';
 
 export default function HomePage() {
