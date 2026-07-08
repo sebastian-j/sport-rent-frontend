@@ -34,7 +34,7 @@ export default function HomePage() {
       </div>
 
       <div className="flex flex-row">
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <CategoryCard
             title={'Przyczepki rowerowe THULA'}
             description="U nas wypożyczysz najnowsze modele przyczepek rowerowych renomowanej marki THULE"
