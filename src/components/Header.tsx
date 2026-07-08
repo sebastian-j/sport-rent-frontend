@@ -20,10 +20,15 @@ export default function Header() {
   return (
     <header className="w-full flex flex-col fixed bg-white z-50">
       <div className="grid h-12 grid-cols-3 items-center px-12">
-        <Link to="/">
+        <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
           <picture>
-            <source media="(max-width: 640px)" srcSet={headerLogoSmall} />
-            <img src={headerLogo} alt="Logo" className="h-10 w-auto sm:h-auto sm:w-64 pe-4" />
+            <source media="(max-width: 960px)" srcSet={headerLogoSmall} />
+
+            <img
+              src={headerLogo}
+              alt="Logo"
+              className="block h-10 w-auto min-[961px]:h-auto min-[961px]:w-64"
+            />
           </picture>
         </Link>
         <div className="flex items-center justify-self-center rounded-lg bg-neutral-200 px-2 min-w-0 w-full">
