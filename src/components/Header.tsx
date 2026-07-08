@@ -1,6 +1,7 @@
 import headerLogo from '../assets/logo_header.png';
 import { Heart, Search, ShoppingCart, User } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -18,7 +19,14 @@ export default function Header() {
   return (
     <header className="w-full flex flex-col fixed bg-white z-50">
       <div className="grid h-12 grid-cols-3 items-center px-12">
-        <img src={headerLogo} alt="Logo" className="w-64 max-w-full h-auto justify-self-start" />
+        <Link to="/" className="w-64">
+          <img
+            src={headerLogo}
+            alt="Logo"
+            className="w-64 max-w-full h-auto justify-self-start cursor-pointer"
+          />
+        </Link>
+
         <div className="flex items-center justify-self-center rounded-lg bg-neutral-200 px-2 min-w-0 w-full">
           <Search />
           <input
@@ -31,9 +39,15 @@ export default function Header() {
         </div>
 
         <div className="flex justify-self-end gap-4">
-          <Heart />
-          <ShoppingCart />
-          <User />
+          <Link to="/favorites">
+            <Heart className="cursor-pointer" />
+          </Link>
+          <Link to="/cart">
+            <ShoppingCart className="cursor-pointer" />
+          </Link>
+          <Link to="/profile">
+            <User className="cursor-pointer" />
+          </Link>
         </div>
       </div>
 

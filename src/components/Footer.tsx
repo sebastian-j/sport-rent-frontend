@@ -4,13 +4,14 @@ import 'react-social-icons/facebook';
 import 'react-social-icons/instagram';
 import 'react-social-icons/twitter';
 import 'react-social-icons/tiktok';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
     <footer className="bg-black text-white p-20 flex justify-center space-x-52">
       <div className="flex flex-col max-w-lg">
         <div className="p-2 b-2">
-          <img src={footer_logo} />
+          <img src={footer_logo} alt="Logo" />
         </div>
         <div className="flex items-center text-xl text-gray-400">
           <p>
@@ -30,11 +31,21 @@ export default function Footer() {
       <div>
         <p className="text-2xl font-bold pb-2">Informacje</p>
         <ul className="text-gray-400 text-xl space-y-2">
-          <li>O nas</li>
-          <li>Kontakt</li>
-          <li>Program lojalnościowy</li>
-          <li>Regulamin</li>
-          <li>FAQ</li>
+          <li>
+            <Link to="/about">O nas</Link>
+          </li>
+          <li>
+            <Link to="/contact">Kontakt</Link>
+          </li>
+          <li>
+            <Link to="points">Program lojalnościowy</Link>
+          </li>
+          <li>
+            <Link to="/tos">Regulamin</Link>
+          </li>
+          <li>
+            <Link to="/faq">FAQ</Link>
+          </li>
         </ul>
       </div>
       <div>
