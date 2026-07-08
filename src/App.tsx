@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import HomePage from './pages/HomePage';
 import FavoritesPage from './pages/FavoritesPage.tsx';

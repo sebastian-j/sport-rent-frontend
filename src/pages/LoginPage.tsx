@@ -1,9 +1,7 @@
 import ButtonCore from '../components/core/ButtonCore.tsx';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-
   const handleLogin = () => {
     // TODO: Implement login logic here
   };
