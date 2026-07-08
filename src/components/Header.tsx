@@ -1,4 +1,5 @@
 import headerLogo from '../assets/logo_header.png';
+import headerLogoSmall from '../assets/logo_header_small.png';
 import { Heart, Search, ShoppingCart, User } from 'lucide-react';
 import { useState } from 'react';
 
@@ -18,7 +19,11 @@ export default function Header() {
   return (
     <header className="w-full flex flex-col fixed bg-white z-50">
       <div className="grid h-12 grid-cols-3 items-center px-12">
-        <img src={headerLogo} alt="Logo" className="w-64 max-w-full h-auto justify-self-start" />
+        <picture>
+          <source media="(max-width: 640px)" srcSet={headerLogoSmall} />
+          <img src={headerLogo} alt="Logo" className="h-10 w-auto sm:h-auto sm:w-64 pe-4" />
+        </picture>
+
         <div className="flex items-center justify-self-center rounded-lg bg-neutral-200 px-2 min-w-0 w-full">
           <Search />
           <input
