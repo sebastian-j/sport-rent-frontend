@@ -5,6 +5,7 @@ import { isRentalDateValid } from '../components/cart/rentalDate.ts';
 import CartProductCard from '../components/cart/CartProductCard.tsx';
 import type { CartProduct } from '../components/cart/CartProductCard.tsx';
 import { formatPrice } from '../utils/formatPrice.ts';
+import { Link } from 'react-router-dom';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -141,42 +142,60 @@ export default function CartPage() {
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
       <p className="text-center mt-12 font-semibold text-5xl text-slate-950">Koszyk</p>
 
-      <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-4">
-        {products.map((product) => {
-          const information = getProductInformation(product);
+      {products.length > 0 && <div>
+          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-4">
+            {products.map((product) => {
+              const information = getProductInformation(product);
 
-          return (
-            <CartProductCard
-              key={product.id}
-              product={product}
-              information={information}
-              onQuantityChange={(dateId, quantity) => updateQuantity(product.id, dateId, quantity)}
-              onDateChange={(dateId, field, value) =>
-                updateRentalDate(product.id, dateId, field, value)
-              }
-              onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
-              onAddDate={() => addRentalDate(product.id)}
-              onRemoveProduct={() => removeProduct(product.id)}
-            />
-          );
-        })}
-      </div>
+              return (
+                  <CartProductCard
+                      key={product.id}
+                      product={product}
+                      information={information}
+                      onQuantityChange={(dateId, quantity) => updateQuantity(product.id, dateId, quantity)}
+                      onDateChange={(dateId, field, value) =>
+                          updateRentalDate(product.id, dateId, field, value)
+                      }
+                      onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
+                      onAddDate={() => addRentalDate(product.id)}
+                      onRemoveProduct={() => removeProduct(product.id)}
+                  />
+              );
+            })}
+          </div>
 
-      <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
-        <p className="text-2xl">Podsumowanie zamówienia</p>
-        <p className="text-lg">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
-        <p className="text-lg">Liczba produktów: {orderInformation.totalQuantity}</p>
+          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
+              <p className="text-2xl">Podsumowanie zamówienia</p>
+              <p className="text-lg">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
+              <p className="text-lg">Liczba produktów: {orderInformation.totalQuantity}</p>
 
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.003 }}
-          whileTap={{ scale: 0.997 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
-        >
-          Kup teraz
-        </motion.button>
-      </div>
+              <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.003 }}
+                  whileTap={{ scale: 0.997 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  className="mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
+              >
+                  Kup teraz
+              </motion.button>
+          </div>
+      </div>}
+      {products.length === 0 && (
+        <div className="mx-8 mt-12 flex flex-col items-center rounded-xl border-2 border-slate-950 bg-slate-200 p-8 text-center">
+          <p className="text-3xl font-semibold text-slate-950">Twój koszyk jest pusty</p>
+          <p className="mt-3 max-w-xl text-lg text-slate-700">
+            Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj,
+            aby sfinalizować zamówienie.
+          </p>
+          <Link
+            to="/"
+            className="mt-6 rounded-lg bg-slate-800 px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-slate-700"
+          >
+            Przejdź do oferty
+          </Link>
+        </div>
+      )}
+
     </div>
   );
 }
