@@ -15,7 +15,6 @@ import RegisterPage from './pages/RegisterPage.tsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
