@@ -5,10 +5,10 @@ import FavoritesPage from './pages/FavoritesPage.tsx';
 import CartPage from './pages/CartPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
-import ContactPage from "./pages/ContactPage.tsx";
-import PointsPage from "./pages/PointsPage.tsx";
-import TosPage from "./pages/TosPage.tsx";
-import FaqPage from "./pages/FaqPage.tsx";
+import ContactPage from './pages/ContactPage.tsx';
+import PointsPage from './pages/PointsPage.tsx';
+import TosPage from './pages/TosPage.tsx';
+import FaqPage from './pages/FaqPage.tsx';
 
 function App() {
   return (
