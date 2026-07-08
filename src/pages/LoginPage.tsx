@@ -1,7 +1,21 @@
 import ButtonCore from '../components/core/ButtonCore.tsx';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function LoginPage() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleLogin = () => {
     // TODO: Implement login logic here
   };
@@ -16,9 +30,19 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center w-[60vw] rounded-lg max-w-[800px] bg-gray-300 p-8 border-[2px] border-black">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="Email">Email</label>
-          <input name="Email" type="email" className="rounded-lg p-2 outline-none" />
+          <input
+            name="Email"
+            type="email"
+            className="rounded-lg p-2 outline-none"
+            onChange={handleChange}
+          />
           <label htmlFor="Password">Hasło</label>
-          <input name="Password" type="password" className="rounded-lg p-2 outline-none" />
+          <input
+            name="Password"
+            type="password"
+            className="rounded-lg p-2 outline-none"
+            onChange={handleChange}
+          />
           <ButtonCore
             text="Zaloguj się"
             onClick={handleLogin}

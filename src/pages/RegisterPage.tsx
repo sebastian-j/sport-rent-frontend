@@ -1,17 +1,34 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import ButtonCore from '../components/core/ButtonCore';
 
 export default function RegisterPage() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    country: '',
+    city: '',
+    addressLine1: '',
+    addressLine2: '',
+    postalCode: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleRegister = () => {
     const passwordsMatch = () => {
-      const password1 = document.getElementById('password1') as HTMLInputElement | null;
-      const password2 = document.getElementById('password2') as HTMLInputElement | null;
-
-      if (!password1 || !password2) {
+      if (!formData.password || !formData.confirmPassword) {
         return false;
       }
 
-      if (password1.value !== password2.value) {
+      if (formData.password !== formData.confirmPassword) {
         alert('Hasła nie są takie same!');
         return false;
       }
@@ -29,13 +46,19 @@ export default function RegisterPage() {
       <div className="flex flex-col items-center justify-center w-[60vw] rounded-lg max-w-[800px] bg-gray-300 p-8">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="Email">Email</label>
-          <input name="Email" type="email" className="rounded-lg p-2 outline-none" />
+          <input
+            name="Email"
+            type="email"
+            className="rounded-lg p-2 outline-none"
+            onChange={handleChange}
+          />
           <label htmlFor="Password">Hasło</label>
           <input
             name="Password"
             type="password"
             className="rounded-lg p-2 outline-none"
             id="password1"
+            onChange={handleChange}
           />
           <label htmlFor="ConfirmPassword">Powtórz hasło</label>
           <input
@@ -43,20 +66,34 @@ export default function RegisterPage() {
             type="password"
             className="rounded-lg p-2 outline-none"
             id="password2"
+            onChange={handleChange}
           />
 
           <p className="text-lg font-semibold"> Adres </p>
 
           <label htmlFor="Country">Państwo</label>
-          <input name="Country" type="text" className="rounded-lg p-2 outline-none" id="country" />
+          <input
+            name="Country"
+            type="text"
+            className="rounded-lg p-2 outline-none"
+            id="country"
+            onChange={handleChange}
+          />
           <label htmlFor="City">Miasto</label>
-          <input name="City" type="text" className="rounded-lg p-2 outline-none" id="city" />
+          <input
+            name="City"
+            type="text"
+            className="rounded-lg p-2 outline-none"
+            id="city"
+            onChange={handleChange}
+          />
           <label htmlFor="AddressLine1">Adres - pierwsza linia</label>
           <input
             name="AddressLine1"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="addressLine1"
+            onChange={handleChange}
           />
           <label htmlFor="AddressLine2">Adres - druga linia</label>
           <input
@@ -64,6 +101,7 @@ export default function RegisterPage() {
             type="text"
             className="rounded-lg p-2 outline-none"
             id="addressLine2"
+            onChange={handleChange}
           />
           <label htmlFor="PostalCode">Kod pocztowy</label>
           <input
@@ -71,6 +109,7 @@ export default function RegisterPage() {
             type="text"
             className="rounded-lg p-2 outline-none"
             id="postalCode"
+            onChange={handleChange}
           />
           <ButtonCore
             text="Zarejestruj się"
