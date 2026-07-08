@@ -327,3 +327,5 @@ export const PRODUCTS = [
     category: 'Sprzęt wodny',
   },
 ];
+
+export const getProductById = (id: number) => PRODUCTS.find((product) => product.id === id);

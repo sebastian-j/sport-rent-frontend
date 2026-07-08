@@ -1,6 +1,6 @@
 import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
-import ButtonCore from './core/ButtonCore.tsx';
+import ButtonCore from '../core/ButtonCore.tsx';
 
 type ProductCardProps = {
   name: string;
@@ -56,7 +56,7 @@ export default function ProductCard({
 
       <div className="mt-auto">
         <p className="mb-2 text-center text-xl font-bold">{price} zł / doba</p>
-        <ButtonCore text="Dodaj do koszyka" onClick={onClick} className="w-full p-2" />
+        <ButtonCore text="Szczegóły" onClick={onClick} className="w-full p-2" />
       </div>
     </div>
   );
