@@ -3,6 +3,11 @@ import ProductCard from '../components/ProductCard';
 import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';
 import { PRODUCTS } from '../assets/products/products.ts';
+import CategoryCard from '../components/CategoryCard.tsx';
+import ferratyImage from '../assets/categories/ferraty.png';
+import namiotyImage from '../assets/categories/namioty.png';
+import przyczepkiImage from '../assets/categories/przyczepki.png';
+import roweryImage from '../assets/categories/rowery.png';
 
 export default function HomePage() {
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
@@ -22,10 +27,52 @@ export default function HomePage() {
   };
 
   return (
-    <>
+    <div>
       <div className="w-full">
         <PanoramicImage image={panoramicImage} title="Deski SUP" />
       </div>
+
+      <div className="flex flex-row">
+        <div className="flex flex-col">
+          <CategoryCard
+            title={'Przyczepki rowerowe THULA'}
+            description="U nas wypożyczysz najnowsze modele przyczepek rowerowych renomowanej marki THULE"
+            image={przyczepkiImage}
+            imagePosition="left"
+            size="medium"
+            className="bg-white"
+          />
+
+          <div className="flex flex-row">
+            <CategoryCard
+              title="Wybierasz się na via ferraty"
+              description="Nie musisz kupować wszystkiego - możesz wypożyczyć u nas!"
+              image={ferratyImage}
+              imagePosition="left"
+              size="small"
+              className="bg-neutral-100"
+            />
+            <CategoryCard
+              title="Rowery TREK GRAVEL"
+              description="Rowery typu gravel, sakwy rowerowe, namioty na rowerowe wyprawy."
+              image={roweryImage}
+              imagePosition="left"
+              size="small"
+              className="bg-neutral-800 text-white"
+            />
+          </div>
+        </div>
+        <CategoryCard
+          title="Namioty THULE"
+          description="Wypożysz namiot dachowy THULE. Zapewniamy pomoc w montażu. Skontaktuj się z nami, aby poznać szczególły i dopasować  namiot do Twojego samochodu."
+          image={namiotyImage}
+          imagePosition="right"
+          size="large"
+          onClick={() => {}}
+          className="bg-neutral-100"
+        />
+      </div>
+
       <div className="flex flex-row gap-4 flex-wrap items-center justify-evenly my-4 w-full">
         {PRODUCTS.map((product) => (
           <ProductCard
@@ -40,6 +87,6 @@ export default function HomePage() {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }
