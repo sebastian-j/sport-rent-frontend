@@ -38,17 +38,15 @@ export default function CategoryBar() {
   return (
     <div className="bg-white border-b border-neutral-200">
       <div className="max-w-[1700px] mx-auto px-4 pt-6 pb-2">
-        
         <div className="flex flex-row justify-between items-start overflow-x-auto pb-6">
-          
           {CATEGORIES.map((category, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="flex flex-col items-center gap-3 cursor-pointer group min-w-[75px] shrink-0"
             >
-              <img 
-                src={category.icon} 
-                alt={category.name} 
+              <img
+                src={category.icon}
+                alt={category.name}
                 className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-200"
               />
               <span className="text-[12px] text-center font-medium leading-tight px-2">
@@ -56,7 +54,6 @@ export default function CategoryBar() {
               </span>
             </div>
           ))}
-          
         </div>
       </div>
     </div>
