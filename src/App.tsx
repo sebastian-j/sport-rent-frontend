@@ -1,13 +1,32 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import HomePage from './pages/HomePage';
+import FavoritesPage from './pages/FavoritesPage.tsx';
+import CartPage from './pages/CartPage.tsx';
+import ProfilePage from './pages/ProfilePage.tsx';
+import AboutPage from './pages/AboutPage.tsx';
+import ContactPage from './pages/ContactPage.tsx';
+import PointsPage from './pages/PointsPage.tsx';
+import TosPage from './pages/TosPage.tsx';
+import FaqPage from './pages/FaqPage.tsx';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
+          {/*Header*/}
           <Route path="/" element={<HomePage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+
+          {/*Footer*/}
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/points" element={<PointsPage />} />
+          <Route path="/tos" element={<TosPage />} />
+          <Route path="/faq" element={<FaqPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
