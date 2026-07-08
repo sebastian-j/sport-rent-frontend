@@ -1,5 +1,6 @@
 import PanoramicImage from '../components/PanoramicImage';
 import ProductCard from '../components/ProductCard';
+import CategoryBar from '../components/CategoryBar';
 import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';
 import { PRODUCTS } from '../assets/products/products.ts';
@@ -26,6 +27,7 @@ export default function HomePage() {
       <div className="w-full">
         <PanoramicImage image={panoramicImage} title="Deski SUP" />
       </div>
+      <CategoryBar />
       <div className="flex flex-row gap-4 flex-wrap items-center justify-evenly my-4 w-full">
         {PRODUCTS.map((product) => (
           <ProductCard
