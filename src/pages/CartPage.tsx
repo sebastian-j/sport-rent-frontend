@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
+// Mockup: creates cart's content when entering /cart
 const INITIAL_CART: CartProduct[] = PRODUCTS.filter(
   (product) => product.id === 1 || product.id === 2
 ).map((product) => ({
