@@ -23,9 +23,6 @@ importers:
       react-dom:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
-      react-router:
-        specifier: ^8.1.0
-        version: 8.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-router-dom:
         specifier: ^7.18.1
         version: 7.18.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -536,9 +533,6 @@ packages:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
 
-  cookie-es@3.1.1:
-    resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
-
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
@@ -907,16 +901,6 @@ packages:
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-
-  react-router@8.1.0:
-    resolution: {integrity: sha512-Mdfi61uObuvWNN9OhChOC0HV6YWOIfKRzEWOvCHRSuQg8IM+Nv10edaM/2HE8ZixBpUTdQbruyWqC3sDkkh9vw==}
-    engines: {node: '>=22.22.0'}
-    peerDependencies:
-      react: '>=19.2.7'
-      react-dom: '>=19.2.7'
     peerDependenciesMeta:
       react-dom:
         optional: true
@@ -1360,8 +1344,6 @@ snapshots:
 
   commander@4.1.1: {}
 
-  cookie-es@3.1.1: {}
-
   cookie@1.1.1: {}
 
   cssesc@3.0.0: {}
@@ -1653,13 +1635,6 @@ snapshots:
       cookie: 1.1.1
       react: 19.2.7
       set-cookie-parser: 2.7.2
-    optionalDependencies:
-      react-dom: 19.2.7(react@19.2.7)
-
-  react-router@8.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
-    dependencies:
-      cookie-es: 3.1.1
-      react: 19.2.7
     optionalDependencies:
       react-dom: 19.2.7(react@19.2.7)
 
