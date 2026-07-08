@@ -41,16 +41,13 @@ export default function LoginPage() {
         />
 
         <div className="w-[90%] text-left my-3">
-          <p>Nie masz konta?</p>
+          <p>
+            Nie masz konta?{' '}
+            <Link to="/register" className="text-black underline">
+              Zarejestruj się
+            </Link>
+          </p>
         </div>
-
-        <ButtonCore
-          text="Zarejestruj się"
-          onClick={() => {
-            navigate('/register');
-          }}
-          className="ps-12 pe-12 p-2 text-[0.8vw] my-2 w-[90%]"
-        />
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
         <Link to="/privacy-policy" className="text-black underline text-[0.7vw]">
