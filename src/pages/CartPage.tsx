@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react';
-import { PRODUCTS } from '../assets/products/products.ts';
 import CartProductCard from '../components/cart/CartProductCard.tsx';
 import { useNavigate } from 'react-router-dom';
-import type { CartProduct } from '../components/cart/cartTypes.ts';
 import {
   findFirstInvalidRentalDate,
   getOrderInformation,
@@ -12,96 +10,24 @@ import TermsPanel from '../components/cart/TermsPanel.tsx';
 import PromoCodePanel from '../components/cart/PromoCodePanel.tsx';
 import CartSummaryPanel from '../components/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../components/cart/EmptyCartPanel.tsx';
-
-// Mockup: creates cart's content when entering /cart
-const INITIAL_CART: CartProduct[] = PRODUCTS.filter(
-  (product) => product.id === 1 || product.id === 2
-).map((product) => ({
-  ...product,
-  dates: [],
-}));
+import { useCart } from '../components/cart/useCart.ts';
+import { INITIAL_CART } from '../components/cart/initialCart.ts';
 
 export default function CartPage() {
-  const [products, setProducts] = useState(INITIAL_CART);
+  const {
+    products,
+    updateRentalDate,
+    updateQuantity,
+    removeRentalDate,
+    addRentalDate,
+    removeProduct,
+  } = useCart(INITIAL_CART);
   const [readTos, setReadTos] = useState(false);
   const [highlightTos, setHighlightTos] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const tosRef = useRef<HTMLDivElement | null>(null);
   const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
-
-  const updateRentalDate = (
-    productId: number,
-    dateId: number,
-    field: 'start_date' | 'end_date',
-    value: Date | null
-  ) => {
-    setProducts((previous) =>
-      previous.map((product) =>
-        product.id === productId
-          ? {
-              ...product,
-              dates: product.dates.map((date) =>
-                date.id === dateId ? { ...date, [field]: value } : date
-              ),
-            }
-          : product
-      )
-    );
-  };
-
-  const updateQuantity = (productId: number, dateId: number, quantity: number) => {
-    setProducts((previous) =>
-      previous.map((product) =>
-        product.id === productId
-          ? {
-              ...product,
-              dates: product.dates.map((date) =>
-                date.id === dateId ? { ...date, quantity } : date
-              ),
-            }
-          : product
-      )
-    );
-  };
-
-  const removeRentalDate = (productId: number, dateId: number) => {
-    setProducts((previous) =>
-      previous.flatMap((product) => {
-        if (product.id !== productId) return [product];
-
-        const dates = product.dates.filter((date) => date.id !== dateId);
-        return dates.length > 0 ? [{ ...product, dates }] : [];
-      })
-    );
-  };
-
-  const addRentalDate = (productId: number) => {
-    setProducts((previous) =>
-      previous.map((product) => {
-        if (product.id !== productId) return product;
-
-        const nextDateId = Math.max(0, ...product.dates.map((date) => date.id)) + 1;
-
-        return {
-          ...product,
-          dates: [
-            ...product.dates,
-            {
-              id: nextDateId,
-              quantity: 1,
-              start_date: null,
-              end_date: null,
-            },
-          ],
-        };
-      })
-    );
-  };
-
-  const removeProduct = (productId: number) => {
-    setProducts((previous) => previous.filter((product) => product.id !== productId));
-  };
 
   const orderInformation = getOrderInformation(products);
 

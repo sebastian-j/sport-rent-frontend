@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { CircleMinus, CirclePlus } from 'lucide-react';
 import ButtonCore from '../core/ButtonCore';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { type ProductProps } from './productProps';
 import { isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
+import DatePickerElem from '../core/DatePickerElem.tsx';
 
 export default function AddToCart({
   product,
@@ -47,7 +46,7 @@ export default function AddToCart({
           <p className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] text-[#193556]">
             Data rozpoczęcia
           </p>
-          <DatePicker
+          <DatePickerElem
             selected={startDate}
             onChange={(date: Date | null) => {
               if (!date) return;
@@ -59,20 +58,20 @@ export default function AddToCart({
               }
             }}
             minDate={new Date()}
-            dateFormat="dd.MM.yyyy"
-            className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] w-full text-[#193556]"
+            wrapperClassName="w-full flex-none"
+            className="mt-[0.5vh] mb-[0.5vh] h-auto rounded-lg border border-slate-300 bg-white p-2 text-left text-[2.5vh] font-semibold text-[#193556]"
           />
         </div>
         <div className="flex flex-col gap-1 w-full">
           <p className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] text-[#193556]">
             Data zakończenia
           </p>
-          <DatePicker
+          <DatePickerElem
             selected={endDate}
             onChange={(date: Date | null) => date && setEndDate(date)}
             minDate={startDate}
-            dateFormat="dd.MM.yyyy"
-            className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] w-full text-[#193556]"
+            wrapperClassName="w-full flex-none"
+            className="mt-[0.5vh] mb-[0.5vh] h-auto rounded-lg border border-slate-300 bg-white p-2 text-left text-[2.5vh] font-semibold text-[#193556]"
           />
         </div>
       </div>
