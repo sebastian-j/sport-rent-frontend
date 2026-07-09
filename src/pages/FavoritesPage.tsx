@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../components/product/ProductCard';
 import bikeImage from '../assets/bike.png';
 
 const INITIAL_FAVORITES = [
