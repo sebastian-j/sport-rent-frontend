@@ -5,7 +5,7 @@ export type RentalDate = {
   end_date: Date | null;
 };
 
-function toDayTimestamp(date: Date) {
+export function toDayTimestamp(date: Date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
 }
 

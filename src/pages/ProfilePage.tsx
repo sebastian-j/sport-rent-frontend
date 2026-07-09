@@ -43,7 +43,7 @@ export default function ProfilePage() {
             onClick={() => setSelectedSection('orders')}
           />
         </div>
-        <ContentPanel className="flex-[2] rounded-lg border border-black p-0">
+        <ContentPanel className="flex-[2] items-stretch">
           <SelectedSection />
         </ContentPanel>
       </div>
