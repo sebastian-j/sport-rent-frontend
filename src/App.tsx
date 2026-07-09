@@ -12,7 +12,7 @@ import FaqPage from './pages/FaqPage.tsx';
 import LoginLayout from './layouts/LoginLayout.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
+// import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ProductPage from './pages/ProductPage.tsx';
 
 function App() {
