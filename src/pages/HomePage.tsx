@@ -1,5 +1,5 @@
 import PanoramicImage from '../components/PanoramicImage';
-import ProductCard from '../components/product/ProductCard.tsx';
+import ProductCard from '../features/product/ProductCard.tsx';
 import CategoryBar from '../components/CategoryBar';
 import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';

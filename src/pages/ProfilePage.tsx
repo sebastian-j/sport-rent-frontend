@@ -1,9 +1,10 @@
-import ProfileCard from '../components/profile/ProfileCard.tsx';
+import ProfileCard from '../features/profile/ProfileCard.tsx';
 import { Gem, ShoppingBag, User } from 'lucide-react';
 import { type ComponentType, useState } from 'react';
-import AccountSection from '../components/profile/AccountSection.tsx';
-import LoyaltySection from '../components/profile/LoyaltySection.tsx';
-import OrdersSection from '../components/profile/OrdersSection.tsx';
+import AccountSection from '../features/profile/AccountSection.tsx';
+import LoyaltySection from '../features/profile/LoyaltySection.tsx';
+import OrdersSection from '../features/profile/OrdersSection.tsx';
+import ContentPanel from '../components/core/ContentPanel.tsx';
 
 type ProfileSection = 'account' | 'loyalty' | 'orders';
 
@@ -42,9 +43,9 @@ export default function ProfilePage() {
             onClick={() => setSelectedSection('orders')}
           />
         </div>
-        <div className="flex-[2] bg-slate-200 rounded-lg border-[1px] border-black">
+        <ContentPanel className="flex-[2] items-stretch">
           <SelectedSection />
-        </div>
+        </ContentPanel>
       </div>
     </div>
   );

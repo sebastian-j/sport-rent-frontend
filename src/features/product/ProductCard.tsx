@@ -1,6 +1,6 @@
 import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
-import ButtonCore from '../core/ButtonCore.tsx';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 type ProductCardProps = {
   name: string;

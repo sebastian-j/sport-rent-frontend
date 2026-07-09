@@ -1,23 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import ProductRentalDate from './ProductRentalDate.tsx';
-import type { RentalDate } from './rentalDate.ts';
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { Ref } from 'react';
-
-type Product = (typeof import('../../assets/products/products.ts').PRODUCTS)[number];
-
-export type CartProduct = Product & {
-  dates: RentalDate[];
-};
-
-export type ProductInformation = {
-  totalQuantity: number;
-  totalDays: number;
-  totalCost: number;
-};
-
-type DateField = 'start_date' | 'end_date';
+import type { CartProduct, DateField, ProductInformation } from './cartTypes.ts';
 
 type CartProductCardProps = {
   product: CartProduct;
@@ -41,16 +27,16 @@ export default function CartProductCard({
   getRentalDateRef,
 }: CartProductCardProps) {
   return (
-    <div className="flex flex-row rounded-xl bg-slate-500 p-4 text-white">
+    <div className="flex flex-row rounded-xl bg-slate-500 p-[1vw] text-white">
       {/*Left image*/}
-      <div className="w-1/4 shrink-0 self-start border-2 border-slate-950">
+      <div className="w-1/4 shrink-0 self-start border-2 border-slate-950 rounded-xl overflow-hidden">
         <img src={product.image} alt={product.alt} className="h-full w-full object-contain" />
       </div>
 
       {/*Right*/}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col ms-4">
         {/*Top row*/}
-        <div className="flex w-full items-center justify-between px-4">
+        <div className="flex w-full items-center justify-between px-[1vw]">
           <p className="text-3xl">{product.name}</p>
           <div className="flex items-center gap-3">
             <p className="text-3xl">{formatPrice(information.totalCost)}</p>
@@ -66,7 +52,7 @@ export default function CartProductCard({
         </div>
 
         {/*Products row*/}
-        <div className="flex flex-col gap-2 bg-slate-600 px-4 py-2 mx-2 my-2 overflow-hidden rounded-xl">
+        <div className="flex flex-col gap-2 bg-slate-600 px-[2vh] py-[1vh] mx-[2vh] my-[1vh] overflow-hidden rounded-xl">
           {product.dates.map((date) => (
             <ProductRentalDate
               key={date.id}
@@ -88,14 +74,14 @@ export default function CartProductCard({
           whileHover={{ scale: 1.005 }}
           whileTap={{ scale: 0.995 }}
           transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-          className="mx-2 mb-2 flex h-10 items-center justify-center rounded-lg bg-slate-600"
+          className="mx-[2vh] mb-2 flex h-10 items-center justify-center rounded-lg bg-slate-600"
           aria-label="Dodaj kolejny termin"
         >
           <Plus size={28} />
         </motion.button>
 
         {/*Information*/}
-        <div className="mx-2 text-lg">
+        <div className="mx-[1vw] text-lg">
           <p>Dzienny koszt wypożyczenia: {formatPrice(product.price)}</p>
           <p>Liczba produktów: {information.totalQuantity}</p>
           <p>Liczba dni: {information.totalDays}</p>

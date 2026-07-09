@@ -1,11 +1,14 @@
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { twMerge } from 'tailwind-merge';
 
 type DatePickerElemProps = {
   selected: Date | null;
   minDate?: Date;
   onChange: (date: Date | null) => void;
   placeholder?: string;
+  className?: string;
+  wrapperClassName?: string;
 };
 
 export default function DatePickerElem({
@@ -13,6 +16,8 @@ export default function DatePickerElem({
   minDate,
   onChange,
   placeholder,
+  className,
+  wrapperClassName,
 }: DatePickerElemProps) {
   return (
     <DatePicker
@@ -23,9 +28,12 @@ export default function DatePickerElem({
       popperClassName="z-50"
       portalId="datepicker-popper-root"
       popperProps={{ strategy: 'fixed' }}
-      wrapperClassName="min-w-0 flex-1"
+      wrapperClassName={twMerge('min-w-0 flex-1', wrapperClassName)}
       placeholderText={placeholder}
-      className="box-border h-12 w-full rounded-xl border border-transparent bg-white px-4 text-black outline-none text-2xl text-center select-none"
+      className={twMerge(
+        'box-border h-12 w-full select-none rounded-xl border border-transparent bg-white px-4 text-center text-2xl text-black outline-none',
+        className
+      )}
     />
   );
 }

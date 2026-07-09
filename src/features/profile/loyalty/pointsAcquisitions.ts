@@ -1,12 +1,10 @@
-import PointsCard from './loyalty/PointsCard.tsx';
-
-type PointsAcquisition = {
+export type PointsAcquisition = {
   id: number;
   date: number;
   amount: number;
 };
 
-const POINTS_ACQUISITIONS: PointsAcquisition[] = [
+export const POINTS_ACQUISITIONS: PointsAcquisition[] = [
   {
     id: 1,
     date: new Date('2026-06-28').getTime(),
@@ -68,19 +66,3 @@ const POINTS_ACQUISITIONS: PointsAcquisition[] = [
     amount: 110,
   },
 ];
-
-export default function LoyaltySection() {
-  return (
-    <section className="flex flex-col justify-center items-center pt-12">
-      <p className="text-5xl text-center">Program lojalnościowy</p>
-      <p className="text-3xl mt-4">
-        Posiadasz <span className="font-semibold">1567</span> punktów
-      </p>
-      <div className="m-12 flex self-stretch flex-col gap-0.5 overflow-hidden rounded-xl bg-slate-300">
-        {POINTS_ACQUISITIONS.map((acquisition) => (
-          <PointsCard key={acquisition.id} date={acquisition.date} amount={acquisition.amount} />
-        ))}
-      </div>
-    </section>
-  );
-}

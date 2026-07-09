@@ -1,5 +1,5 @@
 import { Minus, Trash2, X } from 'lucide-react';
-import DatePickerElem from '../core/DatePickerElem.tsx';
+import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
 import type { Ref } from 'react';
