@@ -5,9 +5,15 @@ type DatePickerElemProps = {
   selected: Date | null;
   minDate?: Date;
   onChange: (date: Date | null) => void;
+  placeholder?: string;
 };
 
-export default function DatePickerElem({ selected, minDate, onChange }: DatePickerElemProps) {
+export default function DatePickerElem({
+  selected,
+  minDate,
+  onChange,
+  placeholder,
+}: DatePickerElemProps) {
   return (
     <DatePicker
       selected={selected}
@@ -18,7 +24,8 @@ export default function DatePickerElem({ selected, minDate, onChange }: DatePick
       portalId="datepicker-popper-root"
       popperProps={{ strategy: 'fixed' }}
       wrapperClassName="min-w-0 flex-1"
-      className="box-border h-12 w-full rounded-xl border border-transparent bg-white px-4 text-black outline-none"
+      placeholderText={placeholder}
+      className="box-border h-12 w-full rounded-xl border border-transparent bg-white px-4 text-black outline-none text-2xl text-center"
     />
   );
 }

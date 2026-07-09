@@ -45,13 +45,18 @@ export default function ProductRentalDate({
       />
       <X />
 
-      <DatePickerElem selected={date.start_date} onChange={onStartDateChange} />
+      <DatePickerElem
+        selected={date.start_date}
+        onChange={onStartDateChange}
+        placeholder="Data początkowa"
+      />
       <Minus />
 
       <DatePickerElem
         selected={date.end_date}
         minDate={date.start_date ?? new Date()}
         onChange={onEndDateChange}
+        placeholder="Data końcowa"
       />
 
       {/*Remove*/}
