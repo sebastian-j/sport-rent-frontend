@@ -57,6 +57,7 @@ export default function CartPage() {
   const [products, setProducts] = useState(INITIAL_CART);
   const [readTos, setReadTos] = useState(false);
   const [highlightTos, setHighlightTos] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
   const tosRef = useRef<HTMLDivElement | null>(null);
   const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
@@ -225,38 +226,59 @@ export default function CartPage() {
             })}
           </div>
 
-          <div
-            className={twMerge(
-              'mx-8 mt-12 flex flex-row justify-between rounded-xl border-2 border-slate-950 bg-slate-200 p-8 transition-colors duration-200',
-              highlightTos && 'border-red-600 bg-red-200'
-            )}
-            ref={tosRef}
-          >
-            <p className="text-2xl">
-              Przeczytaj{' '}
-              <a
-                className="underline font-semibold"
-                href="https://dok.agh.edu.pl/doc.php?id=17184"
-                target="_blank"
-                onClick={handleReadTos}
-              >
-                Regulamin
-              </a>
-              , aby dokonać zakupu.
-            </p>
-            <div>
-              {readTos ? (
-                <BadgeCheck size={32} className="text-green-600" />
-              ) : (
-                <Badge size={32} className="text-red-600" />
+          <div className="flex flex-row">
+            <div
+              className={twMerge(
+                'flex-[2] flex-wrap items-center mx-8 mt-12 flex flex-row justify-between rounded-xl border-2 border-slate-950 bg-slate-200 p-8 transition-colors duration-200',
+                highlightTos && 'border-red-600 bg-red-200'
               )}
+              ref={tosRef}
+            >
+              <p className="text-2xl ">
+                Przeczytaj{' '}
+                <a
+                  className="underline font-semibold"
+                  href="https://dok.agh.edu.pl/doc.php?id=17184"
+                  target="_blank"
+                  onClick={handleReadTos}
+                >
+                  Regulamin
+                </a>
+                , aby dokonać zakupu.
+              </p>
+              <div>
+                {readTos ? (
+                  <BadgeCheck size={32} className="text-green-600" />
+                ) : (
+                  <Badge size={32} className="text-red-600" />
+                )}
+              </div>
+            </div>
+            <div className="mx-8 mt-12 flex flex-1 flex-col items-center rounded-xl border-2 border-slate-950 bg-slate-200 p-8">
+              <p className="text-2xl">Kod promocyjny</p>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(event) => setPromoCode(event.currentTarget.value)}
+                placeholder="Wpisz kod"
+                className="mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
+              />
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.003 }}
+                whileTap={{ scale: 0.997 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                className="mt-4 flex h-14 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
+              >
+                Sprawdź
+              </motion.button>
             </div>
           </div>
 
-          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
-            <p className="text-2xl">Podsumowanie zamówienia</p>
-            <p className="text-lg">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
-            <p className="text-lg">Liczba produktów: {orderInformation.totalQuantity}</p>
+          <div className="flex flex-col items-center bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-2">
+            <p className="text-3xl">Podsumowanie zamówienia</p>
+            <p className="text-xl">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
+            <p className="text-xl">Liczba produktów: {orderInformation.totalQuantity}</p>
 
             <motion.button
               type="button"
@@ -264,7 +286,7 @@ export default function CartPage() {
               whileTap={canPurchase ? { scale: 0.997 } : undefined}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               className={
-                'mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white'
+                'mt-4 flex h-16 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white'
               }
               onClick={handleBuy}
             >
