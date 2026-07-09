@@ -9,6 +9,10 @@ export default function ProductPage() {
   const productId = id ? parseInt(id) : null;
   const product = productId ? getProductById(productId) : null;
 
+  if (!product) {
+    return <div className="text-center text-5xl text-red-500">Produkt nie został znaleziony</div>;
+  }
+
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const handleSizeClick = (size: string) => {
