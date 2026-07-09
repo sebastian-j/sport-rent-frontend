@@ -9,7 +9,13 @@ function toDayTimestamp(date: Date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-export default function AddToCart({ product }: { product: ProductProps | null | undefined }) {
+export default function AddToCart({
+  product,
+  selectedSize,
+}: {
+  product: ProductProps;
+  selectedSize: string | null;
+}) {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
 
@@ -30,14 +36,19 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
       return;
     }
 
+    if (product.sizes && !selectedSize) {
+      alert('Proszę wybrać rozmiar produktu.');
+      return;
+    }
+
     alert(
-      `Dodano ${quantity} sztuk produktu ${product?.name} do koszyka na okres od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
+      `Dodano ${quantity} sztuk produktu ${product.name}${selectedSize ? `o rozmiarze ${selectedSize} ` : ' '}do koszyka na okres od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
     );
   };
 
   return (
     <div className="flex flex-col gap-2 p-10 pl-20 pr-20 border rounded-lg border-black bg-gray-200">
-      <p className="text-6xl font-semibold text-[#193556] text-center">{product?.price} zł/doba</p>
+      <p className="text-6xl font-semibold text-[#193556] text-center">{product.price} zł/doba</p>
       <div className="flex flex-row gap-2">
         <div className="flex flex-col gap-1 w-full">
           <p className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] text-[#193556]">
