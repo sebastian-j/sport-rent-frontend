@@ -18,7 +18,7 @@ export default function ButtonCore({ text, onClick, inverted, className = '' }: 
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 250, damping: 20 }}
-      className={`${className} ${inversion}`}
+      className={`select-none ${className} ${inversion}`}
     >
       {text}
     </motion.button>

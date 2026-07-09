@@ -25,7 +25,7 @@ export default function DatePickerElem({
       popperProps={{ strategy: 'fixed' }}
       wrapperClassName="min-w-0 flex-1"
       placeholderText={placeholder}
-      className="box-border h-12 w-full rounded-xl border border-transparent bg-white px-4 text-black outline-none text-2xl text-center"
+      className="box-border h-12 w-full rounded-xl border border-transparent bg-white px-4 text-black outline-none text-2xl text-center select-none"
     />
   );
 }
