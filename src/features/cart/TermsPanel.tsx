@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { Badge, BadgeCheck } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
-import ContentPanel from '../ContentPanel.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 type TermsPanelProps = {
   readTos: boolean;

@@ -1,5 +1,5 @@
-import ButtonCore from '../core/ButtonCore.tsx';
-import ContentPanel from '../ContentPanel.tsx';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 type PromoCodePanelProps = {
   promoCode: string;

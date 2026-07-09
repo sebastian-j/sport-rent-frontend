@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { CircleMinus, CirclePlus } from 'lucide-react';
-import ButtonCore from '../core/ButtonCore';
+import ButtonCore from '../../components/core/ButtonCore';
 import { type ProductProps } from './productProps';
 import { isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
-import DatePickerElem from '../core/DatePickerElem.tsx';
+import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 
 export default function AddToCart({
   product,

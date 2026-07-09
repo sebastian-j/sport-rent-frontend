@@ -1,17 +1,17 @@
 import { useRef, useState } from 'react';
-import CartProductCard from '../components/cart/CartProductCard.tsx';
+import CartProductCard from '../features/cart/CartProductCard.tsx';
 import { useNavigate } from 'react-router-dom';
 import {
   findFirstInvalidRentalDate,
   getOrderInformation,
   getProductInformation,
-} from '../components/cart/cartCalculations.ts';
-import TermsPanel from '../components/cart/TermsPanel.tsx';
-import PromoCodePanel from '../components/cart/PromoCodePanel.tsx';
-import CartSummaryPanel from '../components/cart/CartSummaryPanel.tsx';
-import EmptyCartPanel from '../components/cart/EmptyCartPanel.tsx';
-import { useCart } from '../components/cart/useCart.ts';
-import { INITIAL_CART } from '../components/cart/initialCart.ts';
+} from '../features/cart/cartCalculations.ts';
+import TermsPanel from '../features/cart/TermsPanel.tsx';
+import PromoCodePanel from '../features/cart/PromoCodePanel.tsx';
+import CartSummaryPanel from '../features/cart/CartSummaryPanel.tsx';
+import EmptyCartPanel from '../features/cart/EmptyCartPanel.tsx';
+import { useCart } from '../features/cart/useCart.ts';
+import { INITIAL_CART } from '../features/cart/initialCart.ts';
 
 export default function CartPage() {
   const {

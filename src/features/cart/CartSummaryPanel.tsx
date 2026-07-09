@@ -1,5 +1,5 @@
-import ContentPanel from '../ContentPanel.tsx';
-import ButtonCore from '../core/ButtonCore.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { OrderInformation } from './cartTypes.ts';
 

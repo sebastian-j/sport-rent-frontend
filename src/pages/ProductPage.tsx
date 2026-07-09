@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { getProductById } from '../assets/products/products';
-import ProductGallery from '../components/product/ProductGallery';
-import AddToCart from '../components/product/AddToCart';
+import ProductGallery from '../features/product/ProductGallery';
+import AddToCart from '../features/product/AddToCart';
 import { useState } from 'react';
 
 export default function ProductPage() {
