@@ -1,9 +1,9 @@
-const PRODUCT_IMAGES = import.meta.glob('./*.jpg', {
+const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;
 
-export const productImage = (filename: string) => PRODUCT_IMAGES[`./${filename}`];
+export const productImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`];
 
 export const PRODUCTS = [
   {
@@ -13,6 +13,8 @@ export const PRODUCTS = [
     image: productImage('01-road-bike.jpg'),
     alt: 'Rower szosowy',
     category: 'Rowery i akcesoria',
+    description: 'Lekki rower do szybkiej jazdy po asfalcie i dłuższych trasach.',
+    sizes: ['S', 'M', 'L'],
   },
   {
     id: 2,
@@ -21,6 +23,8 @@ export const PRODUCTS = [
     image: productImage('02-mountain-bike.jpg'),
     alt: 'Rower górski MTB',
     category: 'Rowery i akcesoria',
+    description: 'Solidny rower terenowy na szlaki, leśne drogi i nierówne podłoże.',
+    sizes: ['S', 'M', 'L'],
   },
   {
     id: 3,
@@ -29,6 +33,8 @@ export const PRODUCTS = [
     image: productImage('03-bike-helmet.jpg'),
     alt: 'Kask rowerowy',
     category: 'Rowery i akcesoria',
+    description: 'Lekki kask zapewniający wygodę i ochronę podczas jazdy rowerem.',
+    sizes: ['S/M', 'L/XL'],
   },
   {
     id: 4,
@@ -37,6 +43,7 @@ export const PRODUCTS = [
     image: productImage('04-child-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa dla dzieci',
     category: 'Przyczepki rowerowe',
+    description: 'Bezpieczna przyczepka dla najmłodszych pasażerów na rodzinne wyjazdy.',
   },
   {
     id: 5,
@@ -45,6 +52,7 @@ export const PRODUCTS = [
     image: productImage('05-cargo-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa bagażowa',
     category: 'Przyczepki rowerowe',
+    description: 'Praktyczna przyczepka do przewozu bagażu, zakupów i sprzętu.',
   },
   {
     id: 6,
@@ -53,6 +61,7 @@ export const PRODUCTS = [
     image: productImage('06-dog-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa dla psa',
     category: 'Przyczepki rowerowe',
+    description: 'Wygodna przyczepka dla psa na wspólne przejażdżki i dłuższe trasy.',
   },
   {
     id: 7,
@@ -61,6 +70,7 @@ export const PRODUCTS = [
     image: productImage('07-two-person-tent.jpg'),
     alt: 'Namiot dwuosobowy',
     category: 'Namioty osobowe',
+    description: 'Lekki namiot dla 2 osób, dobry na weekendowe wypady i biwaki.',
   },
   {
     id: 8,
@@ -69,6 +79,7 @@ export const PRODUCTS = [
     image: productImage('08-three-person-tent.jpg'),
     alt: 'Namiot trzyosobowy',
     category: 'Namioty osobowe',
+    description: 'Praktyczny namiot dla 3 osób z szybkim rozstawianiem.',
   },
   {
     id: 9,
@@ -77,6 +88,7 @@ export const PRODUCTS = [
     image: productImage('09-four-person-tent.jpg'),
     alt: 'Namiot czteroosobowy',
     category: 'Namioty osobowe',
+    description: 'Przestronny namiot dla 4 osób na rodzinne wyjazdy.',
   },
   {
     id: 10,
@@ -85,6 +97,7 @@ export const PRODUCTS = [
     image: productImage('10-sup-board.jpg'),
     alt: 'Deska SUP',
     category: 'Sprzęt wodny',
+    description: 'Stabilna deska SUP do rekreacyjnego pływania po jeziorach i zatoce.',
   },
   {
     id: 11,
@@ -93,6 +106,7 @@ export const PRODUCTS = [
     image: productImage('11-two-person-kayak.jpg'),
     alt: 'Kajak dwuosobowy',
     category: 'Sprzęt wodny',
+    description: 'Wygodny kajak dla dwóch osób na spokojne spływy i wycieczki.',
   },
   {
     id: 12,
@@ -101,6 +115,7 @@ export const PRODUCTS = [
     image: productImage('12-life-jacket.jpg'),
     alt: 'Kamizelka asekuracyjna',
     category: 'Sprzęt wodny',
+    description: 'Kamizelka zwiększająca bezpieczeństwo podczas pływania i sportów wodnych.',
   },
   {
     id: 13,
@@ -109,6 +124,7 @@ export const PRODUCTS = [
     image: productImage('13-via-ferrata-set.jpg'),
     alt: 'Zestaw via ferrata',
     category: 'Via ferraty i wspinanie',
+    description: 'Kompletny zestaw do bezpiecznego poruszania się po via ferratach.',
   },
   {
     id: 14,
@@ -117,6 +133,8 @@ export const PRODUCTS = [
     image: productImage('14-climbing-harness.jpg'),
     alt: 'Uprząż wspinaczkowa',
     category: 'Via ferraty i wspinanie',
+    description: 'Regulowana uprząż do wspinaczki i przejść po via ferratach.',
+    sizes: ['S', 'M', 'L'],
   },
   {
     id: 15,
@@ -125,6 +143,8 @@ export const PRODUCTS = [
     image: productImage('15-climbing-helmet.jpg'),
     alt: 'Kask wspinaczkowy',
     category: 'Via ferraty i wspinanie',
+    description: 'Wytrzymały kask chroniący głowę podczas wspinaczki i trekkingu.',
+    sizes: ['S/M', 'L/XL'],
   },
   {
     id: 16,
@@ -133,6 +153,7 @@ export const PRODUCTS = [
     image: productImage('16-child-carrier.jpg'),
     alt: 'Nosidełko turystyczne dla dziecka',
     category: 'Nosidełka turystyczne',
+    description: 'Stabilne nosidełko dla dziecka na wygodne spacery i górskie trasy.',
   },
   {
     id: 17,
@@ -141,6 +162,7 @@ export const PRODUCTS = [
     image: productImage('17-light-child-carrier.jpg'),
     alt: 'Lekkie nosidełko turystyczne',
     category: 'Nosidełka turystyczne',
+    description: 'Lżejsza wersja nosidełka na krótsze wycieczki i codzienne spacery.',
   },
   {
     id: 18,
@@ -149,6 +171,7 @@ export const PRODUCTS = [
     image: productImage('18-family-tent.jpg'),
     alt: 'Namiot rodzinny',
     category: 'Namioty',
+    description: 'Duży namiot dla rodziny z miejscem na bagaż i wygodny nocleg.',
   },
   {
     id: 19,
@@ -157,6 +180,7 @@ export const PRODUCTS = [
     image: productImage('19-camping-tent.jpg'),
     alt: 'Namiot kempingowy',
     category: 'Namioty',
+    description: 'Uniwersalny namiot na biwak, kemping i krótsze wypady.',
   },
   {
     id: 20,
@@ -165,6 +189,7 @@ export const PRODUCTS = [
     image: productImage('20-rooftop-tent.jpg'),
     alt: 'Namiot dachowy',
     category: 'Namioty',
+    description: 'Namiot dachowy montowany na aucie, wygodny w podróży.',
   },
   {
     id: 21,
@@ -173,6 +198,8 @@ export const PRODUCTS = [
     image: productImage('21-city-bike.jpg'),
     alt: 'Rower miejski',
     category: 'Rowery i akcesoria',
+    description: 'Wygodny rower do codziennej jazdy po mieście i ścieżkach rowerowych.',
+    sizes: ['S', 'M', 'L'],
   },
   {
     id: 22,
@@ -181,6 +208,8 @@ export const PRODUCTS = [
     image: productImage('22-electric-bike.jpg'),
     alt: 'Rower elektryczny',
     category: 'Rowery i akcesoria',
+    description: 'E-rower z wspomaganiem, idealny na dłuższe trasy i codzienne dojazdy.',
+    sizes: ['S', 'M', 'L'],
   },
   {
     id: 23,
@@ -189,6 +218,7 @@ export const PRODUCTS = [
     image: productImage('23-bike-panniers.jpg'),
     alt: 'Sakwy rowerowe',
     category: 'Rowery i akcesoria',
+    description: 'Pojemne sakwy na rower na bagaż, zakupy i rzeczy na wyjazd.',
   },
   {
     id: 24,
@@ -197,6 +227,7 @@ export const PRODUCTS = [
     image: productImage('24-single-wheel-trailer.jpg'),
     alt: 'Jednokołowa przyczepka rowerowa',
     category: 'Przyczepki rowerowe',
+    description: 'Zwrotna przyczepka z jednym kołem do jazdy w terenie i po trasach.',
   },
   {
     id: 25,
@@ -205,6 +236,7 @@ export const PRODUCTS = [
     image: productImage('25-folding-bike-trailer.jpg'),
     alt: 'Składana przyczepka rowerowa',
     category: 'Przyczepki rowerowe',
+    description: 'Składana przyczepka, którą łatwo przewieziesz i przechowasz.',
   },
   {
     id: 26,
@@ -213,6 +245,7 @@ export const PRODUCTS = [
     image: productImage('26-touring-tent.jpg'),
     alt: 'Namiot trekkingowy',
     category: 'Namioty osobowe',
+    description: 'Lekki namiot trekkingowy do plecaka i pieszych wypraw.',
   },
   {
     id: 27,
@@ -221,6 +254,7 @@ export const PRODUCTS = [
     image: productImage('27-winter-tent.jpg'),
     alt: 'Namiot zimowy',
     category: 'Namioty osobowe',
+    description: 'Namiot przygotowany na niższe temperatury i trudniejsze warunki.',
   },
   {
     id: 28,
@@ -229,6 +263,7 @@ export const PRODUCTS = [
     image: productImage('28-inflatable-kayak.jpg'),
     alt: 'Kajak dmuchany',
     category: 'Sprzęt wodny',
+    description: 'Lekki kajak dmuchany, który łatwo transportować i rozłożyć.',
   },
   {
     id: 29,
@@ -237,6 +272,7 @@ export const PRODUCTS = [
     image: productImage('29-canoe.jpg'),
     alt: 'Kanadyjka dwuosobowa',
     category: 'Sprzęt wodny',
+    description: 'Stabilna kanadyjka dla dwóch osób na spokojne spływy.',
   },
   {
     id: 30,
@@ -245,6 +281,7 @@ export const PRODUCTS = [
     image: productImage('30-kayak-paddle.jpg'),
     alt: 'Wiosło kajakowe',
     category: 'Sprzęt wodny',
+    description: 'Lekkie wiosło do kajaka na rekreacyjne pływanie.',
   },
   {
     id: 31,
@@ -253,6 +290,7 @@ export const PRODUCTS = [
     image: productImage('31-climbing-rope.jpg'),
     alt: 'Lina wspinaczkowa',
     category: 'Via ferraty i wspinanie',
+    description: '60-metrowa lina do wspinaczki sportowej i asekuracji.',
   },
   {
     id: 32,
@@ -261,6 +299,7 @@ export const PRODUCTS = [
     image: productImage('32-carabiner-set.jpg'),
     alt: 'Zestaw karabinków wspinaczkowych',
     category: 'Via ferraty i wspinanie',
+    description: 'Zestaw karabinków do asekuracji i pracy z liną.',
   },
   {
     id: 33,
@@ -269,6 +308,8 @@ export const PRODUCTS = [
     image: productImage('33-climbing-shoes.jpg'),
     alt: 'Buty wspinaczkowe',
     category: 'Via ferraty i wspinanie',
+    description: 'Precyzyjne buty wspinaczkowe zapewniające dobrą przyczepność na ścianie.',
+    sizes: ['37', '38', '39', '40', '41', '42', '43', '44'],
   },
   {
     id: 34,
@@ -277,6 +318,7 @@ export const PRODUCTS = [
     image: productImage('34-hiking-carrier.jpg'),
     alt: 'Nosidełko turystyczne premium',
     category: 'Nosidełka turystyczne',
+    description: 'Wygodne nosidełko premium z lepszym wsparciem na dłuższe wycieczki.',
   },
   {
     id: 35,
@@ -285,6 +327,7 @@ export const PRODUCTS = [
     image: productImage('35-rain-cover-carrier.jpg'),
     alt: 'Nosidełko z osłoną przeciwdeszczową',
     category: 'Nosidełka turystyczne',
+    description: 'Nosidełko z osłoną chroniącą dziecko przed deszczem i wiatrem.',
   },
   {
     id: 36,
@@ -293,6 +336,7 @@ export const PRODUCTS = [
     image: productImage('36-tunnel-tent.jpg'),
     alt: 'Namiot tunelowy',
     category: 'Namioty',
+    description: 'Przestronny namiot tunelowy z dobrym wykorzystaniem miejsca.',
   },
   {
     id: 37,
@@ -301,6 +345,7 @@ export const PRODUCTS = [
     image: productImage('37-pop-up-tent.jpg'),
     alt: 'Namiot samorozkładający',
     category: 'Namioty',
+    description: 'Szybkorozkładany namiot na spontaniczne wyjazdy i krótkie biwaki.',
   },
   {
     id: 38,
@@ -309,6 +354,7 @@ export const PRODUCTS = [
     image: productImage('38-expedition-tent.jpg'),
     alt: 'Namiot ekspedycyjny',
     category: 'Namioty',
+    description: 'Wytrzymały namiot ekspedycyjny na wymagające warunki i dłuższe wyprawy.',
   },
   {
     id: 39,
@@ -317,6 +363,7 @@ export const PRODUCTS = [
     image: productImage('39-bike-repair-kit.jpg'),
     alt: 'Zestaw naprawczy do roweru',
     category: 'Rowery i akcesoria',
+    description: 'Poręczny zestaw do drobnych napraw i regulacji roweru w trasie.',
   },
   {
     id: 40,
@@ -325,6 +372,7 @@ export const PRODUCTS = [
     image: productImage('40-waterproof-bag.jpg'),
     alt: 'Wodoodporny worek transportowy',
     category: 'Sprzęt wodny',
+    description: 'Worek chroniący rzeczy przed wodą, deszczem i zabrudzeniem.',
   },
 ];
 

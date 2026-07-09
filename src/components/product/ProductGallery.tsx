@@ -1,14 +1,6 @@
 import { useState } from 'react';
 import { getProductById } from '../../assets/products/products';
-
-type ProductProps = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  alt: string;
-  category: string;
-};
+import { type ProductProps } from './productProps';
 
 export default function ProductGallery({ product }: { product: ProductProps | null | undefined }) {
   if (!product) {
@@ -23,7 +15,7 @@ export default function ProductGallery({ product }: { product: ProductProps | nu
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 align-middle">
           {images.map((image, index) => (
             <img
               key={index}
