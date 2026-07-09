@@ -5,6 +5,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { type ProductProps } from './productProps';
 
+function toDayTimestamp(date: Date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 export default function AddToCart({ product }: { product: ProductProps | null | undefined }) {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -12,15 +16,22 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
   const [quantity, setQuantity] = useState<number>(1);
 
   const handleAddToCart = () => {
-    if (startDate > endDate) {
+    const start = toDayTimestamp(startDate);
+    const end = toDayTimestamp(endDate);
+    const today = toDayTimestamp(new Date());
+
+    if (start > end) {
       alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
       return;
-    } else if (startDate < new Date()) {
+    }
+
+    if (start < today) {
       alert('Data rozpoczęcia nie może być wcześniejsza niż dzisiejsza data.');
       return;
     }
+
     alert(
-      `Dodano ${quantity} sztuk produktu ${product?.name} do koszyka na okres od ${startDate.toLocaleDateString()} do ${endDate.toLocaleDateString()}.`
+      `Dodano ${quantity} sztuk produktu ${product?.name} do koszyka na okres od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
     );
   };
 
@@ -35,7 +46,16 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
           </p>
           <DatePicker
             selected={startDate}
-            onChange={(date: Date | null) => date && setStartDate(date)}
+            onChange={(date: Date | null) => {
+              if (!date) return;
+
+              setStartDate(date);
+
+              if (toDayTimestamp(date) > toDayTimestamp(endDate)) {
+                setEndDate(date);
+              }
+            }}
+            minDate={new Date()}
             dateFormat="dd.MM.yyyy"
             className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] w-full text-[#193556]"
           />
@@ -48,6 +68,7 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
           <DatePicker
             selected={endDate}
             onChange={(date: Date | null) => date && setEndDate(date)}
+            minDate={startDate}
             dateFormat="dd.MM.yyyy"
             className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] w-full text-[#193556]"
           />
