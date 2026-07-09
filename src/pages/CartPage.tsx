@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { PRODUCTS } from '../assets/products/products.ts';
 import { isRentalDateValid } from '../components/cart/rentalDate.ts';
 import CartProductCard from '../components/cart/CartProductCard.tsx';
 import type { CartProduct } from '../components/cart/CartProductCard.tsx';
 import { formatPrice } from '../utils/formatPrice.ts';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { Badge, BadgeCheck } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
@@ -56,6 +56,10 @@ function getProductInformation(product: CartProduct) {
 export default function CartPage() {
   const [products, setProducts] = useState(INITIAL_CART);
   const [readTos, setReadTos] = useState(false);
+  const [highlightTos, setHighlightTos] = useState(false);
+  const tosRef = useRef<HTMLDivElement | null>(null);
+  const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const navigate = useNavigate();
 
   const updateRentalDate = (
     productId: number,
@@ -150,7 +154,44 @@ export default function CartPage() {
   const handleReadTos = () => {
     setReadTos(true);
   };
-  const buttonColor = canPurchase ? 'bg-slate-800' : 'bg-slate-300 text-slate-400';
+
+  const getRentalDateRefKey = (productId: number, dateId: number) => `${productId}-${dateId}`;
+
+  const handleBuy = () => {
+    const firstInvalidRentalDate = products
+      .flatMap((product) =>
+        product.dates.map((date) => ({
+          productId: product.id,
+          date,
+        }))
+      )
+      .find(({ date }) => !isRentalDateValid(date));
+
+    if (firstInvalidRentalDate) {
+      const refKey = getRentalDateRefKey(
+        firstInvalidRentalDate.productId,
+        firstInvalidRentalDate.date.id
+      );
+
+      rentalDateRefs.current[refKey]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+
+      return;
+    }
+
+    if (!readTos) {
+      tosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightTos(true);
+      window.setTimeout(() => setHighlightTos(false), 500);
+
+      return;
+    }
+
+    alert('Kupiono!');
+    navigate('/');
+  };
 
   return (
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
@@ -176,26 +217,33 @@ export default function CartPage() {
                   onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
                   onAddDate={() => addRentalDate(product.id)}
                   onRemoveProduct={() => removeProduct(product.id)}
+                  getRentalDateRef={(dateId) => (element) => {
+                    rentalDateRefs.current[getRentalDateRefKey(product.id, dateId)] = element;
+                  }}
                 />
               );
             })}
           </div>
 
-          <div className="flex flex-row justify-between bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
-            <div>
-              <p className="text-2xl">
-                Przeczytaj{' '}
-                <a
-                  className="underline font-semibold"
-                  href="https://dok.agh.edu.pl/doc.php?id=17184"
-                  target="_blank"
-                  onClick={handleReadTos}
-                >
-                  Regulamin
-                </a>
-                , aby dokonać zakupu.
-              </p>
-            </div>
+          <div
+            className={twMerge(
+              'mx-8 mt-12 flex flex-row justify-between rounded-xl border-2 border-slate-950 bg-slate-200 p-8 transition-colors duration-200',
+              highlightTos && 'border-red-600 bg-red-200'
+            )}
+            ref={tosRef}
+          >
+            <p className="text-2xl">
+              Przeczytaj{' '}
+              <a
+                className="underline font-semibold"
+                href="https://dok.agh.edu.pl/doc.php?id=17184"
+                target="_blank"
+                onClick={handleReadTos}
+              >
+                Regulamin
+              </a>
+              , aby dokonać zakupu.
+            </p>
             <div>
               {readTos ? (
                 <BadgeCheck size={32} className="text-green-600" />
@@ -215,13 +263,10 @@ export default function CartPage() {
               whileHover={canPurchase ? { scale: 1.003 } : undefined}
               whileTap={canPurchase ? { scale: 0.997 } : undefined}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className={twMerge(
-                'mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white',
-                !canPurchase && 'cursor-not-allowed',
-                buttonColor
-              )}
-              disabled={!canPurchase}
-              onClick={() => alert('Kupiono')}
+              className={
+                'mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white'
+              }
+              onClick={handleBuy}
             >
               Kup teraz
             </motion.button>
