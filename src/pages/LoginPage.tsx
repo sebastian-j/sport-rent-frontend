@@ -17,6 +17,7 @@ export default function LoginPage() {
   };
 
   const handleLogin = () => {
+    alert(`Email: ${formData.email}, Password: ${formData.password}`);
     // TODO: Implement login logic here
   };
 

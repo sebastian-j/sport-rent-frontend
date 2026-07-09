@@ -12,7 +12,8 @@ import FaqPage from './pages/FaqPage.tsx';
 import LoginLayout from './layouts/LoginLayout.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
+// import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
+import ProductPage from './pages/ProductPage.tsx';
 
 function App() {
   return (
@@ -21,11 +22,12 @@ function App() {
         <Route element={<Layout />}>
           {/*Header*/}
           <Route path="/" element={<HomePage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Route>
+          {/* <Route element={<ProtectedRoute />}> */}
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          {/* </Route> */}
+          <Route path="/product/:id" element={<ProductPage />} />
           {/*Footer*/}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -1,5 +1,5 @@
 import PanoramicImage from '../components/PanoramicImage';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../components/product/ProductCard.tsx';
 import CategoryBar from '../components/CategoryBar';
 import panoramicImage from '../assets/panoramic_small.png';
 import { useState } from 'react';
@@ -9,8 +9,10 @@ import ferratyImage from '../assets/categories/ferraty.png';
 import namiotyImage from '../assets/categories/namioty.png';
 import przyczepkiImage from '../assets/categories/przyczepki.png';
 import roweryImage from '../assets/categories/rowery.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
 
   const toggleFavorite = (productId: number) => {
@@ -83,7 +85,7 @@ export default function HomePage() {
             price={product.price}
             image={product.image}
             alt={product.alt}
-            onClick={() => alert('Dodano ' + product.name)}
+            onClick={() => navigate(`/product/${product.id}`)}
             isFavorite={favoriteIds.has(product.id)}
             onFavoriteToggle={() => toggleFavorite(product.id)}
           />
