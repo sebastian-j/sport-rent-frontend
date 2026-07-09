@@ -4,6 +4,7 @@ import { type ComponentType, useState } from 'react';
 import AccountSection from '../components/profile/AccountSection.tsx';
 import LoyaltySection from '../components/profile/LoyaltySection.tsx';
 import OrdersSection from '../components/profile/OrdersSection.tsx';
+import ContentPanel from '../components/ContentPanel.tsx';
 
 type ProfileSection = 'account' | 'loyalty' | 'orders';
 
@@ -42,9 +43,9 @@ export default function ProfilePage() {
             onClick={() => setSelectedSection('orders')}
           />
         </div>
-        <div className="flex-[2] bg-slate-200 rounded-lg border-[1px] border-black">
+        <ContentPanel className="flex-[2] rounded-lg border border-black p-0">
           <SelectedSection />
-        </div>
+        </ContentPanel>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge, BadgeCheck } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import ButtonCore from '../components/core/ButtonCore.tsx';
+import ContentPanel from '../components/ContentPanel.tsx';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -221,9 +222,9 @@ export default function CartPage() {
             })}
           </div>
 
-          <div
+          <ContentPanel
             className={twMerge(
-              'flex-[2] flex-wrap items-center mx-8 mt-12 flex flex-row justify-between rounded-xl border-2 border-slate-950 bg-slate-200 p-8 transition-colors duration-200',
+              'mx-8 mt-12 flex-[2] flex-row flex-wrap justify-between transition-colors duration-200',
               highlightTos && 'border-red-600 bg-red-200'
             )}
             ref={tosRef}
@@ -247,25 +248,25 @@ export default function CartPage() {
                 <Badge size={32} className="text-red-600" />
               )}
             </div>
-          </div>
+          </ContentPanel>
 
           <div className="flex flex-row">
-            <div className="mx-8 mt-12 flex flex-1 flex-col items-center rounded-xl border-2 border-slate-950 bg-slate-200 p-8">
+            <ContentPanel className="mx-8 mt-12">
               <p className="text-2xl">Kod promocyjny</p>
               <input
                 type="text"
                 value={promoCode}
                 onChange={(event) => setPromoCode(event.currentTarget.value)}
                 placeholder="Wpisz kod"
-                className="select-none mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
+                className="mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
               />
               <ButtonCore
                 text="Sprawdź"
                 className="mt-4 flex h-14 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
               />
-            </div>
+            </ContentPanel>
 
-            <div className="flex flex-col flex-[2] items-center bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-2">
+            <ContentPanel className="mx-8 mt-12 flex-[2] gap-2">
               <p className="text-3xl">Podsumowanie zamówienia</p>
               <p className="text-xl">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
               <p className="text-xl">Liczba produktów: {orderInformation.totalQuantity}</p>
@@ -277,12 +278,12 @@ export default function CartPage() {
                   'mt-4 flex h-16 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white'
                 }
               />
-            </div>
+            </ContentPanel>
           </div>
         </div>
       )}
       {products.length === 0 && (
-        <div className="mx-8 mt-12 flex flex-col items-center rounded-xl border-2 border-slate-950 bg-slate-200 p-8 text-center">
+        <ContentPanel className="mx-8 mt-12 text-center">
           <p className="text-3xl font-semibold text-slate-950">Twój koszyk jest pusty</p>
           <p className="mt-3 max-w-xl text-lg text-slate-700">
             Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj, aby
@@ -293,7 +294,7 @@ export default function CartPage() {
             onClick={() => navigate('/')}
             className="mt-6 rounded-lg bg-slate-800 px-8 py-3 text-lg font-semibold text-white transition-colors"
           />
-        </div>
+        </ContentPanel>
       )}
     </div>
   );
