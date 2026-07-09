@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
-import { motion } from 'motion/react';
 import { PRODUCTS } from '../assets/products/products.ts';
 import { isRentalDateValid } from '../components/cart/rentalDate.ts';
 import CartProductCard from '../components/cart/CartProductCard.tsx';
 import type { CartProduct } from '../components/cart/CartProductCard.tsx';
 import { formatPrice } from '../utils/formatPrice.ts';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Badge, BadgeCheck } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
+import ButtonCore from '../components/core/ButtonCore.tsx';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -147,11 +147,6 @@ export default function CartPage() {
     { totalValue: 0, totalQuantity: 0 }
   );
 
-  const hasInvalidRentalDate = products.some((product) =>
-    product.dates.some((date) => !isRentalDateValid(date))
-  );
-  const canPurchase = readTos && !hasInvalidRentalDate;
-
   const handleReadTos = () => {
     setReadTos(true);
   };
@@ -263,15 +258,10 @@ export default function CartPage() {
                 placeholder="Wpisz kod"
                 className="mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
               />
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.003 }}
-                whileTap={{ scale: 0.997 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              <ButtonCore
+                text="Sprawdź"
                 className="mt-4 flex h-14 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
-              >
-                Sprawdź
-              </motion.button>
+              />
             </div>
           </div>
 
@@ -280,18 +270,13 @@ export default function CartPage() {
             <p className="text-xl">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
             <p className="text-xl">Liczba produktów: {orderInformation.totalQuantity}</p>
 
-            <motion.button
-              type="button"
-              whileHover={canPurchase ? { scale: 1.003 } : undefined}
-              whileTap={canPurchase ? { scale: 0.997 } : undefined}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            <ButtonCore
+              text="Kup teraz"
+              onClick={handleBuy}
               className={
                 'mt-4 flex h-16 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white'
               }
-              onClick={handleBuy}
-            >
-              Kup teraz
-            </motion.button>
+            />
           </div>
         </div>
       )}
@@ -302,12 +287,11 @@ export default function CartPage() {
             Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj, aby
             sfinalizować zamówienie.
           </p>
-          <Link
-            to="/"
-            className="mt-6 rounded-lg bg-slate-800 px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-slate-700"
-          >
-            Przejdź do oferty
-          </Link>
+          <ButtonCore
+            text="Przejdź do oferty"
+            onClick={() => navigate('/')}
+            className="mt-6 rounded-lg bg-slate-800 px-8 py-3 text-lg font-semibold text-white transition-colors"
+          />
         </div>
       )}
     </div>
