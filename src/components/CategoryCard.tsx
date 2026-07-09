@@ -42,7 +42,7 @@ export default function CategoryCard({
       whileHover={{ scale: 1.015, boxShadow: '0 12px 30px rgb(0 0 0 / 0.15)' }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className={twMerge(
-        `relative flex hover:z-10 cursor-pointer bg-white ${sizeClasses} ${flexRow}`,
+        `relative flex hover:z-10 cursor-pointer bg-white select-none ${sizeClasses} ${flexRow}`,
         className
       )}
       onClick={onClick}

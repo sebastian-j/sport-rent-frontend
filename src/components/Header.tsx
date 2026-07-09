@@ -38,7 +38,7 @@ export default function Header() {
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
             placeholder="Szukaj..."
-            className="rounded-lg w-full bg-neutral-200 p-2 outline-none"
+            className="rounded-lg w-full bg-neutral-200 p-2 outline-none select-none"
           />
         </div>
 

@@ -257,7 +257,7 @@ export default function CartPage() {
                 value={promoCode}
                 onChange={(event) => setPromoCode(event.currentTarget.value)}
                 placeholder="Wpisz kod"
-                className="mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
+                className="select-none mt-4 h-14 w-full rounded-lg border-2 border-slate-950 bg-white px-4 text-xl text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-700"
               />
               <ButtonCore
                 text="Sprawdź"

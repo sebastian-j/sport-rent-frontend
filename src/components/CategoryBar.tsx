@@ -36,7 +36,7 @@ const CATEGORIES = [
 
 export default function CategoryBar() {
   return (
-    <div className="bg-white border-b border-neutral-200">
+    <div className="bg-white border-b border-neutral-200 select-none">
       <div className="max-w-[1700px] mx-auto px-4 pt-6 pb-2">
         <div className="flex flex-row justify-between items-start overflow-x-auto pb-6">
           {CATEGORIES.map((category, index) => (
