@@ -6,6 +6,8 @@ import CartProductCard from '../components/cart/CartProductCard.tsx';
 import type { CartProduct } from '../components/cart/CartProductCard.tsx';
 import { formatPrice } from '../utils/formatPrice.ts';
 import { Link } from 'react-router-dom';
+import { Badge, BadgeCheck } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -53,6 +55,7 @@ function getProductInformation(product: CartProduct) {
 
 export default function CartPage() {
   const [products, setProducts] = useState(INITIAL_CART);
+  const [readTos, setReadTos] = useState(false);
 
   const updateRentalDate = (
     productId: number,
@@ -139,54 +142,98 @@ export default function CartPage() {
     { totalValue: 0, totalQuantity: 0 }
   );
 
+  const hasInvalidRentalDate = products.some((product) =>
+    product.dates.some((date) => !isRentalDateValid(date))
+  );
+  const canPurchase = readTos && !hasInvalidRentalDate;
+
+  const handleReadTos = () => {
+    setReadTos(true);
+  };
+  const buttonColor = canPurchase ? 'bg-slate-800' : 'bg-slate-300 text-slate-400';
+
   return (
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
       <p className="text-center mt-12 font-semibold text-5xl text-slate-950">Koszyk</p>
 
-      {products.length > 0 && <div>
+      {products.length > 0 && (
+        <div>
           <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-4">
             {products.map((product) => {
               const information = getProductInformation(product);
 
               return (
-                  <CartProductCard
-                      key={product.id}
-                      product={product}
-                      information={information}
-                      onQuantityChange={(dateId, quantity) => updateQuantity(product.id, dateId, quantity)}
-                      onDateChange={(dateId, field, value) =>
-                          updateRentalDate(product.id, dateId, field, value)
-                      }
-                      onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
-                      onAddDate={() => addRentalDate(product.id)}
-                      onRemoveProduct={() => removeProduct(product.id)}
-                  />
+                <CartProductCard
+                  key={product.id}
+                  product={product}
+                  information={information}
+                  onQuantityChange={(dateId, quantity) =>
+                    updateQuantity(product.id, dateId, quantity)
+                  }
+                  onDateChange={(dateId, field, value) =>
+                    updateRentalDate(product.id, dateId, field, value)
+                  }
+                  onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
+                  onAddDate={() => addRentalDate(product.id)}
+                  onRemoveProduct={() => removeProduct(product.id)}
+                />
               );
             })}
           </div>
 
-          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
-              <p className="text-2xl">Podsumowanie zamówienia</p>
-              <p className="text-lg">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
-              <p className="text-lg">Liczba produktów: {orderInformation.totalQuantity}</p>
-
-              <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.003 }}
-                  whileTap={{ scale: 0.997 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  className="mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
-              >
-                  Kup teraz
-              </motion.button>
+          <div className="flex flex-row justify-between bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
+            <div>
+              <p className="text-2xl">
+                Przeczytaj{' '}
+                <a
+                  className="underline font-semibold"
+                  href="https://dok.agh.edu.pl/doc.php?id=17184"
+                  target="_blank"
+                  onClick={handleReadTos}
+                >
+                  Regulamin
+                </a>
+                , aby dokonać zakupu.
+              </p>
+            </div>
+            <div>
+              {readTos ? (
+                <BadgeCheck size={32} className="text-green-600" />
+              ) : (
+                <Badge size={32} className="text-red-600" />
+              )}
+            </div>
           </div>
-      </div>}
+
+          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2">
+            <p className="text-2xl">Podsumowanie zamówienia</p>
+            <p className="text-lg">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
+            <p className="text-lg">Liczba produktów: {orderInformation.totalQuantity}</p>
+
+            <motion.button
+              type="button"
+              whileHover={canPurchase ? { scale: 1.003 } : undefined}
+              whileTap={canPurchase ? { scale: 0.997 } : undefined}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className={twMerge(
+                'mt-4 flex h-16 items-center justify-center rounded-lg bg-slate-800 text-2xl text-white',
+                !canPurchase && 'cursor-not-allowed',
+                buttonColor
+              )}
+              disabled={!canPurchase}
+              onClick={() => alert('Kupiono')}
+            >
+              Kup teraz
+            </motion.button>
+          </div>
+        </div>
+      )}
       {products.length === 0 && (
         <div className="mx-8 mt-12 flex flex-col items-center rounded-xl border-2 border-slate-950 bg-slate-200 p-8 text-center">
           <p className="text-3xl font-semibold text-slate-950">Twój koszyk jest pusty</p>
           <p className="mt-3 max-w-xl text-lg text-slate-700">
-            Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj,
-            aby sfinalizować zamówienie.
+            Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj, aby
+            sfinalizować zamówienie.
           </p>
           <Link
             to="/"
@@ -196,7 +243,6 @@ export default function CartPage() {
           </Link>
         </div>
       )}
-
     </div>
   );
 }
