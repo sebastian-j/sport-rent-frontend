@@ -5,7 +5,7 @@ import { isRentalDateValid } from '../components/cart/rentalDate.ts';
 import CartProductCard from '../components/cart/CartProductCard.tsx';
 import type { CartProduct } from '../components/cart/CartProductCard.tsx';
 import { formatPrice } from '../utils/formatPrice.ts';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Badge, BadgeCheck } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
