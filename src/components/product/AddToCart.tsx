@@ -4,10 +4,7 @@ import ButtonCore from '../core/ButtonCore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { type ProductProps } from './productProps';
-
-function toDayTimestamp(date: Date) {
-  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-}
+import { isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 
 export default function AddToCart({
   product,
@@ -22,16 +19,12 @@ export default function AddToCart({
   const [quantity, setQuantity] = useState<number>(1);
 
   const handleAddToCart = () => {
-    const start = toDayTimestamp(startDate);
-    const end = toDayTimestamp(endDate);
-    const today = toDayTimestamp(new Date());
-
-    if (start > end) {
+    if (isDateAfter(startDate, endDate)) {
       alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
       return;
     }
 
-    if (start < today) {
+    if (isDateInPast(startDate)) {
       alert('Data rozpoczęcia nie może być wcześniejsza niż dzisiejsza data.');
       return;
     }
@@ -61,7 +54,7 @@ export default function AddToCart({
 
               setStartDate(date);
 
-              if (toDayTimestamp(date) > toDayTimestamp(endDate)) {
+              if (isDateAfter(date, endDate)) {
                 setEndDate(date);
               }
             }}
