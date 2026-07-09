@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import ProductRentalDate from './ProductRentalDate.tsx';
 import type { RentalDate } from './rentalDate.ts';
 import { formatPrice } from '../../utils/formatPrice.ts';
+import type { Ref } from 'react';
 
 type Product = (typeof import('../../assets/products/products.ts').PRODUCTS)[number];
 
@@ -26,6 +27,7 @@ type CartProductCardProps = {
   onRemoveDate: (dateId: number) => void;
   onAddDate: () => void;
   onRemoveProduct: () => void;
+  getRentalDateRef?: (dateId: number) => Ref<HTMLDivElement>;
 };
 
 export default function CartProductCard({
@@ -36,6 +38,7 @@ export default function CartProductCard({
   onRemoveDate,
   onAddDate,
   onRemoveProduct,
+  getRentalDateRef,
 }: CartProductCardProps) {
   return (
     <div className="flex flex-row rounded-xl bg-slate-500 p-4 text-white">
@@ -69,6 +72,7 @@ export default function CartProductCard({
               key={date.id}
               date={date}
               productName={product.name}
+              containerRef={getRentalDateRef?.(date.id)}
               onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
               onStartDateChange={(value) => onDateChange(date.id, 'start_date', value)}
               onEndDateChange={(value) => onDateChange(date.id, 'end_date', value)}

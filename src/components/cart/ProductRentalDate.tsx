@@ -2,10 +2,12 @@ import { Minus, Trash2, X } from 'lucide-react';
 import DatePickerElem from '../core/DatePickerElem.tsx';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
+import type { Ref } from 'react';
 
 type ProductRentalDateProps = {
   date: RentalDate;
   productName: string;
+  containerRef?: Ref<HTMLDivElement>;
   onQuantityChange: (quantity: number) => void;
   onStartDateChange: (date: Date | null) => void;
   onEndDateChange: (date: Date | null) => void;
@@ -15,6 +17,7 @@ type ProductRentalDateProps = {
 export default function ProductRentalDate({
   date,
   productName,
+  containerRef,
   onQuantityChange,
   onStartDateChange,
   onEndDateChange,
@@ -22,6 +25,7 @@ export default function ProductRentalDate({
 }: ProductRentalDateProps) {
   return (
     <div
+      ref={containerRef}
       className={`flex w-full flex-row items-center justify-between gap-4 rounded-lg px-2 py-1 ${
         isRentalDateValid(date) ? '' : 'bg-red-400/20'
       }`}
