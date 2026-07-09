@@ -30,8 +30,7 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
       <div className="flex flex-row gap-2">
         <div className="flex flex-col gap-1 w-full">
           <p className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] text-[#193556]">
-            {' '}
-            Data rozpoczęcia{' '}
+            Data rozpoczęcia
           </p>
           <DatePicker
             selected={startDate}
@@ -42,8 +41,7 @@ export default function AddToCart({ product }: { product: ProductProps | null | 
         </div>
         <div className="flex flex-col gap-1 w-full">
           <p className="font-semibold text-[2.5vh] mt-[0.5vh] mb-[0.5vh] text-[#193556]">
-            {' '}
-            Data zakończenia{' '}
+            Data zakończenia
           </p>
           <DatePicker
             selected={endDate}
