@@ -1,5 +1,10 @@
 import { isRentalDateValid, toDayTimestamp } from './rentalDate.ts';
-import type { CartProduct, InvalidRentalDate, OrderInformation, ProductInformation } from './cartTypes.ts';
+import type {
+  CartProduct,
+  InvalidRentalDate,
+  OrderInformation,
+  ProductInformation,
+} from './cartTypes.ts';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 

@@ -9,9 +9,7 @@ type ButtonProps = {
 };
 
 export default function ButtonCore({ text, onClick, inverted, className = '' }: ButtonProps) {
-  const inversion = inverted
-    ? 'bg-neutral-50 text-slate-950'
-    : 'bg-neutral-950 text-slate-50';
+  const inversion = inverted ? 'bg-neutral-50 text-slate-950' : 'bg-neutral-950 text-slate-50';
 
   return (
     <motion.button
