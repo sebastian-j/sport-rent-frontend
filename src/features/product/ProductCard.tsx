@@ -23,21 +23,21 @@ export default function ProductCard({
 }: ProductCardProps) {
   const HeartElem = isFavorite ? (
     <Heart
-      className="self-end right-10"
+      className="self-end right-10 text-app-danger"
       onClick={onFavoriteToggle}
-      fill="#FF0000"
+      fill="currentColor"
       strokeWidth={0}
     />
   ) : (
     <Heart
-      className="self-end right-10 stroke-neutral-400"
+      className="self-end right-10 text-app-textMuted"
       onClick={onFavoriteToggle}
       strokeWidth={1}
     />
   );
 
   return (
-    <div className="flex h-[400px] w-52 flex-col gap-2 rounded-xl bg-neutral-100 p-4">
+    <div className="flex h-[400px] w-64 flex-col gap-2 rounded-xl bg-app-surfaceSoft border-app-borderSoft border-[1px] p-4">
       <motion.div
         key={String(isFavorite)}
         initial={{ scale: 0.85 }}
@@ -48,8 +48,8 @@ export default function ProductCard({
         {HeartElem}
       </motion.div>
 
-      <div className="h-44 w-full">
-        <img src={image} alt={alt} className="h-full w-full object-contain" />
+      <div className="flex w-full justify-center">
+        <img src={image} alt={alt} className="max-h-44 max-w-full rounded-lg object-contain" />
       </div>
 
       <p className="line-clamp-2 min-h-12 text-center font-medium">{name}</p>

@@ -27,7 +27,7 @@ export default function ProductRentalDate({
     <div
       ref={containerRef}
       className={`flex w-full flex-row items-center justify-between gap-4 rounded-lg px-2 py-1 ${
-        isRentalDateValid(date) ? '' : 'bg-red-400/20'
+        isRentalDateValid(date) ? '' : 'bg-app-danger/20'
       }`}
     >
       {/*Quantity*/}
@@ -41,7 +41,7 @@ export default function ProductRentalDate({
           if (!Number.isNaN(quantity)) onQuantityChange(Math.max(1, quantity));
         }}
         aria-label={`Liczba sztuk: ${productName}`}
-        className="h-12 w-16 rounded-xl bg-white px-2 text-center text-2xl text-black outline-none"
+        className="h-12 w-16 rounded-xl bg-app-surface px-2 text-center text-2xl text-app-text outline-none"
       />
       <X />
 
@@ -64,7 +64,7 @@ export default function ProductRentalDate({
         type="button"
         onClick={onRemove}
         aria-label={`Usuń termin dla ${productName}`}
-        className="rounded-lg p-2 transition-colors hover:bg-slate-500"
+        className="rounded-lg p-2 transition-colors hover:bg-app-cartCard"
       >
         <Trash2 />
       </button>

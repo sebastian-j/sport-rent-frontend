@@ -1,6 +1,6 @@
 export default function OrdersSection() {
   return (
-    <div>
+    <div className="text-app-text">
       <p>Orders</p>
     </div>
   );

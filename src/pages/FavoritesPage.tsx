@@ -42,11 +42,11 @@ export default function FavoritesPage() {
   return (
     <div className="w-full">
       <div className="max-w-[1400px] mx-auto px-4 pt-8 pb-4">
-        <h1 className="text-4xl font-bold mb-4 text-neutral-900 text-center">Ulubione</h1>
+        <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
       {favorites.length === 0 ? (
-        <div className="text-center py-20 text-neutral-500">
+        <div className="py-20 text-center text-app-textMuted">
           <p className="text-xl">Brak ulubionych produktów.</p>
         </div>
       ) : (

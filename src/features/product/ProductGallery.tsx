@@ -17,7 +17,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
               key={index}
               src={image}
               alt={product.alt}
-              className={`h-[12vh] w-auto rounded-lg border-[2px] ${index === selectedImage ? 'border-black' : 'border-gray-300'}`}
+              className={`h-[12vh] w-auto rounded-lg border-[2px] ${index === selectedImage ? 'border-app-border' : 'border-app-borderSoft'}`}
               onClick={() => setSelectedImage(index)}
             />
           ))}

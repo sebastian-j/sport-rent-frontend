@@ -18,7 +18,7 @@ export default function CartSummaryPanel({ orderInformation, onBuy }: CartSummar
       <ButtonCore
         text="Kup teraz"
         onClick={onBuy}
-        className="mt-4 flex h-16 w-full items-center justify-center rounded-lg bg-slate-800 text-2xl text-white"
+        className="mt-4 flex h-16 w-full items-center justify-center text-2xl"
       />
     </ContentPanel>
   );

@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 import { Badge, BadgeCheck } from 'lucide-react';
-import { twMerge } from 'tailwind-merge';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 type TermsPanelProps = {
@@ -15,10 +14,8 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
 ) {
   return (
     <ContentPanel
-      className={twMerge(
-        'mx-8 mt-12 flex-[2] flex-row flex-wrap justify-between transition-colors duration-200',
-        highlighted && 'border-red-600 bg-red-200'
-      )}
+      tone={highlighted ? 'danger' : 'default'}
+      className="mx-8 mt-12 flex-[2] flex-row flex-wrap justify-between transition-colors duration-200"
       ref={ref}
     >
       <p className="text-2xl">
@@ -36,9 +33,9 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
       </p>
       <div>
         {readTos ? (
-          <BadgeCheck size={32} className="text-green-600" />
+          <BadgeCheck size={32} className="text-app-success" />
         ) : (
-          <Badge size={32} className="text-red-600" />
+          <Badge size={32} className="text-app-danger" />
         )}
       </div>
     </ContentPanel>

@@ -18,7 +18,7 @@ export default function Header() {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <header className="w-full flex flex-col fixed bg-white z-50">
+    <header className="fixed z-50 flex w-full flex-col bg-app-surface">
       <div className="grid h-12 grid-cols-3 items-center px-12">
         <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
           <picture>
@@ -31,18 +31,18 @@ export default function Header() {
             />
           </picture>
         </Link>
-        <div className="flex items-center justify-self-center rounded-lg bg-neutral-200 px-2 min-w-0 w-full">
-          <Search />
+        <div className="flex min-w-0 w-full items-center justify-self-center rounded-lg bg-app-surfaceSoft px-2 text-app-text">
+          <Search className="text-app-textMuted" />
           <input
             type="search"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
             placeholder="Szukaj..."
-            className="rounded-lg w-full bg-neutral-200 p-2 outline-none select-none"
+            className="w-full select-none rounded-lg bg-app-surfaceSoft p-2 text-app-text outline-none placeholder:text-app-textMuted"
           />
         </div>
 
-        <div className="flex justify-self-end gap-4">
+        <div className="flex justify-self-end gap-4 text-app-text">
           <Link to="/favorites">
             <Heart className="cursor-pointer" />
           </Link>
@@ -55,7 +55,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="flex flex-row items-center justify-between bg-blue-900 text-white h-12 px-8">
+      <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
         {CATEGORIES.map((item) => (
           <p key={item}>{item}</p>
         ))}
