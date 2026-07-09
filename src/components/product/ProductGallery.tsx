@@ -3,14 +3,13 @@ import { getProductById } from '../../assets/products/products';
 import { type ProductProps } from './productProps';
 
 export default function ProductGallery({ product }: { product: ProductProps | null | undefined }) {
+  const [selectedImage, setSelectedImage] = useState<number>(0);
   if (!product) {
     return <div>Produkt nie został znaleziony.</div>;
   }
 
   const mockProduct = getProductById(3);
-
   const images = [product.image, mockProduct?.image]; // different images for tests
-  const [selectedImage, setSelectedImage] = useState(0);
 
   return (
     <div className="flex flex-col gap-4">
