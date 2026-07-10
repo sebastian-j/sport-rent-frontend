@@ -36,6 +36,10 @@ export default function RegisterPage() {
       return true;
     };
 
+    if (!formData.consent) {
+      alert('Konieczne jest wyrażenie zgody na przetwarzanie danych.');
+    }
+
     if (passwordsMatch()) {
       // Handle registration logic here
       alert(JSON.stringify(formData, null, 2));
