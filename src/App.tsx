@@ -34,7 +34,6 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/points" element={<PointsPage />} />
-          <Route path="/tos" element={<TosPage />} />
           <Route path="/faq" element={<FaqPage />} />
         </Route>
         <Route element={<LoginLayout />}>
@@ -42,6 +41,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
         </Route>
         <Route element={<DocumentLayout />}>
+          <Route path="/tos" element={<TosPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         </Route>
       </Routes>
