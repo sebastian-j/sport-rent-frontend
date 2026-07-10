@@ -14,6 +14,8 @@ import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
 // import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ProductPage from './pages/ProductPage.tsx';
+import DocumentLayout from './layouts/DocumentLayout.tsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
 
 function App() {
   return (
@@ -32,12 +34,15 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/points" element={<PointsPage />} />
-          <Route path="/tos" element={<TosPage />} />
           <Route path="/faq" element={<FaqPage />} />
         </Route>
         <Route element={<LoginLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+        </Route>
+        <Route element={<DocumentLayout />}>
+          <Route path="/tos" element={<TosPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

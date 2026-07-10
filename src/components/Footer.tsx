@@ -44,6 +44,9 @@ export default function Footer() {
             <Link to="/tos">Regulamin</Link>
           </li>
           <li>
+            <Link to="/privacy-policy">Polityka prywatności RODO</Link>
+          </li>
+          <li>
             <Link to="/faq">FAQ</Link>
           </li>
         </ul>
