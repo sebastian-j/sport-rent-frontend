@@ -7,5 +7,6 @@ export type ProductProps = {
   image: string;
   alt: string;
   category: string;
-  sizes?: string[] | null;
+  sizes?: string[];
+  sizes_description?: Record<string, string | undefined>;
 };

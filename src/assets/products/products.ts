@@ -16,6 +16,11 @@ export const PRODUCTS = [
     category: 'Rowery i akcesoria',
     description: 'Lekki rower do szybkiej jazdy po asfalcie i dłuższych trasach.',
     sizes: ['S', 'M', 'L'],
+    sizes_description: {
+      S: 'wzrost 160-170 cm',
+      M: 'wzrost 170-180 cm',
+      L: 'wzrost 180-190 cm',
+    },
   },
   {
     id: 2,
@@ -27,6 +32,11 @@ export const PRODUCTS = [
     category: 'Rowery i akcesoria',
     description: 'Solidny rower terenowy na szlaki, leśne drogi i nierówne podłoże.',
     sizes: ['S', 'M', 'L'],
+    sizes_description: {
+      S: 'wzrost 160-170 cm',
+      M: 'wzrost 170-180 cm',
+      L: 'wzrost 180-190 cm',
+    },
   },
   {
     id: 3,
@@ -38,6 +48,10 @@ export const PRODUCTS = [
     category: 'Rowery i akcesoria',
     description: 'Lekki kask zapewniający wygodę i ochronę podczas jazdy rowerem.',
     sizes: ['S/M', 'L/XL'],
+    sizes_description: {
+      'S/M': 'obwód głowy 54-58 cm',
+      'L/XL': 'obwód głowy 58-62 cm',
+    },
   },
   {
     id: 4,
@@ -149,6 +163,11 @@ export const PRODUCTS = [
     category: 'Via ferraty i wspinanie',
     description: 'Regulowana uprząż do wspinaczki i przejść po via ferratach.',
     sizes: ['S', 'M', 'L'],
+    sizes_description: {
+      S: 'obwód talii 65-75 cm',
+      M: 'obwód talii 75-85 cm',
+      L: 'obwód talii 85-95 cm',
+    },
   },
   {
     id: 15,
@@ -160,6 +179,10 @@ export const PRODUCTS = [
     category: 'Via ferraty i wspinanie',
     description: 'Wytrzymały kask chroniący głowę podczas wspinaczki i trekkingu.',
     sizes: ['S/M', 'L/XL'],
+    sizes_description: {
+      'S/M': 'obwód głowy 54-58 cm',
+      'L/XL': 'obwód głowy 58-62 cm',
+    },
   },
   {
     id: 16,
@@ -221,6 +244,11 @@ export const PRODUCTS = [
     category: 'Rowery i akcesoria',
     description: 'Wygodny rower do codziennej jazdy po mieście i ścieżkach rowerowych.',
     sizes: ['S', 'M', 'L'],
+    sizes_description: {
+      S: 'wzrost 160-170 cm',
+      M: 'wzrost 170-180 cm',
+      L: 'wzrost 180-190 cm',
+    },
   },
   {
     id: 22,
@@ -232,6 +260,11 @@ export const PRODUCTS = [
     category: 'Rowery i akcesoria',
     description: 'E-rower z wspomaganiem, idealny na dłuższe trasy i codzienne dojazdy.',
     sizes: ['S', 'M', 'L'],
+    sizes_description: {
+      S: 'wzrost 160-170 cm',
+      M: 'wzrost 170-180 cm',
+      L: 'wzrost 180-190 cm',
+    },
   },
   {
     id: 23,
@@ -343,6 +376,16 @@ export const PRODUCTS = [
     category: 'Via ferraty i wspinanie',
     description: 'Precyzyjne buty wspinaczkowe zapewniające dobrą przyczepność na ścianie.',
     sizes: ['37', '38', '39', '40', '41', '42', '43', '44'],
+    sizes_description: {
+      '37': 'orientacyjna długość stopy 23,5 cm',
+      '38': 'orientacyjna długość stopy 24 cm',
+      '39': 'orientacyjna długość stopy 24,5 cm',
+      '40': 'orientacyjna długość stopy 25 cm',
+      '41': 'orientacyjna długość stopy 25,5 cm',
+      '42': 'orientacyjna długość stopy 26,5 cm',
+      '43': 'orientacyjna długość stopy 27 cm',
+      '44': 'orientacyjna długość stopy 28 cm',
+    },
   },
   {
     id: 34,

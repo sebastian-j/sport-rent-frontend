@@ -54,6 +54,15 @@ export default function ProductPage() {
                 </div>
               ))}
             </div>
+            {product.sizes_description && (
+              <div className="mt-4 flex flex-col gap-2 text-2xl text-app-text">
+                {Object.entries(product.sizes_description).map(([size, description]) => (
+                  <p key={size}>
+                    {size} - {description}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
