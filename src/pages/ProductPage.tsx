@@ -40,29 +40,27 @@ export default function ProductPage() {
           <div className="text-lg text-app-textMuted">
             <p className="text-5xl font-semibold text-app-text">Rozmiar</p>
             <div className="flex flex-row gap-4 mt-[2vh]">
-              {product.sizes.map((size, index) => (
+              {product.sizes.map((sizeOption, index) => (
                 <div
                   key={index}
                   className={
-                    selectedSize === size
+                    selectedSize === sizeOption.size
                       ? 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border bg-app-surfaceStrongNeutral p-4 text-app-textInverted'
                       : 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border p-4 text-app-text hover:bg-app-surfaceSoft'
                   }
-                  onClick={() => handleSizeClick(size)}
+                  onClick={() => handleSizeClick(sizeOption.size)}
                 >
-                  <p className="text-2xl font-semibold">{size}</p>
+                  <p className="text-2xl font-semibold">{sizeOption.size}</p>
                 </div>
               ))}
             </div>
-            {product.sizes_description && (
-              <div className="mt-4 flex flex-col gap-2 text-2xl text-app-text">
-                {Object.entries(product.sizes_description).map(([size, description]) => (
-                  <p key={size}>
-                    {size} - {description}
-                  </p>
-                ))}
-              </div>
-            )}
+            <div className="mt-[2vh] flex flex-col gap-2">
+              {product.sizes.map((sizeOption, index) => (
+                <p key={index} className="text-2xl font-semibold text-app-text">
+                  {sizeOption.size}: {sizeOption.description}
+                </p>
+              ))}
+            </div>
           </div>
         )}
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
