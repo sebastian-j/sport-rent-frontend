@@ -1,13 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { getProductById } from '../assets/products/products';
 import ProductGallery from '../features/product/ProductGallery';
 import AddToCart from '../features/product/AddToCart';
 import { useState } from 'react';
+import { getProductBySlug } from '../assets/products/products.ts';
 
 export default function ProductPage() {
-  const { id } = useParams();
-  const productId = id ? parseInt(id) : null;
-  const product = productId ? getProductById(productId) : null;
+  const { slug } = useParams();
+  const product = slug ? getProductBySlug(slug) : null;
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
