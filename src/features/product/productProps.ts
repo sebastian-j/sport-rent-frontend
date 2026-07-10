@@ -1,10 +1,11 @@
 export type ProductProps = {
   id: number;
   name: string;
+  description: string;
   price: number;
+  slug: string;
   image: string;
   alt: string;
   category: string;
-  description: string;
   sizes?: string[] | null;
 };
