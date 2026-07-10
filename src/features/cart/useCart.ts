@@ -39,6 +39,19 @@ export function useCart(initialProducts: CartProduct[]) {
     );
   };
 
+  const updateSize = (productId: number, dateId: number, size: string) => {
+    setProducts((previous) =>
+      previous.map((product) =>
+        product.id === productId
+          ? {
+              ...product,
+              dates: product.dates.map((date) => (date.id === dateId ? { ...date, size } : date)),
+            }
+          : product
+      )
+    );
+  };
+
   const removeRentalDate = (productId: number, dateId: number) => {
     setProducts((previous) =>
       previous.flatMap((product) => {
@@ -64,6 +77,7 @@ export function useCart(initialProducts: CartProduct[]) {
             {
               id: nextDateId,
               quantity: 1,
+              size: null,
               start_date: null,
               end_date: null,
             },
@@ -81,6 +95,7 @@ export function useCart(initialProducts: CartProduct[]) {
     products,
     updateRentalDate,
     updateQuantity,
+    updateSize,
     removeRentalDate,
     addRentalDate,
     removeProduct,

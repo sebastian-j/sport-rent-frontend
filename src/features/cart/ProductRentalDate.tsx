@@ -7,8 +7,10 @@ import type { Ref } from 'react';
 type ProductRentalDateProps = {
   date: RentalDate;
   productName: string;
+  productSizes?: string[];
   containerRef?: Ref<HTMLDivElement>;
   onQuantityChange: (quantity: number) => void;
+  onSizeChange: (size: string) => void;
   onStartDateChange: (date: Date | null) => void;
   onEndDateChange: (date: Date | null) => void;
   onRemove: () => void;
@@ -17,17 +19,21 @@ type ProductRentalDateProps = {
 export default function ProductRentalDate({
   date,
   productName,
+  productSizes,
   containerRef,
   onQuantityChange,
+  onSizeChange,
   onStartDateChange,
   onEndDateChange,
   onRemove,
 }: ProductRentalDateProps) {
+  const requiresSize = Boolean(productSizes?.length);
+
   return (
     <div
       ref={containerRef}
       className={`flex w-full flex-row items-center justify-between gap-4 rounded-lg px-2 py-1 ${
-        isRentalDateValid(date) ? '' : 'bg-app-danger/20'
+        isRentalDateValid(date, requiresSize) ? '' : 'bg-app-danger/20'
       }`}
     >
       {/*Quantity*/}
@@ -43,6 +49,25 @@ export default function ProductRentalDate({
         aria-label={`Liczba sztuk: ${productName}`}
         className="h-12 w-16 rounded-xl bg-app-surface px-2 text-center text-2xl text-app-text outline-none"
       />
+
+      {productSizes && productSizes.length > 0 && (
+        <select
+          value={date.size ?? ''}
+          onChange={(event) => onSizeChange(event.currentTarget.value)}
+          aria-label={`Rozmiar: ${productName}`}
+          className="h-12 w-20 rounded-xl bg-app-surface px-2 text-center text-2xl text-app-text outline-none"
+        >
+          <option value="" disabled>
+            --
+          </option>
+          {productSizes.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
+        </select>
+      )}
+
       <X />
 
       <DatePickerElem

@@ -19,6 +19,7 @@ export default function CartPage() {
     products,
     updateRentalDate,
     updateQuantity,
+    updateSize,
     removeRentalDate,
     addRentalDate,
     removeProduct,
@@ -85,6 +86,7 @@ export default function CartPage() {
                   onQuantityChange={(dateId, quantity) =>
                     updateQuantity(product.id, dateId, quantity)
                   }
+                  onSizeChange={(dateId, size) => updateSize(product.id, dateId, size)}
                   onDateChange={(dateId, field, value) =>
                     updateRentalDate(product.id, dateId, field, value)
                   }
