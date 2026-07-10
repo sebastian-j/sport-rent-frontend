@@ -68,10 +68,6 @@ export default function AccountSection() {
     setExpandedSection(null);
   };
 
-  const handleTempUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempUserData({ ...tempUserData, [e.target.name]: e.target.value });
-  };
-
   const handleSavePersonal = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
@@ -156,7 +152,7 @@ export default function AccountSection() {
                 type="text"
                 name="firstName"
                 value={tempUserData.firstName}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, firstName: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
                 placeholder="Imię"
                 required
@@ -165,7 +161,7 @@ export default function AccountSection() {
                 type="text"
                 name="lastName"
                 value={tempUserData.lastName}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, lastName: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
                 placeholder="Nazwisko"
                 required
@@ -174,7 +170,7 @@ export default function AccountSection() {
                 type="text"
                 name="country"
                 value={tempUserData.country}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, country: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
                 placeholder="Państwo"
                 required
@@ -183,7 +179,7 @@ export default function AccountSection() {
                 type="text"
                 name="city"
                 value={tempUserData.city}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, city: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
                 placeholder="Miasto"
                 required
@@ -192,7 +188,7 @@ export default function AccountSection() {
                 type="text"
                 name="addressLine1"
                 value={tempUserData.addressLine1}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, addressLine1: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
                 placeholder="Adres - pierwsza linia"
                 required
@@ -201,7 +197,7 @@ export default function AccountSection() {
                 type="text"
                 name="addressLine2"
                 value={tempUserData.addressLine2}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, addressLine2: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
                 placeholder="Adres - druga linia (opcjonalne)"
               />
@@ -209,7 +205,7 @@ export default function AccountSection() {
                 type="text"
                 name="postalCode"
                 value={tempUserData.postalCode}
-                onChange={handleTempUserChange}
+                onChange={(e) => setTempUserData({ ...tempUserData, postalCode: e.target.value })}
                 className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
                 placeholder="Kod pocztowy"
                 required
