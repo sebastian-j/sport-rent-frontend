@@ -1,8 +1,10 @@
 import ButtonCore from '../components/core/ButtonCore.tsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,8 +19,11 @@ export default function LoginPage() {
   };
 
   const handleLogin = () => {
-    alert(`Email: ${formData.email}, Password: ${formData.password}`);
+    alert(`Email: ${formData.email}, Password: ${formData.password}; Ustawiono accessToken`);
+
     // TODO: Implement login logic here
+    localStorage.setItem('accessToken', `${formData.email}-${formData.password}`);
+    navigate('/');
   };
 
   const handleGoogleLogin = () => {
