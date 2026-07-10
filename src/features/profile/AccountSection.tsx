@@ -92,10 +92,10 @@ export default function AccountSection() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-8 text-slate-800">
-      <h2 className="text-4xl font-bold text-center text-slate-900">Ustawienia konta</h2>
+    <div className="w-full flex flex-col items-center pt-12 text-slate-800">
+      <h2 className="text-5xl text-center">Ustawienia konta</h2>
 
-      <div className="flex flex-col gap-0.5 overflow-hidden rounded-xl bg-slate-300">
+      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-slate-300">
         <div className="bg-white">
           <div
             className="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none"
