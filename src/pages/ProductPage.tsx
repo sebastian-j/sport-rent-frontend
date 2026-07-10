@@ -36,7 +36,7 @@ export default function ProductPage() {
             <AddToCart product={product} selectedSize={selectedSize} />
           </div>
         </div>
-        {product?.sizes && (
+        {product.sizes && (
           <div className="text-lg text-app-textMuted">
             <p className="text-5xl font-semibold text-app-text">Rozmiar</p>
             <div className="flex flex-row gap-4 mt-[2vh]">
@@ -67,7 +67,7 @@ export default function ProductPage() {
         )}
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
           <p className="text-5xl font-semibold text-app-text">Opis produktu</p>
-          <p className="mt-[2vh] text-2xl">{product?.description}</p>
+          <p className="mt-[2vh] text-2xl">{product.description}</p>
         </div>
       </main>
     </div>
