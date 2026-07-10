@@ -12,6 +12,7 @@ export default function RegisterPage() {
     addressLine1: '',
     addressLine2: '',
     postalCode: '',
+    consent: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,8 +36,13 @@ export default function RegisterPage() {
       return true;
     };
 
+    if (!formData.consent) {
+      alert('Konieczne jest wyrażenie zgody na przetwarzanie danych.');
+    }
+
     if (passwordsMatch()) {
       // Handle registration logic here
+      alert(JSON.stringify(formData, null, 2));
     }
   };
 
@@ -45,24 +51,24 @@ export default function RegisterPage() {
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zarejestruj się</h1>
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg bg-app-panel p-8">
         <form className="flex flex-col gap-4 w-[90%]">
-          <label htmlFor="Email">Email</label>
+          <label htmlFor="email">Email</label>
           <input
-            name="Email"
+            name="email"
             type="email"
             className="rounded-lg p-2 outline-none"
             onChange={handleChange}
           />
-          <label htmlFor="Password">Hasło</label>
+          <label htmlFor="password">Hasło</label>
           <input
-            name="Password"
+            name="password"
             type="password"
             className="rounded-lg p-2 outline-none"
             id="password1"
             onChange={handleChange}
           />
-          <label htmlFor="ConfirmPassword">Powtórz hasło</label>
+          <label htmlFor="confirmPassword">Powtórz hasło</label>
           <input
-            name="ConfirmPassword"
+            name="confirmPassword"
             type="password"
             className="rounded-lg p-2 outline-none"
             id="password2"
@@ -71,57 +77,65 @@ export default function RegisterPage() {
 
           <p className="text-lg font-semibold"> Adres </p>
 
-          <label htmlFor="Country">Państwo</label>
+          <label htmlFor="country">Państwo</label>
           <input
-            name="Country"
+            name="country"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="country"
             onChange={handleChange}
           />
-          <label htmlFor="City">Miasto</label>
+          <label htmlFor="city">Miasto</label>
           <input
-            name="City"
+            name="city"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="city"
             onChange={handleChange}
           />
-          <label htmlFor="AddressLine1">Adres - pierwsza linia</label>
+          <label htmlFor="addressLine1">Adres - pierwsza linia</label>
           <input
-            name="AddressLine1"
+            name="addressLine1"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="addressLine1"
             onChange={handleChange}
           />
-          <label htmlFor="AddressLine2">Adres - druga linia</label>
+          <label htmlFor="addressLine2">Adres - druga linia</label>
           <input
-            name="AddressLine2"
+            name="addressLine2"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="addressLine2"
             onChange={handleChange}
           />
-          <label htmlFor="PostalCode">Kod pocztowy</label>
+          <label htmlFor="postalCode">Kod pocztowy</label>
           <input
-            name="PostalCode"
+            name="postalCode"
             type="text"
             className="rounded-lg p-2 outline-none"
             id="postalCode"
             onChange={handleChange}
           />
+          <label htmlFor="consent" className="flex flex-row justify-between">
+            <p>Zgoda na przetwarzanie danych osobowych</p>
+            <input
+              type="checkbox"
+              name="consent"
+              checked={formData.consent}
+              onChange={() => setFormData({ ...formData, consent: !formData.consent })}
+              className="h-6 w-6 cursor-pointer"
+            />
+          </label>
           <ButtonCore
             text="Zarejestruj się"
-            onClick={() => {
-              handleRegister();
-            }}
+            onClick={handleRegister}
             className="ps-12 pe-12 p-2 text-[0.8vw] my-2"
           />
         </form>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textNeutral underline">
+        <Link to="/privacy-policy" target="_blank" className="text-[0.7vw] text-app-textNeutral underline">
           Polityka prywatności
         </Link>
       </div>

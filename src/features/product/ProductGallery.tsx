@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { getProductById } from '../../assets/products/products';
+import { getProductBySlug } from '../../assets/products/products';
 import { type ProductProps } from './productProps';
 
 export default function ProductGallery({ product }: { product: ProductProps }) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
 
-  const mockProduct = getProductById(3);
+  const mockProduct = getProductBySlug('kask-rowerowy');
   const images = [product?.image, mockProduct?.image]; // different images for tests
 
   return (

@@ -9,6 +9,7 @@ export const PRODUCTS = [
   {
     id: 1,
     name: 'Rower szosowy',
+    slug: 'rower-szosowy',
     price: 89,
     image: productImage('01-road-bike.jpg'),
     alt: 'Rower szosowy',
@@ -19,6 +20,7 @@ export const PRODUCTS = [
   {
     id: 2,
     name: 'Rower górski MTB',
+    slug: 'rower-gorski-mtb',
     price: 99,
     image: productImage('02-mountain-bike.jpg'),
     alt: 'Rower górski MTB',
@@ -29,6 +31,7 @@ export const PRODUCTS = [
   {
     id: 3,
     name: 'Kask rowerowy',
+    slug: 'kask-rowerowy',
     price: 25,
     image: productImage('03-bike-helmet.jpg'),
     alt: 'Kask rowerowy',
@@ -39,6 +42,7 @@ export const PRODUCTS = [
   {
     id: 4,
     name: 'Przyczepka rowerowa dla dzieci',
+    slug: 'przyczepka-rowerowa-dla-dzieci',
     price: 65,
     image: productImage('04-child-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa dla dzieci',
@@ -48,6 +52,7 @@ export const PRODUCTS = [
   {
     id: 5,
     name: 'Przyczepka rowerowa bagażowa',
+    slug: 'przyczepka-rowerowa-bagazowa',
     price: 49,
     image: productImage('05-cargo-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa bagażowa',
@@ -57,6 +62,7 @@ export const PRODUCTS = [
   {
     id: 6,
     name: 'Przyczepka rowerowa dla psa',
+    slug: 'przyczepka-rowerowa-dla-psa',
     price: 55,
     image: productImage('06-dog-bike-trailer.jpg'),
     alt: 'Przyczepka rowerowa dla psa',
@@ -66,6 +72,7 @@ export const PRODUCTS = [
   {
     id: 7,
     name: 'Namiot dwuosobowy',
+    slug: 'namiot-dwuosobowy',
     price: 45,
     image: productImage('07-two-person-tent.jpg'),
     alt: 'Namiot dwuosobowy',
@@ -75,6 +82,7 @@ export const PRODUCTS = [
   {
     id: 8,
     name: 'Namiot trzyosobowy',
+    slug: 'namiot-trzyosobowy',
     price: 59,
     image: productImage('08-three-person-tent.jpg'),
     alt: 'Namiot trzyosobowy',
@@ -84,6 +92,7 @@ export const PRODUCTS = [
   {
     id: 9,
     name: 'Namiot czteroosobowy',
+    slug: 'namiot-czteroosobowy',
     price: 75,
     image: productImage('09-four-person-tent.jpg'),
     alt: 'Namiot czteroosobowy',
@@ -93,6 +102,7 @@ export const PRODUCTS = [
   {
     id: 10,
     name: 'Deska SUP',
+    slug: 'deska-sup',
     price: 79,
     image: productImage('10-sup-board.jpg'),
     alt: 'Deska SUP',
@@ -102,6 +112,7 @@ export const PRODUCTS = [
   {
     id: 11,
     name: 'Kajak dwuosobowy',
+    slug: 'kajak-dwuosobowy',
     price: 119,
     image: productImage('11-two-person-kayak.jpg'),
     alt: 'Kajak dwuosobowy',
@@ -111,6 +122,7 @@ export const PRODUCTS = [
   {
     id: 12,
     name: 'Kamizelka asekuracyjna',
+    slug: 'kamizelka-asekuracyjna',
     price: 20,
     image: productImage('12-life-jacket.jpg'),
     alt: 'Kamizelka asekuracyjna',
@@ -120,6 +132,7 @@ export const PRODUCTS = [
   {
     id: 13,
     name: 'Zestaw via ferrata',
+    slug: 'zestaw-via-ferrata',
     price: 49,
     image: productImage('13-via-ferrata-set.jpg'),
     alt: 'Zestaw via ferrata',
@@ -129,6 +142,7 @@ export const PRODUCTS = [
   {
     id: 14,
     name: 'Uprząż wspinaczkowa',
+    slug: 'uprzaz-wspinaczkowa',
     price: 35,
     image: productImage('14-climbing-harness.jpg'),
     alt: 'Uprząż wspinaczkowa',
@@ -139,6 +153,7 @@ export const PRODUCTS = [
   {
     id: 15,
     name: 'Kask wspinaczkowy',
+    slug: 'kask-wspinaczkowy',
     price: 29,
     image: productImage('15-climbing-helmet.jpg'),
     alt: 'Kask wspinaczkowy',
@@ -149,6 +164,7 @@ export const PRODUCTS = [
   {
     id: 16,
     name: 'Nosidełko turystyczne dla dziecka',
+    slug: 'nosidelko-turystyczne-dla-dziecka',
     price: 69,
     image: productImage('16-child-carrier.jpg'),
     alt: 'Nosidełko turystyczne dla dziecka',
@@ -158,6 +174,7 @@ export const PRODUCTS = [
   {
     id: 17,
     name: 'Lekkie nosidełko turystyczne',
+    slug: 'lekkie-nosidelko-turystyczne',
     price: 55,
     image: productImage('17-light-child-carrier.jpg'),
     alt: 'Lekkie nosidełko turystyczne',
@@ -167,6 +184,7 @@ export const PRODUCTS = [
   {
     id: 18,
     name: 'Namiot rodzinny',
+    slug: 'namiot-rodzinny',
     price: 109,
     image: productImage('18-family-tent.jpg'),
     alt: 'Namiot rodzinny',
@@ -176,6 +194,7 @@ export const PRODUCTS = [
   {
     id: 19,
     name: 'Namiot kempingowy',
+    slug: 'namiot-kempingowy',
     price: 85,
     image: productImage('19-camping-tent.jpg'),
     alt: 'Namiot kempingowy',
@@ -185,6 +204,7 @@ export const PRODUCTS = [
   {
     id: 20,
     name: 'Namiot dachowy',
+    slug: 'namiot-dachowy',
     price: 179,
     image: productImage('20-rooftop-tent.jpg'),
     alt: 'Namiot dachowy',
@@ -194,6 +214,7 @@ export const PRODUCTS = [
   {
     id: 21,
     name: 'Rower miejski',
+    slug: 'rower-miejski',
     price: 69,
     image: productImage('21-city-bike.jpg'),
     alt: 'Rower miejski',
@@ -204,6 +225,7 @@ export const PRODUCTS = [
   {
     id: 22,
     name: 'Rower elektryczny',
+    slug: 'rower-elektryczny',
     price: 149,
     image: productImage('22-electric-bike.jpg'),
     alt: 'Rower elektryczny',
@@ -214,6 +236,7 @@ export const PRODUCTS = [
   {
     id: 23,
     name: 'Sakwy rowerowe',
+    slug: 'sakwy-rowerowe',
     price: 29,
     image: productImage('23-bike-panniers.jpg'),
     alt: 'Sakwy rowerowe',
@@ -223,6 +246,7 @@ export const PRODUCTS = [
   {
     id: 24,
     name: 'Jednokołowa przyczepka rowerowa',
+    slug: 'jednokolowa-przyczepka-rowerowa',
     price: 59,
     image: productImage('24-single-wheel-trailer.jpg'),
     alt: 'Jednokołowa przyczepka rowerowa',
@@ -232,6 +256,7 @@ export const PRODUCTS = [
   {
     id: 25,
     name: 'Składana przyczepka rowerowa',
+    slug: 'skladana-przyczepka-rowerowa',
     price: 54,
     image: productImage('25-folding-bike-trailer.jpg'),
     alt: 'Składana przyczepka rowerowa',
@@ -241,6 +266,7 @@ export const PRODUCTS = [
   {
     id: 26,
     name: 'Namiot trekkingowy',
+    slug: 'namiot-trekkingowy',
     price: 64,
     image: productImage('26-touring-tent.jpg'),
     alt: 'Namiot trekkingowy',
@@ -250,6 +276,7 @@ export const PRODUCTS = [
   {
     id: 27,
     name: 'Namiot zimowy',
+    slug: 'namiot-zimowy',
     price: 99,
     image: productImage('27-winter-tent.jpg'),
     alt: 'Namiot zimowy',
@@ -259,6 +286,7 @@ export const PRODUCTS = [
   {
     id: 28,
     name: 'Kajak dmuchany',
+    slug: 'kajak-dmuchany',
     price: 89,
     image: productImage('28-inflatable-kayak.jpg'),
     alt: 'Kajak dmuchany',
@@ -268,6 +296,7 @@ export const PRODUCTS = [
   {
     id: 29,
     name: 'Kanadyjka dwuosobowa',
+    slug: 'kanadyjka-dwuosobowa',
     price: 109,
     image: productImage('29-canoe.jpg'),
     alt: 'Kanadyjka dwuosobowa',
@@ -277,6 +306,7 @@ export const PRODUCTS = [
   {
     id: 30,
     name: 'Wiosło kajakowe',
+    slug: 'wioslo-kajakowe',
     price: 19,
     image: productImage('30-kayak-paddle.jpg'),
     alt: 'Wiosło kajakowe',
@@ -286,6 +316,7 @@ export const PRODUCTS = [
   {
     id: 31,
     name: 'Lina wspinaczkowa 60 m',
+    slug: 'lina-wspinaczkowa-60-m',
     price: 39,
     image: productImage('31-climbing-rope.jpg'),
     alt: 'Lina wspinaczkowa',
@@ -295,6 +326,7 @@ export const PRODUCTS = [
   {
     id: 32,
     name: 'Zestaw karabinków wspinaczkowych',
+    slug: 'zestaw-karabinkow-wspinaczkowych',
     price: 24,
     image: productImage('32-carabiner-set.jpg'),
     alt: 'Zestaw karabinków wspinaczkowych',
@@ -304,6 +336,7 @@ export const PRODUCTS = [
   {
     id: 33,
     name: 'Buty wspinaczkowe',
+    slug: 'buty-wspinaczkowe',
     price: 34,
     image: productImage('33-climbing-shoes.jpg'),
     alt: 'Buty wspinaczkowe',
@@ -314,6 +347,7 @@ export const PRODUCTS = [
   {
     id: 34,
     name: 'Nosidełko turystyczne premium',
+    slug: 'nosidelko-turystyczne-premium',
     price: 79,
     image: productImage('34-hiking-carrier.jpg'),
     alt: 'Nosidełko turystyczne premium',
@@ -323,6 +357,7 @@ export const PRODUCTS = [
   {
     id: 35,
     name: 'Nosidełko z osłoną przeciwdeszczową',
+    slug: 'nosidelko-z-oslona-przeciwdeszczowa',
     price: 74,
     image: productImage('35-rain-cover-carrier.jpg'),
     alt: 'Nosidełko z osłoną przeciwdeszczową',
@@ -332,6 +367,7 @@ export const PRODUCTS = [
   {
     id: 36,
     name: 'Namiot tunelowy',
+    slug: 'namiot-tunelowy',
     price: 119,
     image: productImage('36-tunnel-tent.jpg'),
     alt: 'Namiot tunelowy',
@@ -341,6 +377,7 @@ export const PRODUCTS = [
   {
     id: 37,
     name: 'Namiot samorozkładający',
+    slug: 'namiot-samorozkladajacy',
     price: 49,
     image: productImage('37-pop-up-tent.jpg'),
     alt: 'Namiot samorozkładający',
@@ -350,6 +387,7 @@ export const PRODUCTS = [
   {
     id: 38,
     name: 'Namiot ekspedycyjny',
+    slug: 'namiot-ekspedycyjny',
     price: 139,
     image: productImage('38-expedition-tent.jpg'),
     alt: 'Namiot ekspedycyjny',
@@ -359,6 +397,7 @@ export const PRODUCTS = [
   {
     id: 39,
     name: 'Zestaw naprawczy do roweru',
+    slug: 'zestaw-naprawczy-do-roweru',
     price: 18,
     image: productImage('39-bike-repair-kit.jpg'),
     alt: 'Zestaw naprawczy do roweru',
@@ -368,6 +407,7 @@ export const PRODUCTS = [
   {
     id: 40,
     name: 'Wodoodporny worek transportowy',
+    slug: 'wodoodporny-worek-transportowy',
     price: 22,
     image: productImage('40-waterproof-bag.jpg'),
     alt: 'Wodoodporny worek transportowy',
@@ -376,4 +416,4 @@ export const PRODUCTS = [
   },
 ];
 
-export const getProductById = (id: number) => PRODUCTS.find((product) => product.id === id);
+export const getProductBySlug = (slug: string) => PRODUCTS.find((product) => product.slug === slug);

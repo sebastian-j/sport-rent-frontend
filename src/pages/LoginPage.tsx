@@ -30,16 +30,16 @@ export default function LoginPage() {
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
         <form className="flex flex-col gap-4 w-[90%]">
-          <label htmlFor="Email">Email</label>
+          <label htmlFor="email">Email</label>
           <input
-            name="Email"
+            name="email"
             type="email"
             className="rounded-lg p-2 outline-none"
             onChange={handleChange}
           />
-          <label htmlFor="Password">Hasło</label>
+          <label htmlFor="password">Hasło</label>
           <input
-            name="Password"
+            name="password"
             type="password"
             className="rounded-lg p-2 outline-none"
             onChange={handleChange}

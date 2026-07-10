@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { componentStyles, type ContentPanelTone } from './componentStyles.ts';
 
 type ContentPanelProps = {
-  children: ReactNode;
+  children?: ReactNode;
   tone?: ContentPanelTone;
   className?: string;
 };
