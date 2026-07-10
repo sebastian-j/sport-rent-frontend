@@ -6,7 +6,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
 
   const mockProduct = getProductBySlug('kask-rowerowy');
-  const images = [product?.image, mockProduct?.image]; // different images for tests
+  const images = [product.image, mockProduct?.image]; // different images for tests
 
   return (
     <div className="flex flex-col gap-4">

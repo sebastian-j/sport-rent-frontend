@@ -15,7 +15,11 @@ export const PRODUCTS = [
     alt: 'Rower szosowy',
     category: 'Rowery i akcesoria',
     description: 'Lekki rower do szybkiej jazdy po asfalcie i dłuższych trasach.',
-    sizes: ['S', 'M', 'L'],
+    sizes: [
+      { size: 'S', description: 'wzrost 160-170 cm' },
+      { size: 'M', description: 'wzrost 170-180 cm' },
+      { size: 'L', description: 'wzrost 180-190 cm' },
+    ],
   },
   {
     id: 2,
@@ -26,7 +30,11 @@ export const PRODUCTS = [
     alt: 'Rower górski MTB',
     category: 'Rowery i akcesoria',
     description: 'Solidny rower terenowy na szlaki, leśne drogi i nierówne podłoże.',
-    sizes: ['S', 'M', 'L'],
+    sizes: [
+      { size: 'S', description: 'wzrost 160-170 cm' },
+      { size: 'M', description: 'wzrost 170-180 cm' },
+      { size: 'L', description: 'wzrost 180-190 cm' },
+    ],
   },
   {
     id: 3,
@@ -37,7 +45,10 @@ export const PRODUCTS = [
     alt: 'Kask rowerowy',
     category: 'Rowery i akcesoria',
     description: 'Lekki kask zapewniający wygodę i ochronę podczas jazdy rowerem.',
-    sizes: ['S/M', 'L/XL'],
+    sizes: [
+      { size: 'S/M', description: 'obwód głowy 54-58 cm' },
+      { size: 'L/XL', description: 'obwód głowy 58-62 cm' },
+    ],
   },
   {
     id: 4,
@@ -148,7 +159,11 @@ export const PRODUCTS = [
     alt: 'Uprząż wspinaczkowa',
     category: 'Via ferraty i wspinanie',
     description: 'Regulowana uprząż do wspinaczki i przejść po via ferratach.',
-    sizes: ['S', 'M', 'L'],
+    sizes: [
+      { size: 'S', description: 'obwód talii 65-75 cm' },
+      { size: 'M', description: 'obwód talii 75-85 cm' },
+      { size: 'L', description: 'obwód talii 85-95 cm' },
+    ],
   },
   {
     id: 15,
@@ -159,7 +174,10 @@ export const PRODUCTS = [
     alt: 'Kask wspinaczkowy',
     category: 'Via ferraty i wspinanie',
     description: 'Wytrzymały kask chroniący głowę podczas wspinaczki i trekkingu.',
-    sizes: ['S/M', 'L/XL'],
+    sizes: [
+      { size: 'S/M', description: 'obwód głowy 54-58 cm' },
+      { size: 'L/XL', description: 'obwód głowy 58-62 cm' },
+    ],
   },
   {
     id: 16,
@@ -220,7 +238,11 @@ export const PRODUCTS = [
     alt: 'Rower miejski',
     category: 'Rowery i akcesoria',
     description: 'Wygodny rower do codziennej jazdy po mieście i ścieżkach rowerowych.',
-    sizes: ['S', 'M', 'L'],
+    sizes: [
+      { size: 'S', description: 'wzrost 160-170 cm' },
+      { size: 'M', description: 'wzrost 170-180 cm' },
+      { size: 'L', description: 'wzrost 180-190 cm' },
+    ],
   },
   {
     id: 22,
@@ -231,7 +253,11 @@ export const PRODUCTS = [
     alt: 'Rower elektryczny',
     category: 'Rowery i akcesoria',
     description: 'E-rower z wspomaganiem, idealny na dłuższe trasy i codzienne dojazdy.',
-    sizes: ['S', 'M', 'L'],
+    sizes: [
+      { size: 'S', description: 'wzrost 160-170 cm' },
+      { size: 'M', description: 'wzrost 170-180 cm' },
+      { size: 'L', description: 'wzrost 180-190 cm' },
+    ],
   },
   {
     id: 23,
@@ -342,7 +368,16 @@ export const PRODUCTS = [
     alt: 'Buty wspinaczkowe',
     category: 'Via ferraty i wspinanie',
     description: 'Precyzyjne buty wspinaczkowe zapewniające dobrą przyczepność na ścianie.',
-    sizes: ['37', '38', '39', '40', '41', '42', '43', '44'],
+    sizes: [
+      { size: '37', description: 'orientacyjna długość stopy 23,5 cm' },
+      { size: '38', description: 'orientacyjna długość stopy 24 cm' },
+      { size: '39', description: 'orientacyjna długość stopy 24,5 cm' },
+      { size: '40', description: 'orientacyjna długość stopy 25 cm' },
+      { size: '41', description: 'orientacyjna długość stopy 25,5 cm' },
+      { size: '42', description: 'orientacyjna długość stopy 26,5 cm' },
+      { size: '43', description: 'orientacyjna długość stopy 27 cm' },
+      { size: '44', description: 'orientacyjna długość stopy 28 cm' },
+    ],
   },
   {
     id: 34,
