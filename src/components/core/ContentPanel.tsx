@@ -2,7 +2,7 @@ import { forwardRef, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type ContentPanelProps = {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 };
 
