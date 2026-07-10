@@ -4,6 +4,7 @@ import ButtonCore from '../../components/core/ButtonCore';
 import { type ProductProps } from './productProps';
 import { isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 export default function AddToCart({
   product,
@@ -39,7 +40,7 @@ export default function AddToCart({
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-app-border bg-app-panel p-10 pl-20 pr-20">
+    <ContentPanel className="gap-2 px-20">
       <p className="text-center text-6xl font-semibold text-app-text">{product.price} zł/doba</p>
       <div className="flex flex-row gap-2">
         <div className="flex flex-col gap-1 w-full">
@@ -98,6 +99,6 @@ export default function AddToCart({
         onClick={handleAddToCart}
         className="w-full p-[1.5vh] mt-[1vh] mb-[1vh] text-[2vh]"
       />
-    </div>
+    </ContentPanel>
   );
 }
