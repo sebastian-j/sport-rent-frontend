@@ -12,6 +12,7 @@ export default function RegisterPage() {
     addressLine1: '',
     addressLine2: '',
     postalCode: '',
+    consent: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +113,16 @@ export default function RegisterPage() {
             id="postalCode"
             onChange={handleChange}
           />
+          <label htmlFor="consent" className="flex flex-row justify-between">
+            <p>Zgoda na przetwarzanie danych osobowych</p>
+            <input
+              type="checkbox"
+              name="consent"
+              checked={formData.consent}
+              onChange={() => setFormData({ ...formData, consent: !formData.consent })}
+              className="h-6 w-6 cursor-pointer"
+            />
+          </label>
           <ButtonCore
             text="Zarejestruj się"
             onClick={handleRegister}
