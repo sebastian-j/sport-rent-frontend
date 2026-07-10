@@ -9,6 +9,7 @@ type CartProductCardProps = {
   product: CartProduct;
   information: ProductInformation;
   onQuantityChange: (dateId: number, quantity: number) => void;
+  onSizeChange: (dateId: number, size: string) => void;
   onDateChange: (dateId: number, field: DateField, value: Date | null) => void;
   onRemoveDate: (dateId: number) => void;
   onAddDate: () => void;
@@ -20,6 +21,7 @@ export default function CartProductCard({
   product,
   information,
   onQuantityChange,
+  onSizeChange,
   onDateChange,
   onRemoveDate,
   onAddDate,
@@ -58,8 +60,10 @@ export default function CartProductCard({
               key={date.id}
               date={date}
               productName={product.name}
+              productSizes={product.sizes}
               containerRef={getRentalDateRef?.(date.id)}
               onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
+              onSizeChange={(size) => onSizeChange(date.id, size)}
               onStartDateChange={(value) => onDateChange(date.id, 'start_date', value)}
               onEndDateChange={(value) => onDateChange(date.id, 'end_date', value)}
               onRemove={() => onRemoveDate(date.id)}

@@ -18,7 +18,8 @@ function getInclusiveDayCount(startDate: Date, endDate: Date) {
 export function getProductInformation(product: CartProduct): ProductInformation {
   const rentalDays = new Set<number>();
   let totalCost = 0;
-  const completeDates = product.dates.filter(isRentalDateValid);
+  const requiresSize = Boolean(product.sizes?.length);
+  const completeDates = product.dates.filter((date) => isRentalDateValid(date, requiresSize));
 
   for (const date of completeDates) {
     const start = Math.min(toDayTimestamp(date.start_date), toDayTimestamp(date.end_date));
@@ -61,5 +62,10 @@ export function findFirstInvalidRentalDate(products: CartProduct[]): InvalidRent
         date,
       }))
     )
-    .find(({ date }) => !isRentalDateValid(date));
+    .find(({ productId, date }) => {
+      const product = products.find((item) => item.id === productId);
+      const requiresSize = Boolean(product?.sizes?.length);
+
+      return !isRentalDateValid(date, requiresSize);
+    });
 }

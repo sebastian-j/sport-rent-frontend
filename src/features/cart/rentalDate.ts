@@ -1,6 +1,7 @@
 export type RentalDate = {
   id: number;
   quantity: number;
+  size: string | null;
   start_date: Date | null;
   end_date: Date | null;
 };
@@ -22,9 +23,11 @@ export function isDateRangeValid(startDate: Date, endDate: Date) {
 }
 
 export function isRentalDateValid(
-  date: RentalDate
+  date: RentalDate,
+  requiresSize = false
 ): date is RentalDate & { start_date: Date; end_date: Date } {
   if (!date.start_date || !date.end_date) return false;
+  if (requiresSize && !date.size) return false;
 
   return isDateRangeValid(date.start_date, date.end_date);
 }
