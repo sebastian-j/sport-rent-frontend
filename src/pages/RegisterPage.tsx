@@ -47,9 +47,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white mt-[-90px] mb-8">
-      <h1 className="text-4xl font-bold mb-8 text-[#193556]">Zarejestruj się</h1>
-      <div className="flex flex-col items-center justify-center w-[60vw] rounded-lg max-w-[800px] bg-gray-300 p-8">
+    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
+      <h1 className="mb-8 text-4xl font-bold text-app-text">Zarejestruj się</h1>
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg bg-app-panel p-8">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="email">Email</label>
           <input
@@ -135,7 +135,11 @@ export default function RegisterPage() {
         </form>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" target="_blank" className="text-black underline text-[0.7vw]">
+        <Link
+          to="/privacy-policy"
+          target="_blank"
+          className="text-[0.7vw] text-app-textNeutral underline"
+        >
           Polityka prywatności
         </Link>
       </div>

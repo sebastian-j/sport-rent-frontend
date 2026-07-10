@@ -1,6 +1,6 @@
 export default function AccountSection() {
   return (
-    <div>
+    <div className="text-app-text">
       <p>Account</p>
     </div>
   );

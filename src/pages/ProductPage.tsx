@@ -11,7 +11,9 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   if (!product) {
-    return <div className="text-center text-5xl text-red-500">Produkt nie został znaleziony</div>;
+    return (
+      <div className="text-center text-5xl text-app-danger">Produkt nie został znaleziony</div>
+    );
   }
 
   const handleSizeClick = (size: string) => {
@@ -23,10 +25,10 @@ export default function ProductPage() {
   };
 
   return (
-    <div className="flex flex-col bg-white mx-[5vw]">
+    <div className="mx-[5vw] flex flex-col bg-app-surface">
       <main className="flex-grow mt-[2vh]">
-        <h1 className="text-6xl font-semibold mb-4 text-center text-[#193556]">{product?.name}</h1>
-        <div className="mb-8 text-lg text-gray-600 flex flex-row gap-4 mt-[2vh] mb-[2vh]">
+        <h1 className="mb-4 text-center text-6xl font-semibold text-app-text">{product?.name}</h1>
+        <div className="mb-[2vh] mt-[2vh] flex flex-row gap-4 text-lg text-app-textMuted">
           <div className="font-bold w-full items-center justify-center flex flex-col gap-4 h-full w-full">
             <ProductGallery product={product} />
           </div>
@@ -35,16 +37,16 @@ export default function ProductPage() {
           </div>
         </div>
         {product?.sizes && (
-          <div className="text-lg text-gray-600">
-            <p className="font-semibold text-5xl text-[#193556]">Rozmiar</p>
+          <div className="text-lg text-app-textMuted">
+            <p className="text-5xl font-semibold text-app-text">Rozmiar</p>
             <div className="flex flex-row gap-4 mt-[2vh]">
               {product.sizes.map((size, index) => (
                 <div
                   key={index}
                   className={
                     selectedSize === size
-                      ? 'flex flex-col gap-2 p-4 border rounded-lg border-black w-[5vw] h-[5vw] items-center justify-center cursor-pointer bg-gray-700 text-white'
-                      : 'flex flex-col gap-2 p-4 border rounded-lg border-black w-[5vw] h-[5vw] items-center justify-center cursor-pointer hover:bg-gray-200 text-[#193556]'
+                      ? 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border bg-app-surfaceStrongNeutral p-4 text-app-textInverted'
+                      : 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border p-4 text-app-text hover:bg-app-surfaceSoft'
                   }
                   onClick={() => handleSizeClick(size)}
                 >
@@ -54,8 +56,8 @@ export default function ProductPage() {
             </div>
           </div>
         )}
-        <div className="text-lg text-[#193556] mt-[2vh] mb-[2vh]">
-          <p className="font-semibold text-5xl text-[#193556]">Opis produktu</p>
+        <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
+          <p className="text-5xl font-semibold text-app-text">Opis produktu</p>
           <p className="mt-[2vh] text-2xl">{product?.description}</p>
         </div>
       </main>

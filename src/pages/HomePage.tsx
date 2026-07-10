@@ -43,7 +43,7 @@ export default function HomePage() {
             image={przyczepkiImage}
             imagePosition="left"
             size="medium"
-            className="bg-white"
+            className="bg-app-surface"
           />
 
           <div className="flex flex-row">
@@ -53,7 +53,7 @@ export default function HomePage() {
               image={ferratyImage}
               imagePosition="left"
               size="small"
-              className="bg-neutral-100"
+              className="bg-app-surfaceNeutral"
             />
             <CategoryCard
               title="Rowery TREK GRAVEL"
@@ -61,7 +61,8 @@ export default function HomePage() {
               image={roweryImage}
               imagePosition="left"
               size="small"
-              className="bg-neutral-800 text-white"
+              invertedText
+              className="bg-app-surfaceStrongNeutral"
             />
           </div>
         </div>
@@ -72,7 +73,7 @@ export default function HomePage() {
           imagePosition="right"
           size="large"
           onClick={() => {}}
-          className="bg-neutral-100"
+          className="bg-app-surfaceNeutral"
         />
       </div>
 

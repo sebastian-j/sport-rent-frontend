@@ -20,10 +20,10 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[100rem] flex-col">
-      <p className="text-center mt-12 font-semibold text-5xl text-slate-950">Jan Kowalski</p>
+      <p className="mt-12 text-center text-5xl font-semibold text-app-text">Jan Kowalski</p>
 
-      <div className="flex flex-row px-16 my-12 gap-16">
-        <div className="flex flex-col gap-0.5 rounded-xl text-white [&>*:first-child]:rounded-t-xl [&>*:last-child]:rounded-b-xl">
+      <div className="my-12 flex flex-row gap-16 px-16">
+        <div className="flex flex-col gap-0.5 rounded-xl text-app-textInverted [&>*:first-child]:rounded-t-xl [&>*:last-child]:rounded-b-xl">
           <ProfileCard
             title="Ustawienia konta"
             icon={User}

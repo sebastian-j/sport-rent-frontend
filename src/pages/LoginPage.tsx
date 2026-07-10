@@ -26,9 +26,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white mt-[-90px] mb-8">
-      <h1 className="text-4xl font-bold mb-8 text-[#193556]">Zaloguj się</h1>
-      <div className="flex flex-col items-center justify-center w-[60vw] rounded-lg max-w-[800px] bg-gray-300 p-8 border-[2px] border-black">
+    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
+      <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="email">Email</label>
           <input
@@ -52,7 +52,7 @@ export default function LoginPage() {
         </form>
 
         <div className="w-[90%] text-left my-3">
-          <Link to="/forgot-password" className="text-black underline">
+          <Link to="/forgot-password" className="text-app-textNeutral underline">
             Zapomniałeś hasła?
           </Link>
         </div>
@@ -66,14 +66,14 @@ export default function LoginPage() {
         <div className="w-[90%] text-left my-3">
           <p>
             Nie masz konta?{' '}
-            <Link to="/register" className="text-black underline">
+            <Link to="/register" className="text-app-textNeutral underline">
               Zarejestruj się
             </Link>
           </p>
         </div>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" className="text-black underline text-[0.7vw]">
+        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textNeutral underline">
           Polityka prywatności
         </Link>
       </div>

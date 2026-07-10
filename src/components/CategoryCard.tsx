@@ -9,6 +9,7 @@ type CategoryCardProps = {
   onClick?: () => void;
   imagePosition: 'left' | 'right';
   size: 'small' | 'medium' | 'large';
+  invertedText?: boolean;
   className?: string;
 };
 
@@ -31,6 +32,7 @@ export default function CategoryCard({
   onClick,
   imagePosition,
   size,
+  invertedText,
   className,
 }: CategoryCardProps) {
   const sizeClasses = SIZE_CLASSES[size];
@@ -42,7 +44,7 @@ export default function CategoryCard({
       whileHover={{ scale: 1.015, boxShadow: '0 12px 30px rgb(0 0 0 / 0.15)' }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className={twMerge(
-        `relative flex hover:z-10 cursor-pointer bg-white select-none ${sizeClasses} ${flexRow}`,
+        `relative flex cursor-pointer select-none bg-app-surface hover:z-10 ${sizeClasses} ${flexRow}`,
         className
       )}
       onClick={onClick}
@@ -50,9 +52,14 @@ export default function CategoryCard({
       <div className={`${imageWidthClasses} h-full shrink-0 overflow-hidden`}>
         <img src={image} alt={title} className="h-full w-full object-cover" />
       </div>
-      <div className="flex flex-col justify-center px-4">
+      <div
+        className={twMerge(
+          'flex flex-col justify-center px-4',
+          invertedText ? 'text-app-textInverted' : 'text-app-textNeutral'
+        )}
+      >
         <p className="text-3xl font-semibold">{title}</p>
-        <p className="text-neutral-600">{description}</p>
+        <p className="text-app-textNeutralSoft">{description}</p>
         {onClick && (
           <ButtonCore
             text="Rezerwuj teraz"

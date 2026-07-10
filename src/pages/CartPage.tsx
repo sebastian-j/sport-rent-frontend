@@ -12,6 +12,7 @@ import CartSummaryPanel from '../features/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../features/cart/EmptyCartPanel.tsx';
 import { useCart } from '../features/cart/useCart.ts';
 import { INITIAL_CART } from '../features/cart/initialCart.ts';
+import ContentPanel from '../components/core/ContentPanel.tsx';
 
 export default function CartPage() {
   const {
@@ -68,11 +69,11 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
-      <p className="text-center mt-12 font-semibold text-5xl text-slate-950">Koszyk</p>
+      <p className="text-center mt-12 font-semibold text-5xl text-app-text">Koszyk</p>
 
       {products.length > 0 && (
         <div>
-          <div className="flex flex-col bg-slate-200 p-8 rounded-xl mx-8 mt-12 border-slate-950 border-2 gap-4">
+          <ContentPanel className="mx-8 mt-12 items-stretch gap-4">
             {products.map((product) => {
               const information = getProductInformation(product);
 
@@ -96,7 +97,7 @@ export default function CartPage() {
                 />
               );
             })}
-          </div>
+          </ContentPanel>
 
           <TermsPanel
             readTos={readTos}

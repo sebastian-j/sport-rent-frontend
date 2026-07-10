@@ -8,12 +8,12 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white p-20 flex justify-center space-x-52">
+    <footer className="bg-app-surfaceStrongNeutral text-app-textInverted p-20 flex justify-center space-x-52">
       <div className="flex flex-col max-w-lg">
         <div className="p-2 b-2">
           <img src={footer_logo} alt="Logo" />
         </div>
-        <div className="flex items-center text-xl text-gray-400">
+        <div className="flex items-center text-xl text-app-textInvertedMuted">
           <p>
             Polar Sport Rent - wypożyczalnia sprzętu outdoorowego dla aktywnych. W naszej ofercie
             znajdziesz wszystko, czego potrzebujesz do przygód w terenie: rowery gravelowe, deski
@@ -30,7 +30,7 @@ export default function Footer() {
       </div>
       <div>
         <p className="text-2xl font-bold pb-2">Informacje</p>
-        <ul className="text-gray-400 text-xl space-y-2">
+        <ul className="space-y-2 text-xl text-app-textInvertedMuted">
           <li>
             <Link to="/about">O nas</Link>
           </li>
@@ -53,7 +53,7 @@ export default function Footer() {
       </div>
       <div>
         <p className="text-2xl font-bold pb-2">Polar Sport Rent</p>
-        <ul className="text-gray-400 text-xl space-y-2">
+        <ul className="space-y-2 text-xl text-app-textInvertedMuted">
           <li>ul. Kałuży 1, Kraków</li>
           <li>798 798 798</li>
           <li>Kontakt@psrent.pl</li>

@@ -27,9 +27,9 @@ export default function CartProductCard({
   getRentalDateRef,
 }: CartProductCardProps) {
   return (
-    <div className="flex flex-row rounded-xl bg-slate-500 p-[1vw] text-white">
+    <div className="flex w-full flex-row rounded-xl bg-app-cartCard p-[1vw] text-app-textInverted">
       {/*Left image*/}
-      <div className="w-1/4 shrink-0 self-start border-2 border-slate-950 rounded-xl overflow-hidden">
+      <div className="w-1/4 shrink-0 self-start border-2 border-app-border rounded-xl overflow-hidden">
         <img src={product.image} alt={product.alt} className="h-full w-full object-contain" />
       </div>
 
@@ -44,7 +44,7 @@ export default function CartProductCard({
               type="button"
               onClick={onRemoveProduct}
               aria-label={`Usuń ${product.name} z koszyka`}
-              className="rounded-lg p-2 transition-colors hover:bg-slate-600"
+              className="rounded-lg p-2 transition-colors hover:bg-app-cartCardInner/70"
             >
               <Trash2 />
             </button>
@@ -52,7 +52,7 @@ export default function CartProductCard({
         </div>
 
         {/*Products row*/}
-        <div className="flex flex-col gap-2 bg-slate-600 px-[2vh] py-[1vh] mx-[2vh] my-[1vh] overflow-hidden rounded-xl">
+        <div className="mx-[2vh] my-[1vh] flex flex-col gap-2 overflow-hidden rounded-xl bg-app-cartCardInner/80 px-[2vh] py-[1vh]">
           {product.dates.map((date) => (
             <ProductRentalDate
               key={date.id}
@@ -74,7 +74,7 @@ export default function CartProductCard({
           whileHover={{ scale: 1.005 }}
           whileTap={{ scale: 0.995 }}
           transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-          className="mx-[2vh] mb-2 flex h-10 items-center justify-center rounded-lg bg-slate-600"
+          className="mx-[2vh] mb-2 flex h-10 items-center justify-center rounded-lg bg-app-cartCardInner/80"
           aria-label="Dodaj kolejny termin"
         >
           <Plus size={28} />
