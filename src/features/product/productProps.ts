@@ -4,7 +4,7 @@ export type ProductProps = {
   description: string;
   price: number;
   slug: string;
-  image: string;
+  images: string[];
   alt: string;
   category: string;
   sizes?: { size: string; description?: string }[];
