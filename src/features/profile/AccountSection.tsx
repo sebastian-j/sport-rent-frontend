@@ -3,6 +3,36 @@ import { ChevronRight, ChevronDown } from 'lucide-react';
 
 type Section = 'personal' | 'email' | 'password' | null;
 
+type SettingsCardProps = {
+  title: string;
+  subtitle: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+};
+
+function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: SettingsCardProps) {
+  return (
+    <div className="bg-white">
+      <div
+        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-slate-50 select-none"
+        onClick={onToggle}
+      >
+        <div>
+          <h2 className="text-lg font-bold">{title}</h2>
+          <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+        </div>
+        {isExpanded ? (
+          <ChevronDown className="text-slate-400" />
+        ) : (
+          <ChevronRight className="text-slate-400" />
+        )}
+      </div>
+      {isExpanded && <div className="p-6 pt-0 border-t border-slate-100">{children}</div>}
+    </div>
+  );
+}
+
 export default function AccountSection() {
   const [expandedSection, setExpandedSection] = useState<Section>(null);
   const [newsletter, setNewsletter] = useState(true);
@@ -22,40 +52,55 @@ export default function AccountSection() {
   const [emailForm, setEmailForm] = useState({ newEmail: '', password: '' });
   const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' });
 
+  const resetForms = () => {
+    setTempUserData(userData);
+    setEmailForm({ newEmail: '', password: '' });
+    setPasswordForm({ current: '', new: '', confirm: '' });
+  };
+
   const toggleSection = (section: Section) => {
-    if (section === 'personal' && expandedSection !== 'personal') {
-      setTempUserData(userData);
-    }
+    resetForms();
     setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  const handleCancel = () => {
+    resetForms();
+    setExpandedSection(null);
   };
 
   const handleTempUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTempUserData({ ...tempUserData, [e.target.name]: e.target.value });
   };
 
-  const handleSavePersonal = () => {
-    if (
-      !tempUserData.firstName ||
-      !tempUserData.lastName ||
-      !tempUserData.country ||
-      !tempUserData.city ||
-      !tempUserData.addressLine1 ||
-      !tempUserData.postalCode
-    ) {
-      alert('Proszę wypełnić wszystkie wymagane pola!');
-      return;
-    }
-    setUserData(tempUserData);
+  const handleSavePersonal = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+
+    const trimmedData = {
+      firstName: tempUserData.firstName.trim(),
+      lastName: tempUserData.lastName.trim(),
+      country: tempUserData.country.trim(),
+      city: tempUserData.city.trim(),
+      addressLine1: tempUserData.addressLine1.trim(),
+      addressLine2: tempUserData.addressLine2.trim(),
+      postalCode: tempUserData.postalCode.trim(),
+    };
+
+    setUserData(trimmedData);
     alert('Dane osobowe zostały pomyślnie zapisane!');
     setExpandedSection(null);
   };
 
-  const handleEmailChange = () => {
-    if (!emailForm.newEmail || !emailForm.password) {
-      alert('Proszę wypełnić oba pola!');
+  const handleEmailChange = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const trimmedNewEmail = emailForm.newEmail.trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedNewEmail)) {
+      alert('Proszę podać poprawny adres e-mail!');
       return;
     }
-    if (emailForm.newEmail === currentEmail) {
+
+    if (trimmedNewEmail === currentEmail) {
       alert('Nowy adres e-mail nie może być taki sam jak obecny!');
       return;
     }
@@ -63,15 +108,18 @@ export default function AccountSection() {
       alert('Podano błędne aktualne hasło!');
       return;
     }
-    setCurrentEmail(emailForm.newEmail);
-    setEmailForm({ newEmail: '', password: '' });
+
+    setCurrentEmail(trimmedNewEmail);
     alert('Adres e-mail został zmieniony!');
     setExpandedSection(null);
   };
 
-  const handlePasswordChange = () => {
-    if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) {
-      alert('Proszę wypełnić wszystkie pola!');
+  const handlePasswordChange = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(passwordForm.new)) {
+      alert('Nowe hasło musi mieć co najmniej 8 znaków, zawierać min. 1 literę i 1 cyfrę!');
       return;
     }
     if (passwordForm.current !== 'haslo123') {
@@ -86,233 +134,203 @@ export default function AccountSection() {
       alert('Nowe hasło musi różnić się od starego!');
       return;
     }
-    setPasswordForm({ current: '', new: '', confirm: '' });
+
     alert('Hasło zostało zaktualizowane!');
     setExpandedSection(null);
   };
 
   return (
-    <div className="w-full flex flex-col items-center pt-12 text-slate-800">
+    <div className="flex flex-col items-center w-full pt-12 text-slate-800">
       <h2 className="text-5xl text-center">Ustawienia konta</h2>
 
       <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-slate-300">
-        <div className="bg-white">
-          <div
-            className="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none"
-            onClick={() => toggleSection('personal')}
-          >
-            <div>
-              <h2 className="text-lg font-bold">Dane osobowe i adres</h2>
-              <p className="text-sm text-slate-500 mt-1">
-                {userData.firstName} {userData.lastName}, {userData.city}
-              </p>
+        <SettingsCard
+          title="Dane osobowe i adres"
+          subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
+          isExpanded={expandedSection === 'personal'}
+          onToggle={() => toggleSection('personal')}
+        >
+          <form onSubmit={handleSavePersonal}>
+            <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+              <input
+                type="text"
+                name="firstName"
+                value={tempUserData.firstName}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Imię"
+                required
+              />
+              <input
+                type="text"
+                name="lastName"
+                value={tempUserData.lastName}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Nazwisko"
+                required
+              />
+              <input
+                type="text"
+                name="country"
+                value={tempUserData.country}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Państwo"
+                required
+              />
+              <input
+                type="text"
+                name="city"
+                value={tempUserData.city}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Miasto"
+                required
+              />
+              <input
+                type="text"
+                name="addressLine1"
+                value={tempUserData.addressLine1}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
+                placeholder="Adres - pierwsza linia"
+                required
+              />
+              <input
+                type="text"
+                name="addressLine2"
+                value={tempUserData.addressLine2}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
+                placeholder="Adres - druga linia (opcjonalne)"
+              />
+              <input
+                type="text"
+                name="postalCode"
+                value={tempUserData.postalCode}
+                onChange={handleTempUserChange}
+                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Kod pocztowy"
+                required
+              />
             </div>
-            {expandedSection === 'personal' ? (
-              <ChevronDown className="text-slate-400" />
-            ) : (
-              <ChevronRight className="text-slate-400" />
-            )}
-          </div>
-
-          {expandedSection === 'personal' && (
-            <div className="p-6 pt-0 border-t border-slate-100">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <input
-                  type="text"
-                  name="firstName"
-                  value={tempUserData.firstName}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                  placeholder="Imię"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={tempUserData.lastName}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                  placeholder="Nazwisko"
-                />
-                <input
-                  type="text"
-                  name="country"
-                  value={tempUserData.country}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                  placeholder="Państwo"
-                />
-                <input
-                  type="text"
-                  name="city"
-                  value={tempUserData.city}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                  placeholder="Miasto"
-                />
-                <input
-                  type="text"
-                  name="addressLine1"
-                  value={tempUserData.addressLine1}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
-                  placeholder="Adres - pierwsza linia"
-                />
-                <input
-                  type="text"
-                  name="addressLine2"
-                  value={tempUserData.addressLine2}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
-                  placeholder="Adres - druga linia (opcjonalne)"
-                />
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={tempUserData.postalCode}
-                  onChange={handleTempUserChange}
-                  className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                  placeholder="Kod pocztowy"
-                />
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleSavePersonal}
-                  className="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition-colors"
-                >
-                  Zapisz
-                </button>
-                <button
-                  onClick={() => setExpandedSection(null)}
-                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-                >
-                  Anuluj
-                </button>
-              </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                type="submit"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+              >
+                Zapisz
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+              >
+                Anuluj
+              </button>
             </div>
-          )}
-        </div>
+          </form>
+        </SettingsCard>
 
-        <div className="bg-white">
-          <div
-            className="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none"
-            onClick={() => toggleSection('email')}
-          >
-            <div>
-              <h2 className="text-lg font-bold">Adres e-mail</h2>
-              <p className="text-sm text-slate-500 mt-1">{currentEmail}</p>
+        <SettingsCard
+          title="Adres e-mail"
+          subtitle={currentEmail}
+          isExpanded={expandedSection === 'email'}
+          onToggle={() => toggleSection('email')}
+        >
+          <form onSubmit={handleEmailChange}>
+            <div className="mt-4 space-y-4">
+              <input
+                type="email"
+                value={emailForm.newEmail}
+                onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+                placeholder="Nowy adres e-mail"
+                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                required
+              />
+              <input
+                type="password"
+                value={emailForm.password}
+                onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
+                placeholder="Aktualne hasło"
+                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                required
+              />
             </div>
-            {expandedSection === 'email' ? (
-              <ChevronDown className="text-slate-400" />
-            ) : (
-              <ChevronRight className="text-slate-400" />
-            )}
-          </div>
-
-          {expandedSection === 'email' && (
-            <div className="p-6 pt-0 border-t border-slate-100">
-              <div className="space-y-4 mt-4">
-                <input
-                  type="email"
-                  value={emailForm.newEmail}
-                  onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
-                  placeholder="Nowy adres e-mail"
-                  className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                />
-                <input
-                  type="password"
-                  value={emailForm.password}
-                  onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
-                  placeholder="Aktualne hasło"
-                  className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                />
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleEmailChange}
-                  className="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition-colors"
-                >
-                  Zmień
-                </button>
-                <button
-                  onClick={() => {
-                    setExpandedSection(null);
-                    setEmailForm({ newEmail: '', password: '' });
-                  }}
-                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-                >
-                  Anuluj
-                </button>
-              </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                type="submit"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+              >
+                Zmień
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+              >
+                Anuluj
+              </button>
             </div>
-          )}
-        </div>
+          </form>
+        </SettingsCard>
 
-        <div className="bg-white">
-          <div
-            className="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none"
-            onClick={() => toggleSection('password')}
-          >
-            <div>
-              <h2 className="text-lg font-bold">Hasło</h2>
-              <p className="text-sm text-slate-500 mt-1">••••••••</p>
+        <SettingsCard
+          title="Hasło"
+          subtitle="••••••••"
+          isExpanded={expandedSection === 'password'}
+          onToggle={() => toggleSection('password')}
+        >
+          <form onSubmit={handlePasswordChange}>
+            <div className="mt-4 space-y-4">
+              <input
+                type="password"
+                value={passwordForm.current}
+                onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                placeholder="Obecne hasło"
+                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                required
+              />
+              <input
+                type="password"
+                value={passwordForm.new}
+                onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
+                placeholder="Nowe hasło"
+                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                required
+              />
+              <input
+                type="password"
+                value={passwordForm.confirm}
+                onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                placeholder="Powtórz nowe hasło"
+                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                required
+              />
             </div>
-            {expandedSection === 'password' ? (
-              <ChevronDown className="text-slate-400" />
-            ) : (
-              <ChevronRight className="text-slate-400" />
-            )}
-          </div>
-
-          {expandedSection === 'password' && (
-            <div className="p-6 pt-0 border-t border-slate-100">
-              <div className="space-y-4 mt-4">
-                <input
-                  type="password"
-                  value={passwordForm.current}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                  placeholder="Obecne hasło"
-                  className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                />
-                <input
-                  type="password"
-                  value={passwordForm.new}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
-                  placeholder="Nowe hasło"
-                  className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                />
-                <input
-                  type="password"
-                  value={passwordForm.confirm}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                  placeholder="Powtórz nowe hasło"
-                  className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-slate-900"
-                />
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handlePasswordChange}
-                  className="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition-colors"
-                >
-                  Zaktualizuj
-                </button>
-                <button
-                  onClick={() => {
-                    setExpandedSection(null);
-                    setPasswordForm({ current: '', new: '', confirm: '' });
-                  }}
-                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-                >
-                  Anuluj
-                </button>
-              </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                type="submit"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+              >
+                Zaktualizuj
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+              >
+                Anuluj
+              </button>
             </div>
-          )}
-        </div>
+          </form>
+        </SettingsCard>
 
-        <div className="bg-white p-6 flex justify-between items-center select-none">
+        <div className="flex items-center justify-between p-6 bg-white select-none">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
-            <p className="text-sm text-slate-500 mt-1">Otrzymuj informacje o promocjach</p>
+            <p className="mt-1 text-sm text-slate-500">Otrzymuj informacje o promocjach</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
