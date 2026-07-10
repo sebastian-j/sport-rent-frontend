@@ -135,7 +135,11 @@ export default function RegisterPage() {
         </form>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" target="_blank" className="text-[0.7vw] text-app-textNeutral underline">
+        <Link
+          to="/privacy-policy"
+          target="_blank"
+          className="text-[0.7vw] text-app-textNeutral underline"
+        >
           Polityka prywatności
         </Link>
       </div>
