@@ -6,6 +6,7 @@ import DualRangeSlider from '../components/core/DualRangeSlider.tsx';
 import PageSelector from '../components/core/PageSelector.tsx';
 import SortToggles from '../components/core/SortToggles.tsx';
 import CategoryFilter, { type CategoryFacets } from '../features/search/CategoryFilter.tsx';
+import { toCategorySlug } from '../features/search/categoryUtils.ts';
 import { useProductSearchParams } from '../features/search/useProductSearchParams.ts';
 
 const TOTAL_PAGES = 10;
@@ -16,15 +17,6 @@ const SORT_OPTIONS: readonly ComboBoxOption[] = [
   { value: 'price', label: 'Cena' },
 ];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
-const toCategorySlug = (category: string) =>
-  category
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replace(/ł/g, 'l')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-
 const PRODUCT_CATEGORY_FACETS = Array.from(
   new Set(PRODUCTS.map((product) => product.category))
 ).map((category, index) => ({

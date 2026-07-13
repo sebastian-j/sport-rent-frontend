@@ -4,6 +4,7 @@ import { Heart, LogIn, LogOut, Menu, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar.tsx';
+import { toCategorySlug } from '../features/search/categoryUtils.ts';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -114,7 +115,18 @@ export default function Header() {
 
       <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
         {CATEGORIES.map((item) => (
-          <p key={item}>{item}</p>
+          <Link
+            key={item}
+            to={`/search?${new URLSearchParams({
+              category: toCategorySlug(item),
+              page: '1',
+              sort: 'name',
+              order: 'asc',
+            }).toString()}`}
+            className="hover:underline"
+          >
+            {item}
+          </Link>
         ))}
       </div>
     </header>
