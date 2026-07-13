@@ -84,7 +84,7 @@ export default function HomePage() {
             key={product.id}
             name={product.name}
             price={product.price}
-            image={product.image}
+            image={product.images[0]}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
             isFavorite={favoriteIds.has(product.id)}
