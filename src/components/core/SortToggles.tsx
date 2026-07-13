@@ -2,8 +2,7 @@ import { ArrowUp } from 'lucide-react';
 import { motion } from 'motion/react';
 import ButtonCore from './ButtonCore.tsx';
 import ComboBox, { type ComboBoxOption } from './ComboBox.tsx';
-
-export type SortDirection = 'ascending' | 'descending';
+import type { SortDirection } from '../../types/search.ts';
 
 type SortTogglesProps = {
   value: string;
@@ -20,7 +19,7 @@ export default function SortToggles({
   onValueChange,
   onDirectionChange,
 }: SortTogglesProps) {
-  const isAscending = direction === 'ascending';
+  const isAscending = direction === 'asc';
 
   return (
     <div className="flex items-center gap-2">
@@ -33,7 +32,7 @@ export default function SortToggles({
       />
 
       <ButtonCore
-        onClick={() => onDirectionChange(isAscending ? 'descending' : 'ascending')}
+        onClick={() => onDirectionChange(isAscending ? 'desc' : 'asc')}
         ariaLabel={isAscending ? 'Sortowanie rosnące' : 'Sortowanie malejące'}
         className="flex h-10 w-10 items-center justify-center rounded-xl bg-app-surfaceStrong"
       >

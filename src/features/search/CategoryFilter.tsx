@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 export type CategoryFacet = {
@@ -14,21 +13,26 @@ export type CategoryFacets = {
 
 type CategoryFilterProps = {
   facets: CategoryFacets;
+  selectedCategorySlugs: readonly string[];
+  onSelectedCategorySlugsChange: (categorySlugs: readonly string[]) => void;
 };
 
-export default function CategoryFilter({ facets }: CategoryFilterProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+export default function CategoryFilter({
+  facets,
+  selectedCategorySlugs,
+  onSelectedCategorySlugsChange,
+}: CategoryFilterProps) {
   const availableCategorySlugs = new Set(
     facets.categories
       .filter((category) => category.productCount > 0)
       .map((category) => category.slug)
   );
-  const selectedCategorySlugs = searchParams
-    .getAll('category')
-    .filter((categorySlug) => availableCategorySlugs.has(categorySlug));
+  const validSelectedCategorySlugs = selectedCategorySlugs.filter((categorySlug) =>
+    availableCategorySlugs.has(categorySlug)
+  );
 
   const handleCategoryChange = (categorySlug: string, isSelected: boolean) => {
-    const nextSelectedCategorySlugs = new Set(selectedCategorySlugs);
+    const nextSelectedCategorySlugs = new Set(validSelectedCategorySlugs);
 
     if (isSelected) {
       nextSelectedCategorySlugs.add(categorySlug);
@@ -36,20 +40,11 @@ export default function CategoryFilter({ facets }: CategoryFilterProps) {
       nextSelectedCategorySlugs.delete(categorySlug);
     }
 
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.delete('category');
-    facets.categories
-      .filter((category) => nextSelectedCategorySlugs.has(category.slug))
-      .forEach((category) => nextSearchParams.append('category', category.slug));
-    nextSearchParams.set('page', '1');
-    setSearchParams(nextSearchParams);
-  };
-
-  const handleClearCategories = () => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.delete('category');
-    nextSearchParams.set('page', '1');
-    setSearchParams(nextSearchParams);
+    onSelectedCategorySlugsChange(
+      facets.categories
+        .filter((category) => nextSelectedCategorySlugs.has(category.slug))
+        .map((category) => category.slug)
+    );
   };
 
   return (
@@ -57,10 +52,10 @@ export default function CategoryFilter({ facets }: CategoryFilterProps) {
       <legend className="sr-only">Kategorie</legend>
       <div className="mb-3 flex items-center justify-between gap-2">
         <span className="font-semibold text-app-text">Kategorie</span>
-        {selectedCategorySlugs.length > 0 && (
+        {validSelectedCategorySlugs.length > 0 && (
           <ButtonCore
             text="Odznacz"
-            onClick={handleClearCategories}
+            onClick={() => onSelectedCategorySlugsChange([])}
             className="shrink-0 whitespace-nowrap bg-transparent text-right text-xs text-app-textMuted hover:underline"
           />
         )}
@@ -76,7 +71,7 @@ export default function CategoryFilter({ facets }: CategoryFilterProps) {
             <input
               type="checkbox"
               disabled={category.productCount === 0}
-              checked={selectedCategorySlugs.includes(category.slug)}
+              checked={validSelectedCategorySlugs.includes(category.slug)}
               onChange={(event) => handleCategoryChange(category.slug, event.currentTarget.checked)}
               className="mt-0.5 h-4 w-4 shrink-0 accent-app-surfaceStrong"
             />

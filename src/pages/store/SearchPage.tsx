@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../assets/products/products.ts';
 import type { ComboBoxOption } from '../components/core/ComboBox.tsx';
 import ContentPanel from '../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../components/core/DualRangeSlider.tsx';
 import PageSelector from '../components/core/PageSelector.tsx';
-import SortToggles, { type SortDirection } from '../components/core/SortToggles.tsx';
+import SortToggles from '../components/core/SortToggles.tsx';
 import CategoryFilter, { type CategoryFacets } from '../features/search/CategoryFilter.tsx';
+import { useProductSearchParams } from '../features/search/useProductSearchParams.ts';
 
 const TOTAL_PAGES = 10;
 const MIN_PRICE = 0;
@@ -15,6 +15,7 @@ const SORT_OPTIONS: readonly ComboBoxOption[] = [
   { value: 'name', label: 'Nazwa' },
   { value: 'price', label: 'Cena' },
 ];
+const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
 const toCategorySlug = (category: string) =>
   category
     .toLowerCase()
@@ -43,110 +44,40 @@ const CATEGORY_FACETS: CategoryFacets = {
     },
   ],
 };
-
-const getPriceRange = (searchParams: URLSearchParams): [number, number] => {
-  const minPriceParam = searchParams.get('minPrice');
-  const maxPriceParam = searchParams.get('maxPrice');
-  const parsedMinPrice = minPriceParam === null ? MIN_PRICE : Number(minPriceParam);
-  const parsedMaxPrice = maxPriceParam === null ? MAX_PRICE : Number(maxPriceParam);
-  const minPrice = Number.isFinite(parsedMinPrice)
-    ? Math.min(MAX_PRICE, Math.max(MIN_PRICE, parsedMinPrice))
-    : MIN_PRICE;
-  const maxPrice = Number.isFinite(parsedMaxPrice)
-    ? Math.min(MAX_PRICE, Math.max(MIN_PRICE, parsedMaxPrice))
-    : MAX_PRICE;
-
-  return minPrice <= maxPrice ? [minPrice, maxPrice] : [MIN_PRICE, MAX_PRICE];
-};
-
-const applyPriceParams = (
-  searchParams: URLSearchParams,
-  [minPrice, maxPrice]: [number, number]
-) => {
-  if (minPrice === MIN_PRICE) {
-    searchParams.delete('minPrice');
-  } else {
-    searchParams.set('minPrice', String(minPrice));
-  }
-
-  if (maxPrice === MAX_PRICE) {
-    searchParams.delete('maxPrice');
-  } else {
-    searchParams.set('maxPrice', String(maxPrice));
-  }
-};
+const CATEGORY_SLUGS = CATEGORY_FACETS.categories
+  .filter((category) => category.productCount > 0)
+  .map((category) => category.slug);
 
 export default function SearchPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [priceRange, setPriceRange] = useState<[number, number]>(() => getPriceRange(searchParams));
-  const [committedPriceRange, setCommittedPriceRange] = useState<[number, number]>(() =>
-    getPriceRange(searchParams)
-  );
-  const [minPriceFromParams, maxPriceFromParams] = getPriceRange(searchParams);
-  const sortFromParams = searchParams.get('sort') ?? '';
-  const sortField = SORT_OPTIONS.some((option) => option.value === sortFromParams)
-    ? sortFromParams
-    : 'name';
-  const sortDirection: SortDirection =
-    searchParams.get('order') === 'desc' ? 'descending' : 'ascending';
-  const pageFromParams = Number(searchParams.get('page'));
-  const pageNumber =
-    Number.isInteger(pageFromParams) && pageFromParams >= 1 && pageFromParams <= TOTAL_PAGES
-      ? pageFromParams
-      : 1;
+  const {
+    pageNumber,
+    sortField,
+    sortDirection,
+    priceRange: appliedPriceRange,
+    selectedCategorySlugs,
+    setPageNumber,
+    setSortField,
+    setSortDirection,
+    setPriceRange: setAppliedPriceRange,
+    setSelectedCategorySlugs,
+  } = useProductSearchParams({
+    totalPages: TOTAL_PAGES,
+    minPrice: MIN_PRICE,
+    maxPrice: MAX_PRICE,
+    sortFields: SORT_FIELDS,
+    defaultSortField: 'name',
+    categorySlugs: CATEGORY_SLUGS,
+  });
+  const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
+  const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>
-      currentPriceRange[0] === minPriceFromParams && currentPriceRange[1] === maxPriceFromParams
+      currentPriceRange[0] === appliedMinPrice && currentPriceRange[1] === appliedMaxPrice
         ? currentPriceRange
-        : [minPriceFromParams, maxPriceFromParams]
+        : [appliedMinPrice, appliedMaxPrice]
     );
-    setCommittedPriceRange((currentPriceRange) =>
-      currentPriceRange[0] === minPriceFromParams && currentPriceRange[1] === maxPriceFromParams
-        ? currentPriceRange
-        : [minPriceFromParams, maxPriceFromParams]
-    );
-  }, [minPriceFromParams, maxPriceFromParams]);
-
-  const handlePriceRangeChangeEnd = (nextPriceRange: [number, number]) => {
-    setCommittedPriceRange(nextPriceRange);
-    setSearchParams(
-      (previousSearchParams) => {
-        const nextSearchParams = new URLSearchParams(previousSearchParams);
-        applyPriceParams(nextSearchParams, nextPriceRange);
-        nextSearchParams.set('page', '1');
-        return nextSearchParams;
-      },
-      { replace: true }
-    );
-  };
-
-  const handlePageChange = (nextPageNumber: number) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.set('page', String(nextPageNumber));
-    nextSearchParams.set('sort', sortField);
-    nextSearchParams.set('order', sortDirection === 'ascending' ? 'asc' : 'desc');
-    applyPriceParams(nextSearchParams, committedPriceRange);
-    setSearchParams(nextSearchParams);
-  };
-
-  const handleSortFieldChange = (nextSortField: string) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.set('sort', nextSortField);
-    nextSearchParams.set('order', sortDirection === 'ascending' ? 'asc' : 'desc');
-    applyPriceParams(nextSearchParams, committedPriceRange);
-    nextSearchParams.set('page', '1');
-    setSearchParams(nextSearchParams);
-  };
-
-  const handleSortDirectionChange = (nextSortDirection: SortDirection) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.set('sort', sortField);
-    nextSearchParams.set('order', nextSortDirection === 'ascending' ? 'asc' : 'desc');
-    applyPriceParams(nextSearchParams, committedPriceRange);
-    nextSearchParams.set('page', '1');
-    setSearchParams(nextSearchParams);
-  };
+  }, [appliedMinPrice, appliedMaxPrice]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-row gap-8 p-8">
@@ -157,10 +88,14 @@ export default function SearchPage() {
           max={MAX_PRICE}
           value={priceRange}
           onChange={setPriceRange}
-          onChangeEnd={handlePriceRangeChangeEnd}
+          onChangeEnd={setAppliedPriceRange}
           formatValue={(value) => `${value} zł`}
         />
-        <CategoryFilter facets={CATEGORY_FACETS} />
+        <CategoryFilter
+          facets={CATEGORY_FACETS}
+          selectedCategorySlugs={selectedCategorySlugs}
+          onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+        />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col">
         <ContentPanel className="sticky top-32 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between self-start p-2">
@@ -168,14 +103,14 @@ export default function SearchPage() {
             value={sortField}
             options={SORT_OPTIONS}
             direction={sortDirection}
-            onValueChange={handleSortFieldChange}
-            onDirectionChange={handleSortDirectionChange}
+            onValueChange={setSortField}
+            onDirectionChange={setSortDirection}
           />
 
           <PageSelector
             pageNumber={pageNumber}
             totalPages={TOTAL_PAGES}
-            onPageChange={handlePageChange}
+            onPageChange={setPageNumber}
           />
         </ContentPanel>
         <div className="h-[2000px]" />
