@@ -42,7 +42,14 @@ export default function SearchBar() {
     const query = searchValue.trim();
     if (!query) return;
 
-    navigate(`/search?${new URLSearchParams({ q: query, page: '1' }).toString()}`);
+    navigate(
+      `/search?${new URLSearchParams({
+        q: query,
+        page: '1',
+        sort: 'name',
+        order: 'asc',
+      }).toString()}`
+    );
     setIsOpen(false);
   };
 

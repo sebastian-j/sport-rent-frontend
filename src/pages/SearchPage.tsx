@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { ComboBoxOption } from '../components/core/ComboBox.tsx';
 import ContentPanel from '../components/core/ContentPanel.tsx';
@@ -13,8 +12,12 @@ const SORT_OPTIONS: readonly ComboBoxOption[] = [
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('ascending');
+  const sortFromParams = searchParams.get('sort') ?? '';
+  const sortField = SORT_OPTIONS.some((option) => option.value === sortFromParams)
+    ? sortFromParams
+    : 'name';
+  const sortDirection: SortDirection =
+    searchParams.get('order') === 'desc' ? 'descending' : 'ascending';
   const pageFromParams = Number(searchParams.get('page'));
   const pageNumber =
     Number.isInteger(pageFromParams) && pageFromParams >= 1 && pageFromParams <= TOTAL_PAGES
@@ -24,6 +27,24 @@ export default function SearchPage() {
   const handlePageChange = (nextPageNumber: number) => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.set('page', String(nextPageNumber));
+    nextSearchParams.set('sort', sortField);
+    nextSearchParams.set('order', sortDirection === 'ascending' ? 'asc' : 'desc');
+    setSearchParams(nextSearchParams);
+  };
+
+  const handleSortFieldChange = (nextSortField: string) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set('sort', nextSortField);
+    nextSearchParams.set('order', sortDirection === 'ascending' ? 'asc' : 'desc');
+    nextSearchParams.set('page', '1');
+    setSearchParams(nextSearchParams);
+  };
+
+  const handleSortDirectionChange = (nextSortDirection: SortDirection) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set('sort', sortField);
+    nextSearchParams.set('order', nextSortDirection === 'ascending' ? 'asc' : 'desc');
+    nextSearchParams.set('page', '1');
     setSearchParams(nextSearchParams);
   };
 
@@ -40,8 +61,8 @@ export default function SearchPage() {
           value={sortField}
           options={SORT_OPTIONS}
           direction={sortDirection}
-          onValueChange={setSortField}
-          onDirectionChange={setSortDirection}
+          onValueChange={handleSortFieldChange}
+          onDirectionChange={handleSortDirectionChange}
         />
 
         <PageSelector
