@@ -16,6 +16,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ProductPage from './pages/ProductPage.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
+import SearchPage from './pages/SearchPage.tsx';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/product/:slug" element={<ProductPage />} />
+          <Route path="/search" element={<SearchPage />} />
           {/*Footer*/}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
