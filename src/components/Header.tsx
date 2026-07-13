@@ -1,8 +1,8 @@
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
-import { Heart, Search, ShoppingCart, User } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Heart, LogIn, LogOut, Menu, Search, ShoppingCart, User } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -16,6 +16,44 @@ const CATEGORIES = [
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const hasAccessToken = Boolean(localStorage.getItem('accessToken'));
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const closeMenuOnOutsideClick = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    const closeMenuOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false);
+    };
+
+    document.addEventListener('pointerdown', closeMenuOnOutsideClick);
+    document.addEventListener('keydown', closeMenuOnEscape);
+
+    return () => {
+      document.removeEventListener('pointerdown', closeMenuOnOutsideClick);
+      document.removeEventListener('keydown', closeMenuOnEscape);
+    };
+  }, [isMenuOpen]);
+
+  const handleAuthAction = () => {
+    setIsMenuOpen(false);
+
+    if (hasAccessToken) {
+      localStorage.removeItem('accessToken');
+      navigate('/', { replace: true });
+      return;
+    }
+
+    navigate('/login');
+  };
 
   return (
     <header className="fixed z-50 flex w-full flex-col bg-app-surface">
@@ -52,6 +90,34 @@ export default function Header() {
           <Link to="/profile">
             <User className="cursor-pointer" />
           </Link>
+          <div ref={menuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((previous) => !previous)}
+              aria-label="Otwórz menu użytkownika"
+              aria-expanded={isMenuOpen}
+              aria-controls="user-menu"
+              className="block rounded-lg"
+            >
+              <Menu />
+            </button>
+
+            {isMenuOpen && (
+              <div
+                id="user-menu"
+                className="absolute right-0 top-full mt-2 w-max rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
+              >
+                <button
+                  type="button"
+                  onClick={handleAuthAction}
+                  className="flex w-full items-center gap-3 whitespace-nowrap rounded-lg p-3 text-left hover:bg-app-surfaceSoft"
+                >
+                  {hasAccessToken ? <LogOut size={20} /> : <LogIn size={20} />}
+                  <span>{hasAccessToken ? 'Wyloguj się' : 'Zaloguj się'}</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

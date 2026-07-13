@@ -3,11 +3,12 @@ import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
 import type { Ref } from 'react';
+import type { ProductProps } from '../product/productProps.ts';
 
 type ProductRentalDateProps = {
   date: RentalDate;
   productName: string;
-  productSizes?: string[];
+  productSizes?: ProductProps['sizes'];
   containerRef?: Ref<HTMLDivElement>;
   onQuantityChange: (quantity: number) => void;
   onSizeChange: (size: string) => void;
@@ -60,9 +61,9 @@ export default function ProductRentalDate({
           <option value="" disabled>
             --
           </option>
-          {productSizes.map((size) => (
-            <option key={size} value={size}>
-              {size}
+          {productSizes.map((sizeOption) => (
+            <option key={sizeOption.size} value={sizeOption.size}>
+              {sizeOption.size}
             </option>
           ))}
         </select>

@@ -10,7 +10,7 @@ export const INITIAL_CART: CartProduct[] = PRODUCTS.filter(
     {
       id: 1,
       quantity: 1,
-      size: product.sizes?.[0] ?? null,
+      size: product.sizes?.[0].size ?? null,
       start_date: null,
       end_date: null,
     },
