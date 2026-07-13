@@ -42,7 +42,7 @@ export default function PageSelector({ pageNumber, totalPages, onPageChange }: P
         ariaLabel="Poprzednia strona"
         className="flex h-10 w-10 items-center justify-center rounded-xl bg-app-surfaceStrong disabled:cursor-not-allowed disabled:opacity-40"
       >
-        <ArrowLeft className="text-white" />
+        <ArrowLeft size={20} className="text-white" />
       </ButtonCore>
 
       <input
@@ -75,7 +75,7 @@ export default function PageSelector({ pageNumber, totalPages, onPageChange }: P
         ariaLabel="Następna strona"
         className="flex h-10 w-10 items-center justify-center rounded-xl bg-app-surfaceStrong disabled:cursor-not-allowed disabled:opacity-40"
       >
-        <ArrowRight className="text-white" />
+        <ArrowRight size={20} className="text-white" />
       </ButtonCore>
     </div>
   );
