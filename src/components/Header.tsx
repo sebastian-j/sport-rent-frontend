@@ -1,8 +1,9 @@
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
-import { Heart, LogIn, LogOut, Menu, Search, ShoppingCart, User } from 'lucide-react';
+import { Heart, LogIn, LogOut, Menu, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SearchBar from './SearchBar.tsx';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -15,7 +16,6 @@ const CATEGORIES = [
 ];
 
 export default function Header() {
-  const [searchValue, setSearchValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -69,16 +69,7 @@ export default function Header() {
             />
           </picture>
         </Link>
-        <div className="flex min-w-0 w-full items-center justify-self-center rounded-lg bg-app-surfaceSoft px-2 text-app-text">
-          <Search className="text-app-textMuted" />
-          <input
-            type="search"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
-            placeholder="Szukaj..."
-            className="w-full select-none rounded-lg bg-app-surfaceSoft p-2 text-app-text outline-none placeholder:text-app-textMuted"
-          />
-        </div>
+        <SearchBar />
 
         <div className="flex justify-self-end gap-4 text-app-text">
           <Link to="/favorites">
