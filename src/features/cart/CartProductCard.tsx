@@ -32,7 +32,7 @@ export default function CartProductCard({
     <div className="flex w-full flex-row rounded-xl bg-app-cartCard p-[1vw] text-app-textInverted">
       {/*Left image*/}
       <div className="w-1/4 shrink-0 self-start border-2 border-app-border rounded-xl overflow-hidden">
-        <img src={product.image} alt={product.alt} className="h-full w-full object-contain" />
+        <img src={product.images[0]} alt={product.alt} className="h-full w-full object-contain" />
       </div>
 
       {/*Right*/}
@@ -60,7 +60,7 @@ export default function CartProductCard({
               key={date.id}
               date={date}
               productName={product.name}
-              productSizes={product.sizes}
+              productSizes={product.sizes?.map((size) => size.size)}
               containerRef={getRentalDateRef?.(date.id)}
               onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
               onSizeChange={(size) => onSizeChange(date.id, size)}
