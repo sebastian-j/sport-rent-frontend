@@ -150,7 +150,7 @@ export default function SearchPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-row gap-8 p-8">
-      <ContentPanel className="w-64 flex-none gap-6">
+      <ContentPanel className="sticky top-32 h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start overflow-y-auto gap-6">
         <DualRangeSlider
           label="Cena"
           min={MIN_PRICE}
@@ -162,21 +162,24 @@ export default function SearchPage() {
         />
         <CategoryFilter facets={CATEGORY_FACETS} />
       </ContentPanel>
-      <ContentPanel className="h-fit min-w-0 flex-1 flex-row justify-between self-start p-2">
-        <SortToggles
-          value={sortField}
-          options={SORT_OPTIONS}
-          direction={sortDirection}
-          onValueChange={handleSortFieldChange}
-          onDirectionChange={handleSortDirectionChange}
-        />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <ContentPanel className="sticky top-32 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between self-start p-2">
+          <SortToggles
+            value={sortField}
+            options={SORT_OPTIONS}
+            direction={sortDirection}
+            onValueChange={handleSortFieldChange}
+            onDirectionChange={handleSortDirectionChange}
+          />
 
-        <PageSelector
-          pageNumber={pageNumber}
-          totalPages={TOTAL_PAGES}
-          onPageChange={handlePageChange}
-        />
-      </ContentPanel>
+          <PageSelector
+            pageNumber={pageNumber}
+            totalPages={TOTAL_PAGES}
+            onPageChange={handlePageChange}
+          />
+        </ContentPanel>
+        <div className="h-[2000px]" />
+      </div>
     </div>
   );
 }
