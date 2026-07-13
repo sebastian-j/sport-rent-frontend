@@ -113,7 +113,6 @@ export default function SearchPage() {
             onPageChange={setPageNumber}
           />
         </ContentPanel>
-        <div className="h-[2000px]" />
       </div>
     </div>
   );
