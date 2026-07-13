@@ -60,7 +60,7 @@ export default function CartProductCard({
               key={date.id}
               date={date}
               productName={product.name}
-              productSizes={product.sizes?.map((size) => size.size)}
+              productSizes={product.sizes}
               containerRef={getRentalDateRef?.(date.id)}
               onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
               onSizeChange={(size) => onSizeChange(date.id, size)}
