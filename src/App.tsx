@@ -17,10 +17,12 @@ import ProductPage from './pages/ProductPage.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
+import ScrollToTop from './components/core/ScrollToTop.tsx';
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
           {/*Header*/}
