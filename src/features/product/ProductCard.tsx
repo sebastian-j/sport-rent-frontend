@@ -1,6 +1,9 @@
 import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
-import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { useCardTilt } from '../../components/core/useCardTilt.ts';
+
+const PRODUCT_IMAGE_SIZE = { width: 256, height: 224 } as const;
+const PRODUCT_CARD_CONTENT_HEIGHT = 120;
 
 type ProductCardProps = {
   name: string;
@@ -21,43 +24,63 @@ export default function ProductCard({
   isFavorite,
   onFavoriteToggle,
 }: ProductCardProps) {
-  const HeartElem = isFavorite ? (
-    <Heart
-      className="self-end right-10 text-app-danger"
-      onClick={onFavoriteToggle}
-      fill="currentColor"
-      strokeWidth={0}
-    />
-  ) : (
-    <Heart
-      className="self-end right-10 text-app-textMuted"
-      onClick={onFavoriteToggle}
-      strokeWidth={1}
-    />
-  );
+  const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt();
 
   return (
-    <div className="flex h-[400px] w-64 flex-col gap-2 rounded-xl bg-app-surfaceSoft border-app-borderSoft border-[1px] p-4">
-      <motion.div
+    <motion.div
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetTilt}
+      whileHover={hoverAnimation}
+      transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+      style={{
+        width: PRODUCT_IMAGE_SIZE.width,
+        height: PRODUCT_IMAGE_SIZE.height + PRODUCT_CARD_CONTENT_HEIGHT,
+        ...cardStyle,
+      }}
+      className="relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] border-app-borderSoft bg-app-surfaceSoft hover:z-10"
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`Zobacz szczegóły produktu: ${name}`}
+        className="absolute inset-0 z-10 rounded-xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-app-surfaceStrong"
+      />
+
+      <motion.button
+        type="button"
         key={String(isFavorite)}
+        onClick={onFavoriteToggle}
+        aria-label={isFavorite ? `Usuń ${name} z ulubionych` : `Dodaj ${name} do ulubionych`}
         initial={{ scale: 0.85 }}
         animate={{ scale: 1.0 }}
+        whileTap={{ scale: 0.9 }}
         transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-        className="self-end"
+        className="absolute right-3 top-3 z-20 rounded-full bg-app-surface/90 p-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-surfaceStrong"
       >
-        {HeartElem}
-      </motion.div>
+        <Heart
+          className={isFavorite ? 'text-app-danger' : 'text-app-textMuted'}
+          fill={isFavorite ? 'currentColor' : 'none'}
+          strokeWidth={isFavorite ? 0 : 1}
+        />
+      </motion.button>
 
-      <div className="flex w-full justify-center">
-        <img src={image} alt={alt} className="max-h-44 max-w-full rounded-lg object-contain" />
+      <div
+        className="relative w-full shrink-0 overflow-hidden"
+        style={{ height: PRODUCT_IMAGE_SIZE.height }}
+      >
+        <motion.img
+          src={image}
+          alt={alt}
+          className="h-full w-full object-cover"
+          style={imageStyle}
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1 bg-gradient-to-b from-transparent via-app-surface via-70% to-app-surface" />
       </div>
 
-      <p className="line-clamp-2 min-h-12 text-center font-medium">{name}</p>
-
-      <div className="mt-auto">
-        <p className="mb-2 text-center text-xl font-bold">{price} zł / doba</p>
-        <ButtonCore text="Szczegóły" onClick={onClick} className="w-full p-2" />
+      <div className="flex min-h-0 flex-1 flex-col bg-app-surface px-4 py-3">
+        <p className="line-clamp-2 min-h-12 text-center font-medium">{name}</p>
+        <p className="mt-auto text-center text-xl font-bold">{price} zł / doba</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
