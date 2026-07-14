@@ -1,6 +1,6 @@
 import { Minus, Trash2, X } from 'lucide-react';
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
-import ComboBox from '../../components/core/ComboBox.tsx';
+import Select from '../../components/core/Select.tsx';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
 import type { Ref } from 'react';
@@ -53,7 +53,7 @@ export default function ProductRentalDate({
       />
 
       {productSizes && productSizes.length > 0 && (
-        <ComboBox
+        <Select
           value={date.size ?? ''}
           onChange={onSizeChange}
           ariaLabel={`Rozmiar: ${productName}`}

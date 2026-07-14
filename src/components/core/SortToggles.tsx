@@ -1,12 +1,12 @@
 import { ArrowUp } from 'lucide-react';
 import { motion } from 'motion/react';
 import ButtonCore from './ButtonCore.tsx';
-import ComboBox, { type ComboBoxOption } from './ComboBox.tsx';
+import Select, { type SelectOption } from './Select.tsx';
 import type { SortDirection } from '../../types/search.ts';
 
 type SortTogglesProps = {
   value: string;
-  options: readonly ComboBoxOption[];
+  options: readonly SelectOption[];
   direction: SortDirection;
   onValueChange: (value: string) => void;
   onDirectionChange: (direction: SortDirection) => void;
@@ -23,7 +23,7 @@ export default function SortToggles({
 
   return (
     <div className="flex items-center gap-2">
-      <ComboBox
+      <Select
         value={value}
         options={options}
         onChange={onValueChange}

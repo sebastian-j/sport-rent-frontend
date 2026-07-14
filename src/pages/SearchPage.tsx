@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { PRODUCTS } from '../assets/products/products.ts';
-import type { ComboBoxOption } from '../components/core/ComboBox.tsx';
+import type { SelectOption } from '../components/core/Select.tsx';
 import ContentPanel from '../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../components/core/DualRangeSlider.tsx';
 import PageSelector from '../components/core/PageSelector.tsx';
@@ -12,7 +12,7 @@ import { useProductSearchParams } from '../features/search/useProductSearchParam
 const TOTAL_PAGES = 10;
 const MIN_PRICE = 0;
 const MAX_PRICE = 200;
-const SORT_OPTIONS: readonly ComboBoxOption[] = [
+const SORT_OPTIONS: readonly SelectOption[] = [
   { value: 'name', label: 'Nazwa' },
   { value: 'price', label: 'Cena' },
 ];

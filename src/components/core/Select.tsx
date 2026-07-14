@@ -1,27 +1,28 @@
 import { twMerge } from 'tailwind-merge';
 
-export type ComboBoxOption = {
+export type SelectOption = {
   value: string;
   label: string;
 };
 
-type ComboBoxProps = {
+type SelectProps = {
   value: string;
-  options: readonly ComboBoxOption[];
+  options: readonly SelectOption[];
   onChange: (value: string) => void;
   ariaLabel: string;
   placeholder?: string;
   className?: string;
 };
 
-export default function ComboBox({
+
+export default function Select({
   value,
   options,
   onChange,
   ariaLabel,
   placeholder,
   className,
-}: ComboBoxProps) {
+}: SelectProps) {
   return (
     <select
       value={value}
