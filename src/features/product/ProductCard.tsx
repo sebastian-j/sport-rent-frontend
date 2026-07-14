@@ -65,7 +65,7 @@ export default function ProductCard({
       </motion.button>
 
       <div
-        className="w-full shrink-0 overflow-hidden"
+        className="relative w-full shrink-0 overflow-hidden"
         style={{ height: PRODUCT_IMAGE_SIZE.height }}
       >
         <motion.img
@@ -74,6 +74,7 @@ export default function ProductCard({
           className="h-full w-full object-cover"
           style={imageStyle}
         />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1 bg-gradient-to-b from-transparent via-app-surface via-70% to-app-surface" />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col bg-app-surface px-4 py-3">
