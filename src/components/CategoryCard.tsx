@@ -1,12 +1,13 @@
-import ButtonCore from './core/ButtonCore.tsx';
 import { motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
+import { useNavigate } from 'react-router-dom';
+import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
 
 type CategoryCardProps = {
   title: string;
   description: string;
+  categorySlug: string;
   image: string;
-  onClick?: () => void;
   imagePosition: 'left' | 'right';
   size: 'small' | 'medium' | 'large';
   invertedText?: boolean;
@@ -28,13 +29,14 @@ const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
 export default function CategoryCard({
   title,
   description,
+  categorySlug,
   image,
-  onClick,
   imagePosition,
   size,
   invertedText,
   className,
 }: CategoryCardProps) {
+  const navigate = useNavigate();
   const sizeClasses = SIZE_CLASSES[size];
   const imageWidthClasses = IMAGE_WIDTH_CLASSES[size];
   const flexRow = imagePosition === 'left' ? 'flex-row' : 'flex-row-reverse';
@@ -47,7 +49,7 @@ export default function CategoryCard({
         `relative flex cursor-pointer select-none bg-app-surface hover:z-10 ${sizeClasses} ${flexRow}`,
         className
       )}
-      onClick={onClick}
+      onClick={() => navigate(getCategorySearchPath(categorySlug))}
     >
       <div className={`${imageWidthClasses} h-full shrink-0 overflow-hidden`}>
         <img src={image} alt={title} className="h-full w-full object-cover" />
@@ -60,13 +62,6 @@ export default function CategoryCard({
       >
         <p className="text-3xl font-semibold">{title}</p>
         <p className="text-app-textNeutralSoft">{description}</p>
-        {onClick && (
-          <ButtonCore
-            text="Rezerwuj teraz"
-            onClick={onClick}
-            className="px-8 py-4 mt-4 self-center"
-          />
-        )}
       </div>
     </motion.div>
   );
