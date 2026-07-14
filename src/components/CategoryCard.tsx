@@ -1,6 +1,7 @@
 import ButtonCore from './core/ButtonCore.tsx';
 import { motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
+import { useCardTilt } from './core/useCardTilt.ts';
 
 type CategoryCardProps = {
   title: string;
@@ -25,6 +26,19 @@ const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
   large: 'w-1/2',
 };
 
+const TILT_BY_SIZE: Record<
+  CategoryCardProps['size'],
+  {
+    maxCardTiltDegrees: number;
+    maxImageTiltDegrees: number;
+    maxImageShiftPixels: number;
+  }
+> = {
+  small: { maxCardTiltDegrees: 1.6, maxImageTiltDegrees: 0.55, maxImageShiftPixels: 1.25 },
+  medium: { maxCardTiltDegrees: 1.25, maxImageTiltDegrees: 0.45, maxImageShiftPixels: 1 },
+  large: { maxCardTiltDegrees: 0.8, maxImageTiltDegrees: 0.3, maxImageShiftPixels: 0.75 },
+};
+
 export default function CategoryCard({
   title,
   description,
@@ -35,14 +49,20 @@ export default function CategoryCard({
   invertedText,
   className,
 }: CategoryCardProps) {
+  const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt(
+    TILT_BY_SIZE[size]
+  );
   const sizeClasses = SIZE_CLASSES[size];
   const imageWidthClasses = IMAGE_WIDTH_CLASSES[size];
   const flexRow = imagePosition === 'left' ? 'flex-row' : 'flex-row-reverse';
 
   return (
     <motion.div
-      whileHover={{ scale: 1.015, boxShadow: '0 12px 30px rgb(0 0 0 / 0.15)' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetTilt}
+      whileHover={hoverAnimation}
+      transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+      style={cardStyle}
       className={twMerge(
         `relative flex cursor-pointer select-none bg-app-surface hover:z-10 ${sizeClasses} ${flexRow}`,
         className
@@ -50,7 +70,12 @@ export default function CategoryCard({
       onClick={onClick}
     >
       <div className={`${imageWidthClasses} h-full shrink-0 overflow-hidden`}>
-        <img src={image} alt={title} className="h-full w-full object-cover" />
+        <motion.img
+          src={image}
+          alt={title}
+          className="h-full w-full object-cover"
+          style={imageStyle}
+        />
       </div>
       <div
         className={twMerge(
