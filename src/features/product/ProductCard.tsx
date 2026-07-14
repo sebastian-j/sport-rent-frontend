@@ -5,6 +5,8 @@ import type { PointerEvent } from 'react';
 const MAX_CARD_TILT_DEGREES = 3;
 const MAX_IMAGE_TILT_DEGREES = 1;
 const MAX_IMAGE_SHIFT_PIXELS = 2;
+const PRODUCT_IMAGE_SIZE = { width: 256, height: 224 } as const;
+const PRODUCT_CARD_CONTENT_HEIGHT = 120;
 
 type ProductCardProps = {
   name: string;
@@ -73,8 +75,15 @@ export default function ProductCard({
           : { scale: 1.025, boxShadow: '0 16px 32px rgb(0 0 0 / 0.16)' }
       }
       transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-      style={{ rotateX, rotateY, transformPerspective: 900, transformStyle: 'preserve-3d' }}
-      className="relative flex h-[340px] w-64 transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] border-app-borderSoft bg-app-surfaceSoft hover:z-10"
+      style={{
+        width: PRODUCT_IMAGE_SIZE.width,
+        height: PRODUCT_IMAGE_SIZE.height + PRODUCT_CARD_CONTENT_HEIGHT,
+        rotateX,
+        rotateY,
+        transformPerspective: 900,
+        transformStyle: 'preserve-3d',
+      }}
+      className="relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] border-app-borderSoft bg-app-surfaceSoft hover:z-10"
     >
       <button
         type="button"
@@ -101,7 +110,10 @@ export default function ProductCard({
         />
       </motion.button>
 
-      <div className="h-[220px] w-full shrink-0 overflow-hidden">
+      <div
+        className="w-full shrink-0 overflow-hidden"
+        style={{ height: PRODUCT_IMAGE_SIZE.height }}
+      >
         <motion.img
           src={image}
           alt={alt}
