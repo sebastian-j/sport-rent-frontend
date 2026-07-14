@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import OrderCard, { type Order } from './orders/OrderCard.tsx';
+import OrderCard from './orders/OrderCard.tsx';
+import { type Order } from './orders/orderTypes.ts';
 
 export default function OrdersSection() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
