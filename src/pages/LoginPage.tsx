@@ -33,20 +33,20 @@ export default function LoginPage() {
   return (
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-surfaceElevated p-8">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="email">Email</label>
           <input
             name="email"
             type="email"
-            className="rounded-lg p-2 outline-none"
+            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
             onChange={handleChange}
           />
           <label htmlFor="password">Hasło</label>
           <input
             name="password"
             type="password"
-            className="rounded-lg p-2 outline-none"
+            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
             onChange={handleChange}
           />
           <ButtonCore
