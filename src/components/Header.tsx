@@ -15,7 +15,11 @@ const CATEGORIES = [
   'Namioty',
 ];
 
-export default function Header() {
+type HeaderProps = {
+  showCategoryBar?: boolean;
+};
+
+export default function Header({ showCategoryBar = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -56,7 +60,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed z-50 flex w-full flex-col bg-app-surface">
+    <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="grid h-12 grid-cols-3 items-center px-12">
         <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
           <picture>
@@ -112,11 +116,13 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
-        {CATEGORIES.map((item) => (
-          <p key={item}>{item}</p>
-        ))}
-      </div>
+      {showCategoryBar && (
+        <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
+          {CATEGORIES.map((item) => (
+            <p key={item}>{item}</p>
+          ))}
+        </div>
+      )}
     </header>
   );
 }

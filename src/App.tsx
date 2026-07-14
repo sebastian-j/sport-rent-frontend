@@ -29,16 +29,20 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/product/:slug" element={<ProductPage />} />
-          <Route path="/search" element={<SearchPage />} />
           {/*Footer*/}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/points" element={<PointsPage />} />
           <Route path="/faq" element={<FaqPage />} />
+        </Route>
+        <Route element={<Layout showCategoryBar={false} />}>
+          <Route path="/search" element={<SearchPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/cart" element={<CartPage />} />
+          </Route>
         </Route>
         <Route element={<LoginLayout />}>
           <Route path="/login" element={<LoginPage />} />
