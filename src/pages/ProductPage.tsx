@@ -32,7 +32,7 @@ export default function ProductPage() {
           <div className="font-bold w-full items-center justify-center flex flex-col gap-4 h-full w-full">
             <ProductGallery product={product} />
           </div>
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-4 w-full sticky top-[110px] h-fit items-center justify-center">
             <AddToCart product={product} selectedSize={selectedSize} />
           </div>
         </div>
