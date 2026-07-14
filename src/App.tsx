@@ -18,42 +18,45 @@ import DocumentLayout from './layouts/DocumentLayout.tsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
+import { ThemeProvider } from './components/core/ThemeSelector.tsx';
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route element={<Layout />}>
-          {/*Header*/}
-          <Route path="/" element={<HomePage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/favorites" element={<FavoritesPage />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route element={<Layout />}>
+            {/*Header*/}
+            <Route path="/" element={<HomePage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Route>
+            <Route path="/product/:slug" element={<ProductPage />} />
+            {/*Footer*/}
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/points" element={<PointsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
           </Route>
-          <Route path="/product/:slug" element={<ProductPage />} />
-          {/*Footer*/}
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/points" element={<PointsPage />} />
-          <Route path="/faq" element={<FaqPage />} />
-        </Route>
-        <Route element={<Layout showCategoryBar={false} />}>
-          <Route path="/search" element={<SearchPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/cart" element={<CartPage />} />
+          <Route element={<Layout showCategoryBar={false} />}>
+            <Route path="/search" element={<SearchPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/cart" element={<CartPage />} />
+            </Route>
           </Route>
-        </Route>
-        <Route element={<LoginLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Route>
-        <Route element={<DocumentLayout />}>
-          <Route path="/tos" element={<TosPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          <Route element={<LoginLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
+          <Route element={<DocumentLayout />}>
+            <Route path="/tos" element={<TosPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
