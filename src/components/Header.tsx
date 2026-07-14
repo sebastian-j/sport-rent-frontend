@@ -4,7 +4,7 @@ import { Heart, LogIn, LogOut, Menu, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar.tsx';
-import { toCategorySlug } from '../features/search/categoryUtils.ts';
+import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 
 const CATEGORIES = [
@@ -133,12 +133,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
             {CATEGORIES.map((item) => (
                 <Link
                     key={item}
-                    to={`/search?${new URLSearchParams({
-                      category: toCategorySlug(item),
-                      page: '1',
-                      sort: 'name',
-                      order: 'asc',
-                    }).toString()}`}
+                    to={getCategorySearchPath(toCategorySlug(item))}
                     className="hover:underline"
                 >
                   {item}

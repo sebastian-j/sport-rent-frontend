@@ -40,6 +40,7 @@ export default function HomePage() {
           <CategoryCard
             title={'Przyczepki rowerowe THULA'}
             description="U nas wypożyczysz najnowsze modele przyczepek rowerowych renomowanej marki THULE"
+            categorySlug="przyczepki-rowerowe"
             image={przyczepkiImage}
             imagePosition="left"
             size="medium"
@@ -50,6 +51,7 @@ export default function HomePage() {
             <CategoryCard
               title="Wybierasz się na via ferraty"
               description="Nie musisz kupować wszystkiego - możesz wypożyczyć u nas!"
+              categorySlug="via-ferraty-i-wspinanie"
               image={ferratyImage}
               imagePosition="left"
               size="small"
@@ -58,6 +60,7 @@ export default function HomePage() {
             <CategoryCard
               title="Rowery TREK GRAVEL"
               description="Rowery typu gravel, sakwy rowerowe, namioty na rowerowe wyprawy."
+              categorySlug="rowery-i-akcesoria"
               image={roweryImage}
               imagePosition="left"
               size="small"
@@ -69,10 +72,10 @@ export default function HomePage() {
         <CategoryCard
           title="Namioty THULE"
           description="Wypożysz namiot dachowy THULE. Zapewniamy pomoc w montażu. Skontaktuj się z nami, aby poznać szczególły i dopasować  namiot do Twojego samochodu."
+          categorySlug="namioty"
           image={namiotyImage}
           imagePosition="right"
           size="large"
-          onClick={() => {}}
           className="bg-app-surfaceNeutral"
         />
       </div>

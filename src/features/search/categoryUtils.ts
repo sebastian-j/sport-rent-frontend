@@ -6,3 +6,11 @@ export const toCategorySlug = (category: string) =>
     .replace(/ł/g, 'l')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+
+export const getCategorySearchPath = (categorySlug: string) =>
+  `/search?${new URLSearchParams({
+    category: categorySlug,
+    page: '1',
+    sort: 'name',
+    order: 'asc',
+  }).toString()}`;
