@@ -11,7 +11,7 @@ type OrderCardProps = {
 
 export default function OrderCard({ order, isExpanded, onToggle, children }: OrderCardProps) {
   return (
-    <div className="bg-white">
+    <div className="bg-app-surfaceElevated">
       <div
         className="flex items-center justify-between p-6 cursor-pointer select-none transition-colors hover:bg-app-surface"
         onClick={onToggle}
