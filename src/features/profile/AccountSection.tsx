@@ -15,20 +15,20 @@ function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: Setti
   return (
     <div className="bg-white">
       <div
-        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-slate-50 select-none"
+        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-app-surface select-none"
         onClick={onToggle}
       >
         <div>
           <h2 className="text-lg font-bold">{title}</h2>
-          <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+          <p className="mt-1 text-sm text-app-textMuted">{subtitle}</p>
         </div>
         {isExpanded ? (
-          <ChevronDown className="text-slate-400" />
+          <ChevronDown className="text-app-textMuted" />
         ) : (
-          <ChevronRight className="text-slate-400" />
+          <ChevronRight className="text-app-textMuted" />
         )}
       </div>
-      {isExpanded && <div className="p-6 pt-0 border-t border-slate-100">{children}</div>}
+      {isExpanded && <div className="p-6 pt-0 border-t border-app-borderSoft">{children}</div>}
     </div>
   );
 }
@@ -136,10 +136,10 @@ export default function AccountSection() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full pt-12 text-slate-800">
-      <h2 className="text-5xl text-center">Ustawienia konta</h2>
+    <div className="flex flex-col items-center w-full pt-12 text-app-text">
+      <p className="text-center text-5xl">Ustawienia konta</p>
 
-      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-slate-300">
+      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft">
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
@@ -153,7 +153,7 @@ export default function AccountSection() {
                 name="firstName"
                 value={tempUserData.firstName}
                 onChange={(e) => setTempUserData({ ...tempUserData, firstName: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 placeholder="Imię"
                 required
               />
@@ -162,7 +162,7 @@ export default function AccountSection() {
                 name="lastName"
                 value={tempUserData.lastName}
                 onChange={(e) => setTempUserData({ ...tempUserData, lastName: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 placeholder="Nazwisko"
                 required
               />
@@ -171,7 +171,7 @@ export default function AccountSection() {
                 name="country"
                 value={tempUserData.country}
                 onChange={(e) => setTempUserData({ ...tempUserData, country: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 placeholder="Państwo"
                 required
               />
@@ -180,7 +180,7 @@ export default function AccountSection() {
                 name="city"
                 value={tempUserData.city}
                 onChange={(e) => setTempUserData({ ...tempUserData, city: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 placeholder="Miasto"
                 required
               />
@@ -189,7 +189,7 @@ export default function AccountSection() {
                 name="addressLine1"
                 value={tempUserData.addressLine1}
                 onChange={(e) => setTempUserData({ ...tempUserData, addressLine1: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong col-span-full"
                 placeholder="Adres - pierwsza linia"
                 required
               />
@@ -198,7 +198,7 @@ export default function AccountSection() {
                 name="addressLine2"
                 value={tempUserData.addressLine2}
                 onChange={(e) => setTempUserData({ ...tempUserData, addressLine2: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900 col-span-full"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong col-span-full"
                 placeholder="Adres - druga linia (opcjonalne)"
               />
               <input
@@ -206,7 +206,7 @@ export default function AccountSection() {
                 name="postalCode"
                 value={tempUserData.postalCode}
                 onChange={(e) => setTempUserData({ ...tempUserData, postalCode: e.target.value })}
-                className="p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 placeholder="Kod pocztowy"
                 required
               />
@@ -214,14 +214,14 @@ export default function AccountSection() {
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
               >
                 Zapisz
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
               >
                 Anuluj
               </button>
@@ -242,7 +242,7 @@ export default function AccountSection() {
                 value={emailForm.newEmail}
                 onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
                 placeholder="Nowy adres e-mail"
-                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 required
               />
               <input
@@ -250,21 +250,21 @@ export default function AccountSection() {
                 value={emailForm.password}
                 onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
                 placeholder="Aktualne hasło"
-                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 required
               />
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
               >
                 Zmień
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
               >
                 Anuluj
               </button>
@@ -285,7 +285,7 @@ export default function AccountSection() {
                 value={passwordForm.current}
                 onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
                 placeholder="Obecne hasło"
-                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 required
               />
               <input
@@ -293,7 +293,7 @@ export default function AccountSection() {
                 value={passwordForm.new}
                 onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
                 placeholder="Nowe hasło"
-                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 required
               />
               <input
@@ -301,21 +301,21 @@ export default function AccountSection() {
                 value={passwordForm.confirm}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
                 placeholder="Powtórz nowe hasło"
-                className="w-full p-3 border rounded-lg border-slate-200 outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
                 required
               />
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-slate-900 hover:bg-slate-800"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
               >
                 Zaktualizuj
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
               >
                 Anuluj
               </button>
@@ -326,7 +326,7 @@ export default function AccountSection() {
         <div className="flex items-center justify-between p-6 bg-white select-none">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
-            <p className="mt-1 text-sm text-slate-500">Otrzymuj informacje o promocjach</p>
+            <p className="mt-1 text-sm text-text-app-textMuted">Otrzymuj informacje o promocjach</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -335,7 +335,7 @@ export default function AccountSection() {
               checked={newsletter}
               onChange={() => setNewsletter(!newsletter)}
             />
-            <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-slate-900 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+            <div className="w-11 h-6 bg-app-borderSoft rounded-full peer peer-checked:bg-app-surfaceStrong transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
           </label>
         </div>
       </div>
