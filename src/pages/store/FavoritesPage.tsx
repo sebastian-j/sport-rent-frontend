@@ -1,38 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PRODUCTS } from '../../assets/products/products.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
-import bikeImage from '../../assets/bike.png';
 
-const INITIAL_FAVORITES = [
-  { id: 1, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 2, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 3, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 4, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 5, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 6, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 7, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 8, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 9, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 10, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 11, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 12, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 13, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 14, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 15, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 16, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 17, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 18, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 19, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 20, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 21, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 22, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 23, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 24, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 25, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 26, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-  { id: 27, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },
-];
+const INITIAL_FAVORITES = PRODUCTS.slice(0, 12);
 
 export default function FavoritesPage() {
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState(INITIAL_FAVORITES);
 
   const handleRemoveFavorite = (id: number) => {
@@ -56,11 +30,11 @@ export default function FavoritesPage() {
               key={product.id}
               name={product.name}
               price={product.price}
-              image={product.image}
+              image={product.images[0]}
               alt={product.alt}
               isFavorite={true}
               onFavoriteToggle={() => handleRemoveFavorite(product.id)}
-              onClick={() => alert(`Dodano ${product.name} do koszyka!`)}
+              onClick={() => navigate(`/product/${product.slug}`)}
             />
           ))}
         </div>
