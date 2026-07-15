@@ -1,5 +1,11 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+const hasStringDetail = (value: unknown): value is { detail: string } =>
+  typeof value === 'object' &&
+  value !== null &&
+  'detail' in value &&
+  typeof value.detail === 'string';
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -35,7 +41,12 @@ export const request = async <T>(
     });
 
     if (!res.ok) {
-      throw new ApiError(res.status, res.statusText);
+      const payload: unknown = await res.json().catch(() => undefined);
+      const message = hasStringDetail(payload)
+        ? payload.detail
+        : res.statusText || `HTTP ${res.status}`;
+
+      throw new ApiError(res.status, message);
     }
 
     const text = await res.text();
