@@ -11,9 +11,14 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [hasInvalidCredentials, setHasInvalidCredentials] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setLoginError(null);
+    setHasInvalidCredentials(false);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -23,10 +28,16 @@ export default function LoginPage() {
   const handleLogin = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (isLoggingIn) return;
+
+    setHasInvalidCredentials(false);
+    setIsLoggingIn(true);
+
     try {
       const res = await login(formData);
       if (!res) {
-        alert('Logowanie się nie powiodło');
+        setHasInvalidCredentials(false);
+        setLoginError('Logowanie się nie powiodło');
         return;
       }
 
@@ -34,11 +45,21 @@ export default function LoginPage() {
       localStorage.setItem('refreshToken', res?.refresh_token);
       navigate('/');
     } catch (error) {
-      if (error instanceof ApiError) {
-        alert(error.message);
+      if (error instanceof ApiError && error.status === 401) {
+        setHasInvalidCredentials(true);
+        setLoginError('Nieprawidłowy adres e-mail lub hasło');
         return;
       }
-      alert('Logowanie się nie powiodło');
+
+      setHasInvalidCredentials(false);
+
+      if (error instanceof ApiError) {
+        setLoginError(error.message);
+        return;
+      }
+      setLoginError('Logowanie się nie powiodło');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -50,7 +71,11 @@ export default function LoginPage() {
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
-        <form onSubmit={handleLogin} className="flex flex-col gap-4 w-[90%]">
+        <form
+          onSubmit={handleLogin}
+          aria-busy={isLoggingIn}
+          className="flex flex-col gap-4 w-[90%]"
+        >
           <label htmlFor="email">Email</label>
           <input
             name="email"
@@ -59,7 +84,11 @@ export default function LoginPage() {
             value={formData.email}
             required
             autoComplete="email"
-            className="rounded-lg p-2 outline-none"
+            aria-invalid={hasInvalidCredentials}
+            aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
+            className={`rounded-lg border p-2 outline-none ${
+              hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
+            }`}
             onChange={handleChange}
           />
           <label htmlFor="password">Hasło</label>
@@ -69,13 +98,30 @@ export default function LoginPage() {
             type="password"
             required
             autoComplete="current-password"
-            className="rounded-lg p-2 outline-none"
+            aria-invalid={hasInvalidCredentials}
+            aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
+            className={`rounded-lg border p-2 outline-none ${
+              hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
+            }`}
             onChange={handleChange}
           />
+          {isLoggingIn ? (
+            <p role="status" className="text-sm text-app-textMuted">
+              {loginError ? 'Ponowne sprawdzanie danych…' : 'Sprawdzanie danych…'}
+            </p>
+          ) : (
+            loginError && (
+              <p id="login-error" role="alert" className="text-sm text-app-danger">
+                {loginError}
+              </p>
+            )
+          )}
           <ButtonCore
-            text="Zaloguj się"
+            text={isLoggingIn ? 'Logowanie…' : 'Zaloguj się'}
             type="submit"
-            className="ps-12 pe-12 p-2 text-[0.8vw] my-2"
+            className={`ps-12 pe-12 p-2 text-[0.8vw] my-2 ${
+              isLoggingIn ? 'pointer-events-none cursor-wait opacity-70' : ''
+            }`}
           />
         </form>
 
