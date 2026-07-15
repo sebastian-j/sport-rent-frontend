@@ -1,0 +1,2 @@
+export const PLN_SPENT_PER_POINT_EARNED = 1;
+export const POINTS_REQUIRED_PER_PLN = 10;
