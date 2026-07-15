@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { PRODUCTS } from '../../assets/products/products.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
+import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 
 const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
@@ -30,6 +32,8 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 }));
 
 export default function OrderSummaryPage() {
+  const [promoCode, setPromoCode] = useState('');
+
   return (
     <main className="mx-auto w-full max-w-[84rem] px-4 py-12 sm:px-6 lg:px-8">
       <div className="grid items-start justify-center gap-6 lg:grid-cols-[minmax(0,58rem)_minmax(18rem,24rem)] lg:gap-8">
@@ -53,7 +57,8 @@ export default function OrderSummaryPage() {
             ))}
           </div>
 
-          {/*TODO: Promo code*/}
+          <PromoCodePanel promoCode={promoCode} onPromoCodeChange={setPromoCode} />
+
           {/*TODO: Summary*/}
         </ContentPanel>
       </div>

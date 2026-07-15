@@ -7,7 +7,6 @@ import {
   getProductInformation,
 } from '../../features/cart/cartCalculations.ts';
 import TermsPanel from '../../features/cart/TermsPanel.tsx';
-import PromoCodePanel from '../../features/cart/PromoCodePanel.tsx';
 import CartSummaryPanel from '../../features/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../../features/cart/EmptyCartPanel.tsx';
 import { useCart } from '../../features/cart/useCart.ts';
@@ -26,7 +25,6 @@ export default function CartPage() {
   } = useCart(INITIAL_CART);
   const [readTos, setReadTos] = useState(false);
   const [highlightTos, setHighlightTos] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
   const tosRef = useRef<HTMLDivElement | null>(null);
   const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
@@ -64,7 +62,7 @@ export default function CartPage() {
       return;
     }
 
-    navigate("/summary")
+    navigate('/summary');
   };
 
   return (
@@ -107,10 +105,7 @@ export default function CartPage() {
             ref={tosRef}
           />
 
-          <div className="flex flex-row">
-            <PromoCodePanel promoCode={promoCode} onPromoCodeChange={setPromoCode} />
-            <CartSummaryPanel orderInformation={orderInformation} onBuy={handleBuy} />
-          </div>
+          <CartSummaryPanel orderInformation={orderInformation} onBuy={handleBuy} />
         </div>
       )}
       {products.length === 0 && <EmptyCartPanel onGoToOffer={() => navigate('/')} />}
