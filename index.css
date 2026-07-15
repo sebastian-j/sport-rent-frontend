@@ -62,3 +62,7 @@ img {
   user-select: none;
   -webkit-user-drag: none;
 }
+
+html.dark img {
+  filter: brightness(0.85);
+}

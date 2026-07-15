@@ -36,7 +36,7 @@ export default function ContactPage() {
             title="Mapa dojazdu do Polar Sport Rent"
             src="https://www.openstreetmap.org/export/embed.html?bbox=19.913543%2C50.054589%2C19.925543%2C50.062089&layer=mapnik&marker=50.058339%2C19.919543"
             loading="lazy"
-            className="min-h-72 w-full border-0 lg:h-full"
+            className="min-h-72 w-full border-0 dark:brightness-[0.85] lg:h-full"
           />
         </div>
       </section>
