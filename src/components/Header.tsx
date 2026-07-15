@@ -1,8 +1,9 @@
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
-import { Heart, LogIn, LogOut, Menu, ShoppingCart, User } from 'lucide-react';
+import { Heart, LogIn, LogOut, Menu, Server, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { healthCheck } from '../api/health.ts';
 import SearchBar from './SearchBar.tsx';
 
 const CATEGORIES = [
@@ -59,6 +60,15 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     navigate('/login');
   };
 
+  const handleHealthCheck = async () => {
+    try {
+      const response = await healthCheck();
+      alert(JSON.stringify(response, null, 2));
+    } catch (error) {
+      alert(error instanceof Error ? error.message : String(error));
+    }
+  };
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="grid h-12 grid-cols-3 items-center px-12">
@@ -102,6 +112,14 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
                 id="user-menu"
                 className="absolute right-0 top-full mt-2 w-max rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
               >
+                <button
+                  type="button"
+                  onClick={handleHealthCheck}
+                  className="flex w-full items-center gap-3 whitespace-nowrap rounded-lg p-3 text-left hover:bg-app-surfaceSoft"
+                >
+                  <Server size={20} />
+                  <span>Sprawdź połączenie</span>
+                </button>
                 <button
                   type="button"
                   onClick={handleAuthAction}
