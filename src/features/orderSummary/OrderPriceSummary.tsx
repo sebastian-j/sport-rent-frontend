@@ -5,6 +5,7 @@ type OrderPriceSummaryProps = {
   cartPrice: number;
   paymentPrice?: number;
   discount?: number;
+  canBuy?: boolean;
   onBuy?: () => void;
 };
 
@@ -12,6 +13,7 @@ export default function OrderPriceSummary({
   cartPrice,
   paymentPrice,
   discount = 0,
+  canBuy = true,
   onBuy,
 }: OrderPriceSummaryProps) {
   const totalPrice = cartPrice + (paymentPrice ?? 0) - discount;
@@ -45,6 +47,7 @@ export default function OrderPriceSummary({
       <ButtonCore
         text="Kupuję i płacę"
         onClick={onBuy}
+        disabled={!canBuy}
         className="mt-2 flex h-12 w-full items-center justify-center text-lg font-semibold"
       />
     </div>

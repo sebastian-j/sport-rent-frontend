@@ -3,7 +3,13 @@ import { PRODUCTS } from '../../assets/products/products.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
+import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
+import PaymentMethodsPanel from '../../features/orderSummary/PaymentMethodsPanel.tsx';
+import {
+  PAYMENT_METHODS,
+  type PaymentMethodId,
+} from '../../features/orderSummary/paymentMethods.ts';
 import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel, {
   type RecipientDetails,
@@ -13,6 +19,8 @@ import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 const PROMO_DISCOUNTS: Record<string, number> = {
   SPORT10: 0.1,
 };
+
+const USER_LOYALTY_POINTS = 16_000;
 
 const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
   firstName: 'Jan',
@@ -53,12 +61,17 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 export default function OrderSummaryPage() {
   const [recipientDetails, setRecipientDetails] =
     useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
   const [discountRate, setDiscountRate] = useState(0);
   const [promoCodeError, setPromoCodeError] = useState<string>();
   const cartPrice = getOrderInformation(SUMMARY_PRODUCTS).totalValue;
+  const paymentPrice = PAYMENT_METHODS.find(
+    (method) => method.id === selectedPaymentMethodId
+  )?.price;
   const discount = cartPrice * discountRate;
+  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
 
   const handleApplyPromoCode = () => {
     const normalizedPromoCode = promoCode.trim().toUpperCase();
@@ -92,6 +105,7 @@ export default function OrderSummaryPage() {
     setAppliedPromoCode(undefined);
     setDiscountRate(0);
     setPromoCodeError(undefined);
+    if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
 
   return (
@@ -106,8 +120,12 @@ export default function OrderSummaryPage() {
           </ContentPanel>
 
           <ContentPanel className="w-full">
-            <p className="text-2xl font-semibold text-app-textStrong">Płatność</p>
-            {/*[radioButton name ---------- logo price]*/}
+            <PaymentMethodsPanel
+              selectedMethodId={selectedPaymentMethodId}
+              pointsRequired={pointsRequired}
+              userPoints={USER_LOYALTY_POINTS}
+              onMethodChange={setSelectedPaymentMethodId}
+            />
           </ContentPanel>
         </div>
 
@@ -129,7 +147,12 @@ export default function OrderSummaryPage() {
             onRemove={handleRemovePromoCode}
           />
 
-          <OrderPriceSummary cartPrice={cartPrice} discount={discount} />
+          <OrderPriceSummary
+            cartPrice={cartPrice}
+            paymentPrice={paymentPrice}
+            discount={discount}
+            canBuy={selectedPaymentMethodId !== undefined}
+          />
         </ContentPanel>
       </div>
     </main>

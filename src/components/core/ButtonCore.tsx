@@ -19,7 +19,7 @@ export default function ButtonCore({
   children,
   onClick,
   inverted,
-  disabled,
+  disabled = false,
   ariaLabel,
   type = 'button',
   className = '',
