@@ -23,7 +23,7 @@ export default function ContactPage() {
               Kraków
             </address>
             <a
-              href="https://www.openstreetmap.org/?mlat=50.05825&mlon=19.922111#map=17/50.05825/19.922111"
+              href="https://www.openstreetmap.org/?mlat=50.058339&mlon=19.919543#map=17/50.058339/19.919543"
               target="_blank"
               rel="noreferrer"
               className="mt-5 inline-block"
@@ -34,7 +34,7 @@ export default function ContactPage() {
 
           <iframe
             title="Mapa dojazdu do Polar Sport Rent"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=19.916%2C50.0545%2C19.928%2C50.062&layer=mapnik&marker=50.05825%2C19.922111"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=19.913543%2C50.054589%2C19.925543%2C50.062089&layer=mapnik&marker=50.058339%2C19.919543"
             loading="lazy"
             className="min-h-72 w-full border-0 lg:h-full"
           />
