@@ -23,41 +23,41 @@ import InfoLayout from './layouts/InfoLayout.tsx';
 
 function App() {
   return (
-      <ThemeProvider>
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/favorites" element={<FavoritesPage />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Route>
+            <Route path="/product/:slug" element={<ProductPage />} />
           </Route>
-          <Route path="/product/:slug" element={<ProductPage />} />
-        </Route>
-        <Route element={<Layout showCategoryBar={false} />}>
-          <Route path="/search" element={<SearchPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/cart" element={<CartPage />} />
+          <Route element={<Layout showCategoryBar={false} />}>
+            <Route path="/search" element={<SearchPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/cart" element={<CartPage />} />
+            </Route>
           </Route>
-        </Route>
-        <Route element={<LoginLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Route>
-        <Route element={<DocumentLayout />}>
-          <Route path="/tos" element={<TosPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        </Route>
-        <Route element={<InfoLayout />}>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/points" element={<PointsPage />} />
-          <Route path="/faq" element={<FaqPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-      </ThemeProvider>
+          <Route element={<LoginLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
+          <Route element={<DocumentLayout />}>
+            <Route path="/tos" element={<TosPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          </Route>
+          <Route element={<InfoLayout />}>
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/points" element={<PointsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
