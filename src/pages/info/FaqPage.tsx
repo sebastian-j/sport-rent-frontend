@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
-} from '../features/loyalty/constants.ts';
+} from '../../features/loyalty/constants.ts';
 
 type FaqItemProps = {
   question: string;

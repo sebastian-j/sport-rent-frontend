@@ -1,14 +1,14 @@
-import PanoramicImage from '../components/PanoramicImage';
-import ProductCard from '../features/product/ProductCard.tsx';
-import CategoryBar from '../components/CategoryBar';
-import panoramicImage from '../assets/panoramic_small.png';
+import PanoramicImage from '../../components/PanoramicImage.tsx';
+import ProductCard from '../../features/product/ProductCard.tsx';
+import CategoryBar from '../../components/CategoryBar.tsx';
+import panoramicImage from '../../assets/panoramic_small.png';
 import { useState } from 'react';
-import { PRODUCTS } from '../assets/products/products.ts';
-import CategoryCard from '../components/CategoryCard.tsx';
-import ferratyImage from '../assets/categories/ferraty.png';
-import namiotyImage from '../assets/categories/namioty.png';
-import przyczepkiImage from '../assets/categories/przyczepki.png';
-import roweryImage from '../assets/categories/rowery.png';
+import { PRODUCTS } from '../../assets/products/products.ts';
+import CategoryCard from '../../components/CategoryCard.tsx';
+import ferratyImage from '../../assets/categories/ferraty.png';
+import namiotyImage from '../../assets/categories/namioty.png';
+import przyczepkiImage from '../../assets/categories/przyczepki.png';
+import roweryImage from '../../assets/categories/rowery.png';
 import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {

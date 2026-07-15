@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import ButtonCore from '../components/core/ButtonCore';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
