@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import LogoHeader from '../assets/logo_header.png';
 export default function LoginLayout() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col bg-app-surface text-app-text">
       <header className="py-4">
         <Link to="/">
           <img src={LogoHeader} alt="Logo" className="h-28 mx-auto my-5" />

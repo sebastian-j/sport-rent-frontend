@@ -49,7 +49,7 @@ export default function RegisterPage() {
   return (
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zarejestruj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg bg-app-panel p-8">
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-border bg-app-panel p-8">
         <form className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="email">Email</label>
           <input
