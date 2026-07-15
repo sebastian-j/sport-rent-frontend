@@ -64,8 +64,7 @@ export default function CartPage() {
       return;
     }
 
-    alert('Kupiono!');
-    navigate('/');
+    navigate("/summary")
   };
 
   return (
