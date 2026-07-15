@@ -4,6 +4,7 @@ import { Heart, LogIn, LogOut, Menu, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar.tsx';
+import ThemeSelector from './core/ThemeSelector.tsx';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -63,15 +64,24 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="grid h-12 grid-cols-3 items-center px-12">
         <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
-          <picture>
-            <source media="(max-width: 960px)" srcSet={headerLogoSmall} />
-
-            <img
-              src={headerLogo}
-              alt="Logo"
-              className="block h-10 w-auto min-[961px]:h-auto min-[961px]:w-64"
-            />
-          </picture>
+          <span
+            role="img"
+            aria-label="Logo Polar Sport Rent"
+            className="block h-10 w-[67px] bg-app-text min-[961px]:hidden"
+            style={{
+              WebkitMask: `url(${headerLogoSmall}) center / contain no-repeat`,
+              mask: `url(${headerLogoSmall}) center / contain no-repeat`,
+            }}
+          />
+          <span
+            role="img"
+            aria-label="Logo Polar Sport Rent"
+            className="hidden h-[41px] w-64 bg-app-text min-[961px]:block"
+            style={{
+              WebkitMask: `url(${headerLogo}) center / contain no-repeat`,
+              mask: `url(${headerLogo}) center / contain no-repeat`,
+            }}
+          />
         </Link>
         <SearchBar />
 
@@ -110,6 +120,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
                   {hasAccessToken ? <LogOut size={20} /> : <LogIn size={20} />}
                   <span>{hasAccessToken ? 'Wyloguj się' : 'Zaloguj się'}</span>
                 </button>
+                <ThemeSelector />
               </div>
             )}
           </div>
