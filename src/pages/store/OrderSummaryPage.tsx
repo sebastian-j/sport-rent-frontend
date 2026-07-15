@@ -129,7 +129,7 @@ export default function OrderSummaryPage() {
           </ContentPanel>
         </div>
 
-        <ContentPanel className="w-full max-w-[24rem] gap-6 justify-self-center lg:justify-self-end">
+        <ContentPanel className="w-full max-w-none gap-6 justify-self-center lg:max-w-[24rem] lg:justify-self-end">
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
