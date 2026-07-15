@@ -18,6 +18,7 @@ import DocumentLayout from './layouts/DocumentLayout.tsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
+import InfoLayout from './layouts/InfoLayout.tsx';
 
 function App() {
   return (
@@ -32,10 +33,6 @@ function App() {
           </Route>
           <Route path="/product/:slug" element={<ProductPage />} />
           {/*Footer*/}
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/points" element={<PointsPage />} />
-          <Route path="/faq" element={<FaqPage />} />
         </Route>
         <Route element={<Layout showCategoryBar={false} />}>
           <Route path="/search" element={<SearchPage />} />
@@ -51,6 +48,12 @@ function App() {
         <Route element={<DocumentLayout />}>
           <Route path="/tos" element={<TosPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        </Route>
+        <Route element={<InfoLayout />}>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/points" element={<PointsPage />} />
+          <Route path="/faq" element={<FaqPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
