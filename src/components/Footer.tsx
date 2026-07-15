@@ -38,13 +38,17 @@ export default function Footer() {
             <Link to="/contact">Kontakt</Link>
           </li>
           <li>
-            <Link to="points">Program lojalnościowy</Link>
+            <Link to="/points">Program lojalnościowy</Link>
           </li>
           <li>
-            <Link to="/tos">Regulamin</Link>
+            <Link to="/tos" target="_blank">
+              Regulamin
+            </Link>
           </li>
           <li>
-            <Link to="/privacy-policy">Polityka prywatności RODO</Link>
+            <Link to="/privacy-policy" target="_blank">
+              Polityka prywatności RODO
+            </Link>
           </li>
           <li>
             <Link to="/faq">FAQ</Link>

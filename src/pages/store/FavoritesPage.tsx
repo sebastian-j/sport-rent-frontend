@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import ProductCard from '../features/product/ProductCard';
-import bikeImage from '../assets/bike.png';
+import ProductCard from '../../features/product/ProductCard.tsx';
+import bikeImage from '../../assets/bike.png';
 
 const INITIAL_FAVORITES = [
   { id: 1, name: 'Rower Gravel', price: 89, image: bikeImage, alt: 'Rower Gravel' },

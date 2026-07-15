@@ -1,24 +1,25 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './layouts/Layout';
-import HomePage from './pages/HomePage';
-import FavoritesPage from './pages/FavoritesPage.tsx';
-import CartPage from './pages/CartPage.tsx';
-import ProfilePage from './pages/ProfilePage.tsx';
-import AboutPage from './pages/AboutPage.tsx';
-import ContactPage from './pages/ContactPage.tsx';
-import PointsPage from './pages/PointsPage.tsx';
-import TosPage from './pages/TosPage.tsx';
-import FaqPage from './pages/FaqPage.tsx';
+import HomePage from './pages/store/HomePage.tsx';
+import FavoritesPage from './pages/store/FavoritesPage.tsx';
+import CartPage from './pages/store/CartPage.tsx';
+import ProfilePage from './pages/account/ProfilePage.tsx';
+import AboutPage from './pages/info/AboutPage.tsx';
+import ContactPage from './pages/info/ContactPage.tsx';
+import PointsPage from './pages/info/PointsPage.tsx';
+import TosPage from './pages/document/TosPage.tsx';
+import FaqPage from './pages/info/FaqPage.tsx';
 import LoginLayout from './layouts/LoginLayout.tsx';
-import LoginPage from './pages/LoginPage.tsx';
-import RegisterPage from './pages/RegisterPage.tsx';
+import LoginPage from './pages/auth/LoginPage.tsx';
+import RegisterPage from './pages/auth/RegisterPage.tsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
-import ProductPage from './pages/ProductPage.tsx';
+import ProductPage from './pages/store/ProductPage.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
-import SearchPage from './pages/SearchPage.tsx';
+import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
+import SearchPage from './pages/store/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
 import { ThemeProvider } from './components/core/ThemeSelector.tsx';
+import InfoLayout from './layouts/InfoLayout.tsx';
 
 function App() {
   return (
@@ -27,17 +28,11 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route element={<Layout />}>
-            {/*Header*/}
             <Route path="/" element={<HomePage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/favorites" element={<FavoritesPage />} />
             </Route>
             <Route path="/product/:slug" element={<ProductPage />} />
-            {/*Footer*/}
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/points" element={<PointsPage />} />
-            <Route path="/faq" element={<FaqPage />} />
           </Route>
           <Route element={<Layout showCategoryBar={false} />}>
             <Route path="/search" element={<SearchPage />} />
@@ -53,6 +48,12 @@ function App() {
           <Route element={<DocumentLayout />}>
             <Route path="/tos" element={<TosPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          </Route>
+          <Route element={<InfoLayout />}>
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/points" element={<PointsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
