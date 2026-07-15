@@ -5,10 +5,23 @@ import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
 import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
+import RecipientDetailsPanel, {
+  type RecipientDetails,
+} from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 
 const PROMO_DISCOUNTS: Record<string, number> = {
   SPORT10: 0.1,
+};
+
+const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
+  firstName: 'Jan',
+  lastName: 'Kowalski',
+  country: 'Polska',
+  city: 'Kraków',
+  addressLine1: 'ul. Kałuży 1',
+  addressLine2: '',
+  postalCode: '30-111',
 };
 
 const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
@@ -38,6 +51,8 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 }));
 
 export default function OrderSummaryPage() {
+  const [recipientDetails, setRecipientDetails] =
+    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
   const [discountRate, setDiscountRate] = useState(0);
@@ -80,11 +95,14 @@ export default function OrderSummaryPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[84rem] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="grid items-start justify-center gap-6 lg:grid-cols-[minmax(0,58rem)_minmax(18rem,24rem)] lg:gap-8">
-        <div className="flex w-full max-w-[58rem] flex-col gap-6">
+    <main className="mx-auto w-full max-w-[74rem] px-4 py-12 sm:px-6 lg:px-8">
+      <div className="grid items-start justify-center gap-6 lg:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] lg:gap-8">
+        <div className="flex w-full max-w-[48rem] flex-col gap-6">
           <ContentPanel className="w-full">
-            <p className="text-2xl font-semibold text-app-textStrong">Dane odbiorcy</p>
+            <RecipientDetailsPanel
+              details={recipientDetails}
+              onDetailsChange={setRecipientDetails}
+            />
           </ContentPanel>
 
           <ContentPanel className="w-full">
