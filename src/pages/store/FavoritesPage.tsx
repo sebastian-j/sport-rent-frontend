@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { PRODUCTS } from '../../assets/products/products.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
@@ -19,26 +20,39 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      {favorites.length === 0 ? (
-        <div className="py-20 text-center text-app-textMuted">
-          <p className="text-xl">Brak ulubionych produktów.</p>
-        </div>
-      ) : (
-        <div className="flex flex-row flex-wrap gap-4 p-4 mt-4 justify-evenly items-center w-full">
-          {favorites.map((product) => (
-            <ProductCard
-              key={product.id}
-              name={product.name}
-              price={product.price}
-              image={product.images[0]}
-              alt={product.alt}
-              isFavorite={true}
-              onFavoriteToggle={() => handleRemoveFavorite(product.id)}
-              onClick={() => navigate(`/product/${product.slug}`)}
-            />
-          ))}
-        </div>
-      )}
+      <div className="mt-4 flex w-full flex-row flex-wrap items-center justify-stretch gap-4 p-4">
+        <AnimatePresence initial={false} mode="popLayout">
+          {favorites.length === 0 ? (
+            <motion.div
+              key="empty-favorites"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="w-full py-20 text-center text-app-textMuted"
+            >
+              <p className="text-xl">Brak ulubionych produktów.</p>
+            </motion.div>
+          ) : (
+            favorites.map((product) => (
+              <motion.div
+                key={product.id}
+                layout
+                exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
+                transition={{ duration: 0.28, times: [0, 0.4, 1], ease: 'easeOut' }}
+              >
+                <ProductCard
+                  name={product.name}
+                  price={product.price}
+                  image={product.images[0]}
+                  alt={product.alt}
+                  isFavorite={true}
+                  onFavoriteToggle={() => handleRemoveFavorite(product.id)}
+                  onClick={() => navigate(`/product/${product.slug}`)}
+                />
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
