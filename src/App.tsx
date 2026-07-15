@@ -18,21 +18,21 @@ import DocumentLayout from './layouts/DocumentLayout.tsx';
 import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
 import SearchPage from './pages/store/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
+import { ThemeProvider } from './components/core/ThemeSelector.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
 
 function App() {
   return (
+      <ThemeProvider>
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
-          {/*Header*/}
           <Route path="/" element={<HomePage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/favorites" element={<FavoritesPage />} />
           </Route>
           <Route path="/product/:slug" element={<ProductPage />} />
-          {/*Footer*/}
         </Route>
         <Route element={<Layout showCategoryBar={false} />}>
           <Route path="/search" element={<SearchPage />} />
@@ -57,6 +57,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+      </ThemeProvider>
   );
 }
 

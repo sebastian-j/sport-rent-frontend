@@ -10,7 +10,7 @@ export default function LoyaltySection() {
       <p className="mt-4 text-3xl">
         Posiadasz <span className="font-semibold">{pointsSum}</span> punktów
       </p>
-      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft">
+      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col divide-y divide-app-borderSoft overflow-hidden rounded-xl border border-app-border">
         {POINTS_ACQUISITIONS.map((acquisition) => (
           <PointsCard key={acquisition.id} date={acquisition.date} amount={acquisition.amount} />
         ))}

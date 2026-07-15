@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-app-surfaceStrongNeutral text-app-textInverted p-20 flex justify-center space-x-52">
+    <footer className="bg-black text-app-textInverted p-20 flex justify-center space-x-52">
       <div className="flex flex-col max-w-lg">
         <div className="p-2 b-2">
-          <img src={footer_logo} alt="Logo" />
+          <img src={footer_logo} alt="Logo Polar Sport Rent" />
         </div>
         <div className="flex items-center text-xl text-app-textInvertedMuted">
           <p>

@@ -44,10 +44,19 @@ export default function CategoryBar() {
               key={index}
               className="flex flex-col items-center gap-3 cursor-pointer group min-w-[75px] shrink-0"
             >
-              <img
-                src={category.icon}
-                alt={category.name}
-                className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-200"
+              <span
+                aria-hidden="true"
+                className="h-10 w-10 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110"
+                style={{
+                  WebkitMaskImage: `url(${category.icon})`,
+                  maskImage: `url(${category.icon})`,
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                }}
               />
               <span className="text-[12px] text-center font-medium leading-tight px-2">
                 {category.name}
