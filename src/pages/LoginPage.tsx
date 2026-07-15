@@ -1,6 +1,8 @@
 import ButtonCore from '../components/core/ButtonCore.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
+import { login } from '../api/auth.ts';
+import { ApiError } from '../api/client.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,12 +20,26 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = () => {
-    alert(`Email: ${formData.email}, Password: ${formData.password}; Ustawiono accessToken`);
+  const handleLogin = async (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    // TODO: Implement login logic here
-    localStorage.setItem('accessToken', `${formData.email}-${formData.password}`);
-    navigate('/');
+    try {
+      const res = await login(formData);
+      if (!res) {
+        alert('Logowanie się nie powiodło');
+        return;
+      }
+
+      localStorage.setItem('accessToken', res?.access_token);
+      localStorage.setItem('refreshToken', res?.refresh_token);
+      navigate('/');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        alert(error.message);
+        return;
+      }
+      alert('Logowanie się nie powiodło');
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -34,24 +50,31 @@ export default function LoginPage() {
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
       <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
-        <form className="flex flex-col gap-4 w-[90%]">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4 w-[90%]">
           <label htmlFor="email">Email</label>
           <input
             name="email"
+            id="email"
             type="email"
+            value={formData.email}
+            required
+            autoComplete="email"
             className="rounded-lg p-2 outline-none"
             onChange={handleChange}
           />
           <label htmlFor="password">Hasło</label>
           <input
             name="password"
+            id="password"
             type="password"
+            required
+            autoComplete="current-password"
             className="rounded-lg p-2 outline-none"
             onChange={handleChange}
           />
           <ButtonCore
             text="Zaloguj się"
-            onClick={handleLogin}
+            type="submit"
             className="ps-12 pe-12 p-2 text-[0.8vw] my-2"
           />
         </form>

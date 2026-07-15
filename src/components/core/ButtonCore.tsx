@@ -5,16 +5,23 @@ import { componentStyles } from './componentStyles.ts';
 type ButtonProps = {
   text: string;
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
   className?: string;
 };
 
-export default function ButtonCore({ text, onClick, inverted, className = '' }: ButtonProps) {
+export default function ButtonCore({
+  text,
+  onClick,
+  type = 'button',
+  inverted,
+  className = '',
+}: ButtonProps) {
   const tone = inverted ? 'inversed' : 'default';
 
   return (
     <motion.button
-      type="button"
+      type={type}
       onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
