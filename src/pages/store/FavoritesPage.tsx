@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { PRODUCTS } from '../../assets/products/products.ts';
-import ProductCard from '../../features/product/ProductCard.tsx';
+import ProductCard, { PRODUCT_CARD_WIDTH } from '../../features/product/ProductCard.tsx';
 
 const INITIAL_FAVORITES = PRODUCTS.slice(0, 12);
 
@@ -20,7 +20,10 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      <div className="mt-4 flex w-full flex-row flex-wrap items-center justify-stretch gap-4 p-4">
+      <div
+        className="mt-4 grid w-full justify-center gap-4 p-4"
+        style={{ gridTemplateColumns: `repeat(auto-fit, ${PRODUCT_CARD_WIDTH}px)` }}
+      >
         <AnimatePresence initial={false} mode="popLayout">
           {favorites.length === 0 ? (
             <motion.div
