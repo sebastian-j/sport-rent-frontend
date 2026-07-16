@@ -24,6 +24,25 @@ export default function PaymentMethodsPanel({
         const isPointsPayment = method.id === 'points';
         const missingPoints = Math.max(0, pointsRequired - userPoints);
         const isDisabled = isPointsPayment && missingPoints > 0;
+        const logos = (
+          <span
+            aria-hidden="true"
+            className={`flex h-10 shrink-0 items-center justify-end ${
+              method.logos.length > 1 ? 'w-40 gap-2' : 'w-20'
+            }`}
+          >
+            {method.logos.map((logo) => (
+              <img
+                key={logo}
+                src={logo}
+                alt=""
+                className={`h-auto w-12 shrink-0 object-contain ${
+                  selectedMethodId === method.id ? '' : 'grayscale'
+                } transition-[filter]}`}
+              />
+            ))}
+          </span>
+        );
 
         return (
           <label
@@ -50,20 +69,22 @@ export default function PaymentMethodsPanel({
             <span className="font-medium text-app-textStrong">{method.name}</span>
 
             {isPointsPayment ? (
-              <span className="ml-auto flex shrink-0 flex-col items-end text-right">
-                <span className="font-medium text-app-textStrong">
-                  {pointsRequired.toLocaleString('pl-PL')} pkt
-                </span>
-                {missingPoints > 0 && (
-                  <span className="text-sm text-app-textMuted">
-                    Brakuje {missingPoints.toLocaleString('pl-PL')} pkt
+              <span className="ml-auto flex shrink-0 items-center gap-2">
+                <span className="flex w-28 flex-col items-end text-right">
+                  <span className="font-medium text-app-textStrong">
+                    {pointsRequired.toLocaleString('pl-PL')} pkt
                   </span>
-                )}
+                  {missingPoints > 0 && (
+                    <span className="text-sm text-app-textMuted">
+                      Brakuje {missingPoints.toLocaleString('pl-PL')} pkt
+                    </span>
+                  )}
+                </span>
               </span>
             ) : (
-              <span className="ml-auto flex shrink-0 items-center gap-4">
-                <span aria-hidden="true" className="h-8 w-16" />
-                <span className="min-w-20 text-right text-app-textMuted">
+              <span className="ml-auto flex shrink-0 items-center gap-2">
+                {logos}
+                <span className="shrink-0 text-right text-app-textMuted">
                   {formatPrice(method.price)}
                 </span>
               </span>

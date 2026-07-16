@@ -20,7 +20,7 @@ const PROMO_DISCOUNTS: Record<string, number> = {
   SPORT10: 0.1,
 };
 
-const USER_LOYALTY_POINTS = 16_000;
+const USER_LOYALTY_POINTS = 7_200;
 
 const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
   firstName: 'Jan',
