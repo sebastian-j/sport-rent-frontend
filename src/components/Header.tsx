@@ -1,6 +1,6 @@
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
-import {Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User} from 'lucide-react';
+import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { healthCheck } from '../api/health.ts';
