@@ -1,4 +1,5 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { PRODUCTS } from '../../assets/products/products.ts';
 import type { SelectOption } from '../../components/core/Select.tsx';
@@ -154,68 +155,82 @@ export default function SearchPage() {
         </ContentPanel>
       </div>
 
-      {mobilePanel && (
-        <div className="fixed inset-0 z-[60] md:hidden">
-          <button
-            type="button"
-            aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
-            className="absolute inset-0 bg-app-surfaceStrong/60"
-            onClick={() => setMobilePanel(null)}
-          />
-          <ContentPanel
-            className="absolute inset-y-0 left-0 z-10 h-full w-[min(85vw,20rem)] items-stretch gap-6 overflow-y-auto rounded-none border-y-0 border-l-0 bg-app-surfaceElevated p-6 shadow-2xl"
+      <AnimatePresence>
+        {mobilePanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className="fixed inset-0 z-[60] md:hidden"
           >
-            <div className="flex items-center justify-between border-b border-app-borderSoft pb-4">
-              <h2 id="mobile-search-panel-title" className="text-xl font-semibold">
-                {mobilePanel === 'filters' ? 'Filtry' : 'Sortowanie'}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setMobilePanel(null)}
-                aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-app-text hover:bg-app-surfaceSoft"
-              >
-                <X size={22} aria-hidden="true" />
-              </button>
-            </div>
-
-            <div
-              id="mobile-search-panel"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="mobile-search-panel-title"
-              className="flex flex-col gap-6"
+            <button
+              type="button"
+              aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
+              className="absolute inset-0 bg-app-surfaceStrong/60"
+              onClick={() => setMobilePanel(null)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ duration: 0.14, ease: 'easeOut' }}
+              className="absolute inset-y-0 left-0 z-10 h-full w-[min(85vw,20rem)]"
             >
-              {mobilePanel === 'filters' ? (
-                <>
-                  <DualRangeSlider
-                    label="Cena"
-                    min={MIN_PRICE}
-                    max={MAX_PRICE}
-                    value={priceRange}
-                    onChange={setPriceRange}
-                    onChangeEnd={setAppliedPriceRange}
-                    formatValue={(value) => `${value} zł`}
-                  />
-                  <CategoryFilter
-                    facets={CATEGORY_FACETS}
-                    selectedCategorySlugs={selectedCategorySlugs}
-                    onSelectedCategorySlugsChange={setSelectedCategorySlugs}
-                  />
-                </>
-              ) : (
-                <SortToggles
-                  value={sortField}
-                  options={SORT_OPTIONS}
-                  direction={sortDirection}
-                  onValueChange={setSortField}
-                  onDirectionChange={setSortDirection}
-                />
-              )}
-            </div>
-          </ContentPanel>
-        </div>
-      )}
+              <ContentPanel className="h-full w-full items-stretch gap-6 overflow-y-auto rounded-none border-y-0 border-l-0 bg-app-surfaceElevated p-6 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-app-borderSoft pb-4">
+                  <h2 id="mobile-search-panel-title" className="text-xl font-semibold">
+                    {mobilePanel === 'filters' ? 'Filtry' : 'Sortowanie'}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setMobilePanel(null)}
+                    aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-app-text hover:bg-app-surfaceSoft"
+                  >
+                    <X size={22} aria-hidden="true" />
+                  </button>
+                </div>
+
+                <div
+                  id="mobile-search-panel"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="mobile-search-panel-title"
+                  className="flex flex-col gap-6"
+                >
+                  {mobilePanel === 'filters' ? (
+                    <>
+                      <DualRangeSlider
+                        label="Cena"
+                        min={MIN_PRICE}
+                        max={MAX_PRICE}
+                        value={priceRange}
+                        onChange={setPriceRange}
+                        onChangeEnd={setAppliedPriceRange}
+                        formatValue={(value) => `${value} zł`}
+                      />
+                      <CategoryFilter
+                        facets={CATEGORY_FACETS}
+                        selectedCategorySlugs={selectedCategorySlugs}
+                        onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+                      />
+                    </>
+                  ) : (
+                    <SortToggles
+                      value={sortField}
+                      options={SORT_OPTIONS}
+                      direction={sortDirection}
+                      onValueChange={setSortField}
+                      onDirectionChange={setSortDirection}
+                    />
+                  )}
+                </div>
+              </ContentPanel>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
