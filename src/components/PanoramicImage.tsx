@@ -7,12 +7,14 @@ type PanoramicImageProps = {
 
 export default function PanoramicImage({ image, title }: PanoramicImageProps) {
   return (
-    <div
-      className="w-full h-[50vh] bg-cover bg-center bg-no-repeat flex flex-col justify-center items-center gap-4"
-      style={{ backgroundImage: `url(${image})` }}
-    >
-      <p className="text-app-textInverted text-[7vh] font-bold ">{title}</p>
-      <div className="">
+    <div className="relative flex h-[50vh] w-full flex-col items-center justify-center gap-4 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:brightness-[0.85]"
+        style={{ backgroundImage: `url(${image})` }}
+      />
+      <p className="relative z-10 text-[7vh] font-bold text-app-textInverted">{title}</p>
+      <div className="relative z-10">
         <ButtonCore
           text="Rezerwuj teraz"
           onClick={() => {}}
