@@ -76,7 +76,9 @@ export default function LoginPage() {
           aria-busy={isLoggingIn}
           className="flex flex-col gap-4 w-[90%]"
         >
-          <label htmlFor="email" className="text-app-textStrong">Email</label>
+          <label htmlFor="email" className="text-app-textStrong">
+            Email
+          </label>
           <input
             name="email"
             id="email"
@@ -91,7 +93,9 @@ export default function LoginPage() {
             }`}
             onChange={handleChange}
           />
-          <label htmlFor="password" className="text-app-textStrong">Hasło</label>
+          <label htmlFor="password" className="text-app-textStrong">
+            Hasło
+          </label>
           <input
             name="password"
             id="password"
