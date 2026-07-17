@@ -1,3 +1,4 @@
+import ButtonCore from './core/ButtonCore.tsx';
 import { motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +17,7 @@ type CategoryCardProps = {
 };
 
 const SIZE_CLASSES: Record<CategoryCardProps['size'], string> = {
-  small: 'h-[16rem] w-1/2',
+  small: 'h-[16rem] w-full min-[961px]:w-1/2',
   medium: 'h-[16rem] w-full',
   large: 'h-[32rem] w-full',
 };
@@ -24,7 +25,7 @@ const SIZE_CLASSES: Record<CategoryCardProps['size'], string> = {
 const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
   small: 'w-1/3',
   medium: 'w-1/3',
-  large: 'w-1/2',
+  large: 'w-1/3 min-[961px]:w-1/2',
 };
 
 const TILT_BY_SIZE: Record<
@@ -81,12 +82,14 @@ export default function CategoryCard({
       </div>
       <div
         className={twMerge(
-          'flex flex-col justify-center px-4',
+          'flex min-w-0 flex-col justify-center px-3 min-[961px]:px-4',
           invertedText ? 'text-app-textInverted' : 'text-app-textNeutral'
         )}
       >
-        <p className="text-3xl font-semibold">{title}</p>
-        <p className="text-app-textNeutralSoft">{description}</p>
+        <p className="break-words text-xl font-semibold sm:text-2xl min-[961px]:text-3xl">
+          {title}
+        </p>
+        <p className="break-words text-app-textNeutralSoft">{description}</p>
       </div>
     </motion.div>
   );

@@ -35,7 +35,7 @@ export default function HomePage() {
         <PanoramicImage image={panoramicImage} title="Deski SUP" />
       </div>
 
-      <div className="flex flex-row">
+      <div className="flex flex-col min-[961px]:flex-row">
         <div className="flex flex-col w-full">
           <CategoryCard
             title={'Przyczepki rowerowe THULA'}
@@ -47,7 +47,7 @@ export default function HomePage() {
             className="bg-app-surface"
           />
 
-          <div className="flex flex-row">
+          <div className="flex flex-col min-[961px]:flex-row">
             <CategoryCard
               title="Wybierasz się na via ferraty"
               description="Nie musisz kupować wszystkiego - możesz wypożyczyć u nas!"
