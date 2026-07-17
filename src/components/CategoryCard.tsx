@@ -18,7 +18,7 @@ type CategoryCardProps = {
 const SIZE_CLASSES: Record<CategoryCardProps['size'], string> = {
   small: 'h-[16rem] w-full min-[961px]:w-1/2',
   medium: 'h-[16rem] w-full',
-  large: 'h-[32rem] w-full',
+  large: 'h-[16rem] w-full min-[961px]:h-[32rem]',
 };
 
 const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
