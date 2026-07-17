@@ -1,5 +1,6 @@
 import PanoramicImage from '../../components/PanoramicImage.tsx';
 import ProductCard from '../../features/product/ProductCard.tsx';
+import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import panoramicImage from '../../assets/panoramic_small.png';
 import { useState } from 'react';
@@ -81,7 +82,7 @@ export default function HomePage() {
       </div>
 
       <CategoryBar />
-      <div className="grid grid-cols-[repeat(auto-fit,256px)] gap-4 justify-center my-4 w-full">
+      <ProductCardGrid className="my-4">
         {PRODUCTS.map((product) => (
           <ProductCard
             key={product.id}
@@ -94,7 +95,7 @@ export default function HomePage() {
             onFavoriteToggle={() => toggleFavorite(product.id)}
           />
         ))}
-      </div>
+      </ProductCardGrid>
     </div>
   );
 }

@@ -35,8 +35,8 @@ export default function ProductCard({
       whileHover={hoverAnimation}
       transition={{ type: 'spring', stiffness: 280, damping: 24 }}
       style={{
-        width: PRODUCT_IMAGE_SIZE.width,
-        height: PRODUCT_IMAGE_SIZE.height + PRODUCT_CARD_CONTENT_HEIGHT,
+        width: '100%',
+        maxWidth: PRODUCT_CARD_WIDTH,
         ...cardStyle,
       }}
       className="relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] border-app-borderSoft bg-app-surfaceSoft hover:z-10"
@@ -68,7 +68,7 @@ export default function ProductCard({
 
       <div
         className="relative w-full shrink-0 overflow-hidden"
-        style={{ height: PRODUCT_IMAGE_SIZE.height }}
+        style={{ aspectRatio: `${PRODUCT_IMAGE_SIZE.width} / ${PRODUCT_IMAGE_SIZE.height}` }}
       >
         <motion.img
           src={image}
@@ -79,7 +79,10 @@ export default function ProductCard({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1 bg-gradient-to-b from-transparent via-app-surface via-70% to-app-surface" />
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col bg-app-surface px-4 py-3">
+      <div
+        className="flex shrink-0 flex-col bg-app-surface px-4 py-3"
+        style={{ height: PRODUCT_CARD_CONTENT_HEIGHT }}
+      >
         <p className="line-clamp-2 min-h-12 text-center font-medium">{name}</p>
         <p className="mt-auto text-center text-xl font-bold">{price} zł / doba</p>
       </div>
