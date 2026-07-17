@@ -2,7 +2,9 @@ import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCardTilt } from '../../components/core/useCardTilt.ts';
 
-const PRODUCT_IMAGE_SIZE = { width: 256, height: 224 } as const;
+export const PRODUCT_CARD_WIDTH = 256;
+
+const PRODUCT_IMAGE_SIZE = { width: PRODUCT_CARD_WIDTH, height: 224 } as const;
 const PRODUCT_CARD_CONTENT_HEIGHT = 120;
 
 type ProductCardProps = {

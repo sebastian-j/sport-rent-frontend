@@ -81,7 +81,7 @@ export default function HomePage() {
       </div>
 
       <CategoryBar />
-      <div className="flex flex-row gap-4 flex-wrap items-center justify-evenly my-4 w-full">
+      <div className="grid grid-cols-[repeat(auto-fit,256px)] gap-4 justify-center my-4 w-full">
         {PRODUCTS.map((product) => (
           <ProductCard
             key={product.id}
