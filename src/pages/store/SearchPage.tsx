@@ -1,3 +1,4 @@
+import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { PRODUCTS } from '../../assets/products/products.ts';
 import type { SelectOption } from '../../components/core/Select.tsx';
@@ -62,6 +63,7 @@ export default function SearchPage() {
   });
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
+  const [mobilePanel, setMobilePanel] = useState<'filters' | 'sorting' | null>(null);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>
@@ -71,9 +73,26 @@ export default function SearchPage() {
     );
   }, [appliedMinPrice, appliedMaxPrice]);
 
+  useEffect(() => {
+    if (!mobilePanel) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobilePanel(null);
+    };
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mobilePanel]);
+
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-row gap-8 p-8">
-      <ContentPanel className="sticky top-32 h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start overflow-y-auto gap-6">
+    <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 md:gap-8 md:p-8">
+      <ContentPanel className="sticky top-32 hidden h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start gap-6 overflow-y-auto md:flex">
         <DualRangeSlider
           label="Cena"
           min={MIN_PRICE}
@@ -90,22 +109,113 @@ export default function SearchPage() {
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col">
-        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between self-start p-2">
-          <SortToggles
-            value={sortField}
-            options={SORT_OPTIONS}
-            direction={sortDirection}
-            onValueChange={setSortField}
-            onDirectionChange={setSortDirection}
-          />
+        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobilePanel('filters')}
+              aria-label="Otwórz filtry"
+              aria-expanded={mobilePanel === 'filters'}
+              aria-controls="mobile-search-panel"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted md:hidden"
+            >
+              <Funnel size={20} aria-hidden="true" />
+            </button>
 
-          <PageSelector
-            pageNumber={pageNumber}
-            totalPages={TOTAL_PAGES}
-            onPageChange={setPageNumber}
-          />
+            <button
+              type="button"
+              onClick={() => setMobilePanel('sorting')}
+              aria-label="Otwórz sortowanie"
+              aria-expanded={mobilePanel === 'sorting'}
+              aria-controls="mobile-search-panel"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted min-[480px]:hidden"
+            >
+              <ArrowUpDown size={20} aria-hidden="true" />
+            </button>
+
+            <div className="hidden min-[480px]:block">
+              <SortToggles
+                value={sortField}
+                options={SORT_OPTIONS}
+                direction={sortDirection}
+                onValueChange={setSortField}
+                onDirectionChange={setSortDirection}
+              />
+            </div>
+          </div>
+
+          <div className="shrink-0">
+            <PageSelector
+              pageNumber={pageNumber}
+              totalPages={TOTAL_PAGES}
+              onPageChange={setPageNumber}
+            />
+          </div>
         </ContentPanel>
       </div>
+
+      {mobilePanel && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <button
+            type="button"
+            aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
+            className="absolute inset-0 bg-app-surfaceStrong/60"
+            onClick={() => setMobilePanel(null)}
+          />
+          <ContentPanel
+            className="absolute inset-y-0 left-0 z-10 h-full w-[min(85vw,20rem)] items-stretch gap-6 overflow-y-auto rounded-none border-y-0 border-l-0 bg-app-surfaceElevated p-6 shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b border-app-borderSoft pb-4">
+              <h2 id="mobile-search-panel-title" className="text-xl font-semibold">
+                {mobilePanel === 'filters' ? 'Filtry' : 'Sortowanie'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setMobilePanel(null)}
+                aria-label={`Zamknij ${mobilePanel === 'filters' ? 'filtry' : 'sortowanie'}`}
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-app-text hover:bg-app-surfaceSoft"
+              >
+                <X size={22} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div
+              id="mobile-search-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mobile-search-panel-title"
+              className="flex flex-col gap-6"
+            >
+              {mobilePanel === 'filters' ? (
+                <>
+                  <DualRangeSlider
+                    label="Cena"
+                    min={MIN_PRICE}
+                    max={MAX_PRICE}
+                    value={priceRange}
+                    onChange={setPriceRange}
+                    onChangeEnd={setAppliedPriceRange}
+                    formatValue={(value) => `${value} zł`}
+                  />
+                  <CategoryFilter
+                    facets={CATEGORY_FACETS}
+                    selectedCategorySlugs={selectedCategorySlugs}
+                    onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+                  />
+                </>
+              ) : (
+                <SortToggles
+                  value={sortField}
+                  options={SORT_OPTIONS}
+                  direction={sortDirection}
+                  onValueChange={setSortField}
+                  onDirectionChange={setSortDirection}
+                />
+              )}
+            </div>
+          </ContentPanel>
+        </div>
+      )}
     </div>
   );
 }
