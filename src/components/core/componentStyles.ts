@@ -8,7 +8,7 @@ export const componentStyles = {
   },
 
   button: {
-    base: 'rounded-lg',
+    base: 'rounded-lg min-w-24 min-h-8',
     tone: {
       default: 'bg-app-surfaceStrong text-app-textInverted',
       inversed: 'bg-app-surface text-app-text',
