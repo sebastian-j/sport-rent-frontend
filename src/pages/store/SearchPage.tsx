@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { PRODUCTS } from '../assets/products/products.ts';
-import type { SelectOption } from '../components/core/Select.tsx';
-import ContentPanel from '../components/core/ContentPanel.tsx';
-import DualRangeSlider from '../components/core/DualRangeSlider.tsx';
-import PageSelector from '../components/core/PageSelector.tsx';
-import SortToggles from '../components/core/SortToggles.tsx';
-import CategoryFilter, { type CategoryFacets } from '../features/search/CategoryFilter.tsx';
-import { toCategorySlug } from '../features/search/categoryUtils.ts';
-import { useProductSearchParams } from '../features/search/useProductSearchParams.ts';
+import { PRODUCTS } from '../../assets/products/products.ts';
+import type { SelectOption } from '../../components/core/Select.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
+import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
+import PageSelector from '../../components/core/PageSelector.tsx';
+import SortToggles from '../../components/core/SortToggles.tsx';
+import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
+import { toCategorySlug } from '../../features/search/categoryUtils.ts';
+import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
 
 const TOTAL_PAGES = 10;
 const MIN_PRICE = 0;
@@ -90,7 +90,7 @@ export default function SearchPage() {
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col">
-        <ContentPanel className="sticky top-32 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between self-start p-2">
+        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between self-start p-2">
           <SortToggles
             value={sortField}
             options={SORT_OPTIONS}

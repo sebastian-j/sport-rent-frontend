@@ -129,19 +129,18 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       </div>
 
       {showCategoryBar && (
-          <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
-            {CATEGORIES.map((item) => (
-                <Link
-                    key={item}
-                    to={getCategorySearchPath(toCategorySlug(item))}
-                    className="hover:underline"
-                >
-                  {item}
-                </Link>
-            ))}
-          </div>
+        <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
+          {CATEGORIES.map((item) => (
+            <Link
+              key={item}
+              to={getCategorySearchPath(toCategorySlug(item))}
+              className="hover:underline"
+            >
+              {item}
+            </Link>
+          ))}
+        </div>
       )}
-
     </header>
   );
 }
