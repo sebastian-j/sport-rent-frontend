@@ -45,7 +45,7 @@ const CATEGORY_CARDS = {
   tents: {
     title: 'Namioty THULE',
     description:
-      'Wypożysz namiot dachowy THULE. Zapewniamy pomoc w montażu. Skontaktuj się z nami, aby poznać szczególły i dopasować  namiot do Twojego samochodu.',
+      'Wypożycz namiot dachowy THULE. Zapewniamy pomoc w montażu. Skontaktuj się z nami, aby poznać szczegóły i dopasować namiot do Twojego samochodu.',
     categorySlug: 'namioty',
     image: namiotyImage,
     imagePosition: 'right',
