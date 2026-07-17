@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { healthCheck } from '../api/health.ts';
 import SearchBar from './SearchBar.tsx';
+import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 
 const CATEGORIES = [
@@ -148,7 +149,13 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       {showCategoryBar && (
         <div className="flex h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted">
           {CATEGORIES.map((item) => (
-            <p key={item}>{item}</p>
+            <Link
+              key={item}
+              to={getCategorySearchPath(toCategorySlug(item))}
+              className="hover:underline"
+            >
+              {item}
+            </Link>
           ))}
         </div>
       )}

@@ -1,5 +1,6 @@
 import { Minus, Trash2, X } from 'lucide-react';
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
+import Select from '../../components/core/Select.tsx';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
 import type { Ref } from 'react';
@@ -52,21 +53,16 @@ export default function ProductRentalDate({
       />
 
       {productSizes && productSizes.length > 0 && (
-        <select
+        <Select
           value={date.size ?? ''}
-          onChange={(event) => onSizeChange(event.currentTarget.value)}
-          aria-label={`Rozmiar: ${productName}`}
-          className="h-12 w-20 rounded-xl bg-app-surface px-2 text-center text-2xl text-app-text outline-none"
-        >
-          <option value="" disabled>
-            --
-          </option>
-          {productSizes.map((sizeOption) => (
-            <option key={sizeOption.size} value={sizeOption.size}>
-              {sizeOption.size}
-            </option>
-          ))}
-        </select>
+          onChange={onSizeChange}
+          ariaLabel={`Rozmiar: ${productName}`}
+          placeholder="--"
+          options={productSizes.map((sizeOption) => ({
+            value: sizeOption.size,
+            label: sizeOption.size,
+          }))}
+        />
       )}
 
       <X />

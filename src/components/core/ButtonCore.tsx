@@ -1,23 +1,37 @@
 import { motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
 import { componentStyles } from './componentStyles.ts';
+import type { ReactNode } from 'react';
 
 type ButtonProps = {
-  text: string;
+  text?: string;
+  children?: ReactNode;
   onClick?: () => void;
   inverted?: boolean;
+  disabled?: boolean;
+  ariaLabel?: string;
   className?: string;
 };
 
-export default function ButtonCore({ text, onClick, inverted, className = '' }: ButtonProps) {
+export default function ButtonCore({
+  text,
+  children,
+  onClick,
+  inverted,
+  disabled,
+  ariaLabel,
+  className = '',
+}: ButtonProps) {
   const tone = inverted ? 'inversed' : 'default';
 
   return (
     <motion.button
       type="button"
       onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      whileHover={disabled ? undefined : { scale: 1.02 }}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 250, damping: 20 }}
       className={twMerge(
         'select-none',
@@ -26,7 +40,7 @@ export default function ButtonCore({ text, onClick, inverted, className = '' }: 
         className
       )}
     >
-      {text}
+      {children ?? text}
     </motion.button>
   );
 }
