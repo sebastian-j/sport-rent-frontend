@@ -48,17 +48,17 @@ export default function RegisterPage() {
 
   return (
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-text">Zarejestruj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-surfaceElevated p-8">
+      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Zarejestruj się</h1>
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
         <form className="flex flex-col gap-4 w-[90%]">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-app-textStrong">Email</label>
           <input
             name="email"
             type="email"
             className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
             onChange={handleChange}
           />
-          <label htmlFor="password">Hasło</label>
+          <label htmlFor="password" className="text-app-textStrong">Hasło</label>
           <input
             name="password"
             type="password"
@@ -66,7 +66,7 @@ export default function RegisterPage() {
             id="password1"
             onChange={handleChange}
           />
-          <label htmlFor="confirmPassword">Powtórz hasło</label>
+          <label htmlFor="confirmPassword" className="text-app-textStrong">Powtórz hasło</label>
           <input
             name="confirmPassword"
             type="password"
@@ -75,9 +75,9 @@ export default function RegisterPage() {
             onChange={handleChange}
           />
 
-          <p className="text-lg font-semibold"> Adres </p>
+          <p className="text-lg font-semibold text-app-textStrong"> Adres </p>
 
-          <label htmlFor="country">Państwo</label>
+          <label htmlFor="country" className="text-app-textStrong">Państwo</label>
           <input
             name="country"
             type="text"
@@ -85,7 +85,7 @@ export default function RegisterPage() {
             id="country"
             onChange={handleChange}
           />
-          <label htmlFor="city">Miasto</label>
+          <label htmlFor="city" className="text-app-textStrong">Miasto</label>
           <input
             name="city"
             type="text"
@@ -93,7 +93,7 @@ export default function RegisterPage() {
             id="city"
             onChange={handleChange}
           />
-          <label htmlFor="addressLine1">Adres - pierwsza linia</label>
+          <label htmlFor="addressLine1" className="text-app-textStrong">Adres - pierwsza linia</label>
           <input
             name="addressLine1"
             type="text"
@@ -101,7 +101,7 @@ export default function RegisterPage() {
             id="addressLine1"
             onChange={handleChange}
           />
-          <label htmlFor="addressLine2">Adres - druga linia</label>
+          <label htmlFor="addressLine2" className="text-app-textStrong">Adres - druga linia</label>
           <input
             name="addressLine2"
             type="text"
@@ -109,7 +109,7 @@ export default function RegisterPage() {
             id="addressLine2"
             onChange={handleChange}
           />
-          <label htmlFor="postalCode">Kod pocztowy</label>
+          <label htmlFor="postalCode" className="text-app-textStrong">Kod pocztowy</label>
           <input
             name="postalCode"
             type="text"
@@ -117,7 +117,7 @@ export default function RegisterPage() {
             id="postalCode"
             onChange={handleChange}
           />
-          <label htmlFor="consent" className="flex flex-row justify-between">
+          <label htmlFor="consent" className="flex flex-row justify-between text-app-textStrong">
             <p>Zgoda na przetwarzanie danych osobowych</p>
             <input
               type="checkbox"
@@ -138,7 +138,7 @@ export default function RegisterPage() {
         <Link
           to="/privacy-policy"
           target="_blank"
-          className="text-[0.7vw] text-app-textNeutral underline"
+          className="text-[0.7vw] text-app-textMuted underline"
         >
           Polityka prywatności
         </Link>

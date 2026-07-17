@@ -1,8 +1,8 @@
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { type SubmitEvent, useState } from 'react';
-import { login } from '../api/auth.ts';
-import { ApiError } from '../api/client.ts';
+import { login } from '../../api/auth.ts';
+import { ApiError } from '../../api/client.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -69,14 +69,14 @@ export default function LoginPage() {
 
   return (
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-text">Zaloguj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-border bg-app-panel p-8">
+      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Zaloguj się</h1>
+      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
         <form
           onSubmit={handleLogin}
           aria-busy={isLoggingIn}
           className="flex flex-col gap-4 w-[90%]"
         >
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-app-textStrong">Email</label>
           <input
             name="email"
             id="email"
@@ -86,12 +86,12 @@ export default function LoginPage() {
             autoComplete="email"
             aria-invalid={hasInvalidCredentials}
             aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-3 outline-none border-app-borderSoft bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
-              hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
+            className={`rounded-lg border p-3 outline-none bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
+              hasInvalidCredentials ? 'border-app-danger' : 'border-app-borderSoft'
             }`}
             onChange={handleChange}
           />
-          <label htmlFor="password">Hasło</label>
+          <label htmlFor="password" className="text-app-textStrong">Hasło</label>
           <input
             name="password"
             id="password"
@@ -100,8 +100,8 @@ export default function LoginPage() {
             autoComplete="current-password"
             aria-invalid={hasInvalidCredentials}
             aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-3 outline-none border-app-borderSoft bg-app-surface text-app-text focus:ring-1 focus:ring-app-border${
-              hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
+            className={`rounded-lg border p-3 outline-none bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
+              hasInvalidCredentials ? 'border-app-danger' : 'border-app-borderSoft'
             }`}
             onChange={handleChange}
           />
@@ -126,7 +126,7 @@ export default function LoginPage() {
         </form>
 
         <div className="w-[90%] text-left my-3">
-          <Link to="/forgot-password" className="text-app-textNeutral underline">
+          <Link to="/forgot-password" className="text-app-textStrong underline">
             Zapomniałeś hasła?
           </Link>
         </div>
@@ -138,16 +138,16 @@ export default function LoginPage() {
         />
 
         <div className="w-[90%] text-left my-3">
-          <p>
+          <p className="text-app-textMuted">
             Nie masz konta?{' '}
-            <Link to="/register" className="text-app-textNeutral underline">
+            <Link to="/register" className="text-app-textStrong underline">
               Zarejestruj się
             </Link>
           </p>
         </div>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textNeutral underline">
+        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>
