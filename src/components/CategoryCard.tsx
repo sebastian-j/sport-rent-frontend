@@ -1,13 +1,14 @@
-import ButtonCore from './core/ButtonCore.tsx';
 import { motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
+import { useNavigate } from 'react-router-dom';
+import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
 import { useCardTilt } from './core/useCardTilt.ts';
 
 type CategoryCardProps = {
   title: string;
   description: string;
+  categorySlug: string;
   image: string;
-  onClick?: () => void;
   imagePosition: 'left' | 'right';
   size: 'small' | 'medium' | 'large';
   invertedText?: boolean;
@@ -42,13 +43,14 @@ const TILT_BY_SIZE: Record<
 export default function CategoryCard({
   title,
   description,
+  categorySlug,
   image,
-  onClick,
   imagePosition,
   size,
   invertedText,
   className,
 }: CategoryCardProps) {
+  const navigate = useNavigate();
   const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt(
     TILT_BY_SIZE[size]
   );
@@ -67,7 +69,7 @@ export default function CategoryCard({
         `relative flex cursor-pointer select-none bg-app-surface hover:z-10 ${sizeClasses} ${flexRow}`,
         className
       )}
-      onClick={onClick}
+      onClick={() => navigate(getCategorySearchPath(categorySlug))}
     >
       <div className={`${imageWidthClasses} h-full shrink-0 overflow-hidden`}>
         <motion.img
@@ -85,13 +87,6 @@ export default function CategoryCard({
       >
         <p className="text-3xl font-semibold">{title}</p>
         <p className="text-app-textNeutralSoft">{description}</p>
-        {onClick && (
-          <ButtonCore
-            text="Rezerwuj teraz"
-            onClick={onClick}
-            className="px-8 py-4 mt-4 self-center"
-          />
-        )}
       </div>
     </motion.div>
   );

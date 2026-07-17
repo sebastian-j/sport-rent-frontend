@@ -1,14 +1,14 @@
-import PanoramicImage from '../components/PanoramicImage';
-import ProductCard from '../features/product/ProductCard.tsx';
-import CategoryBar from '../components/CategoryBar';
-import panoramicImage from '../assets/panoramic_small.png';
+import PanoramicImage from '../../components/PanoramicImage.tsx';
+import ProductCard from '../../features/product/ProductCard.tsx';
+import CategoryBar from '../../components/CategoryBar.tsx';
+import panoramicImage from '../../assets/panoramic_small.png';
 import { useState } from 'react';
-import { PRODUCTS } from '../assets/products/products.ts';
-import CategoryCard from '../components/CategoryCard.tsx';
-import ferratyImage from '../assets/categories/ferraty.png';
-import namiotyImage from '../assets/categories/namioty.png';
-import przyczepkiImage from '../assets/categories/przyczepki.png';
-import roweryImage from '../assets/categories/rowery.png';
+import { PRODUCTS } from '../../assets/products/products.ts';
+import CategoryCard from '../../components/CategoryCard.tsx';
+import ferratyImage from '../../assets/categories/ferraty.png';
+import namiotyImage from '../../assets/categories/namioty.png';
+import przyczepkiImage from '../../assets/categories/przyczepki.png';
+import roweryImage from '../../assets/categories/rowery.png';
 import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
@@ -40,6 +40,7 @@ export default function HomePage() {
           <CategoryCard
             title={'Przyczepki rowerowe THULA'}
             description="U nas wypożyczysz najnowsze modele przyczepek rowerowych renomowanej marki THULE"
+            categorySlug="przyczepki-rowerowe"
             image={przyczepkiImage}
             imagePosition="left"
             size="medium"
@@ -50,6 +51,7 @@ export default function HomePage() {
             <CategoryCard
               title="Wybierasz się na via ferraty"
               description="Nie musisz kupować wszystkiego - możesz wypożyczyć u nas!"
+              categorySlug="via-ferraty-i-wspinanie"
               image={ferratyImage}
               imagePosition="left"
               size="small"
@@ -58,6 +60,7 @@ export default function HomePage() {
             <CategoryCard
               title="Rowery TREK GRAVEL"
               description="Rowery typu gravel, sakwy rowerowe, namioty na rowerowe wyprawy."
+              categorySlug="rowery-i-akcesoria"
               image={roweryImage}
               imagePosition="left"
               size="small"
@@ -69,16 +72,16 @@ export default function HomePage() {
         <CategoryCard
           title="Namioty THULE"
           description="Wypożysz namiot dachowy THULE. Zapewniamy pomoc w montażu. Skontaktuj się z nami, aby poznać szczególły i dopasować  namiot do Twojego samochodu."
+          categorySlug="namioty"
           image={namiotyImage}
           imagePosition="right"
           size="large"
-          onClick={() => {}}
           className="bg-app-surfaceNeutral"
         />
       </div>
 
       <CategoryBar />
-      <div className="flex flex-row gap-4 flex-wrap items-center justify-evenly my-4 w-full">
+      <div className="grid grid-cols-[repeat(auto-fit,256px)] gap-4 justify-center my-4 w-full">
         {PRODUCTS.map((product) => (
           <ProductCard
             key={product.id}

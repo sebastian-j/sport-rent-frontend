@@ -1,11 +1,13 @@
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PRODUCTS } from '../assets/products/products.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
 
 export default function SearchBar() {
-  const [searchValue, setSearchValue] = useState('');
+  const location = useLocation();
+  const queryFromUrl = new URLSearchParams(location.search).get('q') ?? '';
+  const [searchValue, setSearchValue] = useState(queryFromUrl);
   const [isOpen, setIsOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -13,6 +15,10 @@ export default function SearchBar() {
   const matchingProducts = normalizedSearchValue
     ? PRODUCTS.filter((product) => product.name.toLocaleLowerCase().includes(normalizedSearchValue))
     : [];
+
+  useEffect(() => {
+    setSearchValue(queryFromUrl);
+  }, [queryFromUrl]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -42,7 +48,14 @@ export default function SearchBar() {
     const query = searchValue.trim();
     if (!query) return;
 
-    navigate(`/search?${new URLSearchParams({ q: query }).toString()}`);
+    navigate(
+      `/search?${new URLSearchParams({
+        q: query,
+        page: '1',
+        sort: 'name',
+        order: 'asc',
+      }).toString()}`
+    );
     setIsOpen(false);
   };
 

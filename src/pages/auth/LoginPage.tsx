@@ -1,4 +1,4 @@
-import ButtonCore from '../components/core/ButtonCore.tsx';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { type SubmitEvent, useState } from 'react';
 import { login } from '../api/auth.ts';
@@ -86,7 +86,7 @@ export default function LoginPage() {
             autoComplete="email"
             aria-invalid={hasInvalidCredentials}
             aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-2 outline-none ${
+            className={`rounded-lg border p-3 outline-none border-app-borderSoft bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
               hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
             }`}
             onChange={handleChange}
@@ -100,7 +100,7 @@ export default function LoginPage() {
             autoComplete="current-password"
             aria-invalid={hasInvalidCredentials}
             aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-2 outline-none ${
+            className={`rounded-lg border p-3 outline-none border-app-borderSoft bg-app-surface text-app-text focus:ring-1 focus:ring-app-border${
               hasInvalidCredentials ? 'border-app-danger' : 'border-transparent'
             }`}
             onChange={handleChange}

@@ -13,9 +13,9 @@ type SettingsCardProps = {
 
 function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: SettingsCardProps) {
   return (
-    <div className="bg-white">
+    <div className="bg-app-surfaceElevated">
       <div
-        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-app-surface select-none"
+        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-app-surfaceSoft/50 select-none"
         onClick={onToggle}
       >
         <div>
@@ -137,9 +137,9 @@ export default function AccountSection() {
 
   return (
     <div className="flex flex-col items-center w-full pt-12 text-app-text">
-      <p className="text-center text-5xl">Ustawienia konta</p>
+      <h2 className="text-5xl text-center">Ustawienia konta</h2>
 
-      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft">
+      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft">
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
@@ -153,7 +153,7 @@ export default function AccountSection() {
                 name="firstName"
                 value={tempUserData.firstName}
                 onChange={(e) => setTempUserData({ ...tempUserData, firstName: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 placeholder="Imię"
                 required
               />
@@ -162,7 +162,7 @@ export default function AccountSection() {
                 name="lastName"
                 value={tempUserData.lastName}
                 onChange={(e) => setTempUserData({ ...tempUserData, lastName: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 placeholder="Nazwisko"
                 required
               />
@@ -171,7 +171,7 @@ export default function AccountSection() {
                 name="country"
                 value={tempUserData.country}
                 onChange={(e) => setTempUserData({ ...tempUserData, country: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 placeholder="Państwo"
                 required
               />
@@ -180,7 +180,7 @@ export default function AccountSection() {
                 name="city"
                 value={tempUserData.city}
                 onChange={(e) => setTempUserData({ ...tempUserData, city: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 placeholder="Miasto"
                 required
               />
@@ -189,7 +189,7 @@ export default function AccountSection() {
                 name="addressLine1"
                 value={tempUserData.addressLine1}
                 onChange={(e) => setTempUserData({ ...tempUserData, addressLine1: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong col-span-full"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border col-span-full"
                 placeholder="Adres - pierwsza linia"
                 required
               />
@@ -198,7 +198,7 @@ export default function AccountSection() {
                 name="addressLine2"
                 value={tempUserData.addressLine2}
                 onChange={(e) => setTempUserData({ ...tempUserData, addressLine2: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong col-span-full"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border col-span-full"
                 placeholder="Adres - druga linia (opcjonalne)"
               />
               <input
@@ -206,7 +206,7 @@ export default function AccountSection() {
                 name="postalCode"
                 value={tempUserData.postalCode}
                 onChange={(e) => setTempUserData({ ...tempUserData, postalCode: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 placeholder="Kod pocztowy"
                 required
               />
@@ -214,14 +214,14 @@ export default function AccountSection() {
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
               >
                 Zapisz
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
               >
                 Anuluj
               </button>
@@ -242,7 +242,7 @@ export default function AccountSection() {
                 value={emailForm.newEmail}
                 onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
                 placeholder="Nowy adres e-mail"
-                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 required
               />
               <input
@@ -250,21 +250,21 @@ export default function AccountSection() {
                 value={emailForm.password}
                 onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
                 placeholder="Aktualne hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 required
               />
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
               >
                 Zmień
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
               >
                 Anuluj
               </button>
@@ -285,7 +285,7 @@ export default function AccountSection() {
                 value={passwordForm.current}
                 onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
                 placeholder="Obecne hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 required
               />
               <input
@@ -293,7 +293,7 @@ export default function AccountSection() {
                 value={passwordForm.new}
                 onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
                 placeholder="Nowe hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 required
               />
               <input
@@ -301,21 +301,21 @@ export default function AccountSection() {
                 value={passwordForm.confirm}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
                 placeholder="Powtórz nowe hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft outline-none focus:ring-1 focus:ring-app-surfaceStrong"
+                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
                 required
               />
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-text-app-text"
+                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
               >
                 Zaktualizuj
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceSoft"
+                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
               >
                 Anuluj
               </button>
@@ -323,10 +323,10 @@ export default function AccountSection() {
           </form>
         </SettingsCard>
 
-        <div className="flex items-center justify-between p-6 bg-white select-none">
+        <div className="flex items-center justify-between p-6 bg-app-surfaceElevated select-none">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
-            <p className="mt-1 text-sm text-text-app-textMuted">Otrzymuj informacje o promocjach</p>
+            <p className="mt-1 text-sm text-app-textMuted">Otrzymuj informacje o promocjach</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -335,7 +335,7 @@ export default function AccountSection() {
               checked={newsletter}
               onChange={() => setNewsletter(!newsletter)}
             />
-            <div className="w-11 h-6 bg-app-borderSoft rounded-full peer peer-checked:bg-app-surfaceStrong transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+            <div className="w-11 h-6 bg-app-borderSoft rounded-full peer peer-checked:bg-app-text transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-app-surfaceElevated after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
           </label>
         </div>
       </div>

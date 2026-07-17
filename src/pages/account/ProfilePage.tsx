@@ -1,10 +1,10 @@
-import ProfileCard from '../features/profile/ProfileCard.tsx';
+import ProfileCard from '../../features/profile/ProfileCard.tsx';
 import { Gem, ShoppingBag, User } from 'lucide-react';
 import { type ComponentType, useState } from 'react';
-import AccountSection from '../features/profile/AccountSection.tsx';
-import LoyaltySection from '../features/profile/LoyaltySection.tsx';
-import OrdersSection from '../features/profile/OrdersSection.tsx';
-import ContentPanel from '../components/core/ContentPanel.tsx';
+import AccountSection from '../../features/profile/AccountSection.tsx';
+import LoyaltySection from '../../features/profile/LoyaltySection.tsx';
+import OrdersSection from '../../features/profile/OrdersSection.tsx';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 type ProfileSection = 'account' | 'loyalty' | 'orders';
 

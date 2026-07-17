@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
-import ProductGallery from '../features/product/ProductGallery';
-import AddToCart from '../features/product/AddToCart';
+import ProductGallery from '../../features/product/ProductGallery.tsx';
+import AddToCart from '../../features/product/AddToCart.tsx';
 import { useState } from 'react';
-import { getProductBySlug } from '../assets/products/products.ts';
+import { getProductBySlug } from '../../assets/products/products.ts';
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -45,7 +45,7 @@ export default function ProductPage() {
                   key={index}
                   className={
                     selectedSize === sizeOption.size
-                      ? 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border bg-app-surfaceStrongNeutral p-4 text-app-textInverted'
+                      ? 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-text bg-app-text p-4 text-app-surface'
                       : 'flex h-[5vw] w-[5vw] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-app-border p-4 text-app-text hover:bg-app-surfaceSoft'
                   }
                   onClick={() => handleSizeClick(sizeOption.size)}

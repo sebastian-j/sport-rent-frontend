@@ -2,11 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+  --app-surface: 243 246 249;
+  --app-surface-elevated: 255 255 255;
+  --app-surface-soft: 228 234 240;
+  --app-surface-neutral: 245 245 245;
+  --app-surface-strong: 16 38 64;
+  --app-surface-strong-neutral: 38 38 38;
+  --app-cart-card: 83 104 128;
+  --app-cart-card-inner: 25 53 86;
+  --app-text: 25 53 86;
+  --app-text-muted: 83 104 128;
+  --app-text-strong: 16 38 64;
+  --app-text-neutral: 0 0 0;
+  --app-text-neutral-soft: 82 82 82;
+  --app-text-inverted: 255 255 255;
+  --app-text-inverted-muted: 212 212 212;
+  --app-border: 25 53 86;
+  --app-border-soft: 197 204 213;
+  --app-danger: 220 38 38;
+  --app-danger-soft: 254 202 202;
+  --app-success: 22 163 74;
+}
+
+html.dark {
+  color-scheme: dark;
+  --app-surface: 14 20 27;
+  --app-surface-elevated: 40 54 68;
+  --app-surface-soft: 27 38 49;
+  --app-surface-neutral: 24 24 24;
+  --app-surface-strong: 16 38 64;
+  --app-surface-strong-neutral: 38 38 38;
+  --app-cart-card: 52 65 80;
+  --app-cart-card-inner: 21 44 71;
+  --app-text: 184 207 234;
+  --app-text-muted: 153 170 189;
+  --app-text-strong: 214 228 245;
+  --app-text-neutral: 238 238 238;
+  --app-text-neutral-soft: 173 173 173;
+  --app-text-inverted: 255 255 255;
+  --app-text-inverted-muted: 212 212 212;
+  --app-border: 89 143 207;
+  --app-border-soft: 54 62 74;
+  --app-danger: 230 101 101;
+  --app-danger-soft: 90 2 2;
+  --app-success: 66 230 126;
+}
+
 html {
   overflow-y: scroll;
+}
+
+body {
+  @apply bg-app-surface text-app-text;
 }
 
 img {
   user-select: none;
   -webkit-user-drag: none;
+}
+
+html.dark img {
+  filter: brightness(0.85);
 }

@@ -8,10 +8,10 @@ export const componentStyles = {
   },
 
   button: {
-    base: 'rounded-lg',
+    base: 'rounded-lg min-w-4 min-h-4',
     tone: {
-      default: 'bg-app-surfaceStrongNeutral text-app-textInverted',
-      inversed: 'bg-app-surfaceNeutral text-app-text',
+      default: 'bg-app-surfaceStrong text-app-textInverted',
+      inversed: 'bg-app-surface text-app-text',
     },
   },
 } as const;
