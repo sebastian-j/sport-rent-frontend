@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import roofTentIcon from '../assets/categories/roof-tent.svg';
 import hitchTentIcon from '../assets/categories/hitch-tent.svg';
 import snowSledIcon from '../assets/categories/snow-sled.svg';
@@ -34,36 +36,101 @@ const CATEGORIES = [
   { name: 'Kajaki', icon: kayakIcon },
 ];
 
+const SCROLL_SPEED_PX_PER_SECOND = 24;
+
 export default function CategoryBar() {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const categoryGroupRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const [dimensions, setDimensions] = useState({ contentWidth: 0, viewportWidth: 0 });
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const categoryGroup = categoryGroupRef.current;
+
+    if (!viewport || !categoryGroup) return;
+
+    const updateDimensions = () => {
+      const contentWidth = Array.from(categoryGroup.children).reduce(
+        (width, category) => width + category.getBoundingClientRect().width,
+        0
+      );
+
+      setDimensions({
+        contentWidth,
+        viewportWidth: viewport.getBoundingClientRect().width,
+      });
+    };
+
+    updateDimensions();
+
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(viewport);
+    Array.from(categoryGroup.children).forEach((category) => resizeObserver.observe(category));
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const isOverflowing = dimensions.contentWidth > dimensions.viewportWidth + 1;
+  const shouldAnimate = isOverflowing && !prefersReducedMotion;
+  const groupWidth = isOverflowing ? dimensions.contentWidth : dimensions.viewportWidth;
+  const duration = groupWidth / SCROLL_SPEED_PX_PER_SECOND;
+
+  const categoryGroupClassName = `flex h-[68px] shrink-0 items-start min-[961px]:h-[82px] ${
+    isOverflowing ? 'justify-center' : 'justify-between'
+  }`;
+  const categoryGroupStyle = { width: groupWidth || '100%' };
+  const categoryItems = CATEGORIES.map((category) => (
+    <div
+      key={category.name}
+      className="group flex w-16 shrink-0 cursor-pointer flex-col items-center gap-2 min-[961px]:w-[75px] min-[961px]:gap-3"
+    >
+      <span
+        aria-hidden="true"
+        className="h-8 w-8 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110 min-[961px]:h-10 min-[961px]:w-10"
+        style={{
+          WebkitMaskImage: `url(${category.icon})`,
+          maskImage: `url(${category.icon})`,
+          WebkitMaskPosition: 'center',
+          maskPosition: 'center',
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskSize: 'contain',
+          maskSize: 'contain',
+        }}
+      />
+      <span className="line-clamp-2 px-1 text-center text-[11px] font-medium leading-[14px] min-[961px]:px-2 min-[961px]:text-[12px] min-[961px]:leading-tight">
+        {category.name}
+      </span>
+    </div>
+  ));
+
   return (
     <div className="bg-app-surface border-b border-app-borderSoft select-none">
-      <div className="max-w-[1700px] mx-auto px-4 pt-6 pb-2 text-app-textNeutral">
-        <div className="flex flex-row justify-between items-start overflow-x-auto pb-6">
-          {CATEGORIES.map((category, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-3 cursor-pointer group min-w-[75px] shrink-0"
-            >
-              <span
-                aria-hidden="true"
-                className="h-10 w-10 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110"
-                style={{
-                  WebkitMaskImage: `url(${category.icon})`,
-                  maskImage: `url(${category.icon})`,
-                  WebkitMaskPosition: 'center',
-                  maskPosition: 'center',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                }}
-              />
-              <span className="text-[12px] text-center font-medium leading-tight px-2">
-                {category.name}
-              </span>
+      <div
+        ref={viewportRef}
+        className={`w-full pb-2 pt-6 text-app-textNeutral ${
+          prefersReducedMotion && isOverflowing ? 'overflow-x-auto' : 'overflow-hidden'
+        }`}
+      >
+        <motion.div
+          className="flex w-max min-w-full"
+          animate={{ x: shouldAnimate ? -groupWidth : 0 }}
+          transition={
+            shouldAnimate
+              ? { duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }
+              : { duration: 0 }
+          }
+        >
+          <div ref={categoryGroupRef} className={categoryGroupClassName} style={categoryGroupStyle}>
+            {categoryItems}
+          </div>
+          {isOverflowing && (
+            <div aria-hidden="true" className={categoryGroupClassName} style={categoryGroupStyle}>
+              {categoryItems}
             </div>
-          ))}
-        </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
