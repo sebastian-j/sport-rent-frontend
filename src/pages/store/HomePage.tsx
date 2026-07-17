@@ -54,10 +54,6 @@ const CATEGORY_CARDS = {
   },
 } as const;
 
-const renderCategoryCard = (card: (typeof CATEGORY_CARDS)[keyof typeof CATEGORY_CARDS]) => (
-  <CategoryCard key={card.categorySlug} {...card} />
-);
-
 export default function HomePage() {
   const navigate = useNavigate();
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
@@ -83,19 +79,21 @@ export default function HomePage() {
       </div>
 
       <CategoryCardSlider>
-        {Object.values(CATEGORY_CARDS).map(renderCategoryCard)}
+        {Object.values(CATEGORY_CARDS).map((card) => (
+          <CategoryCard key={card.categorySlug} {...card} />
+        ))}
       </CategoryCardSlider>
 
       <div className="hidden min-[961px]:flex min-[961px]:flex-row">
         <div className="flex flex-col w-full">
-          {renderCategoryCard(CATEGORY_CARDS.trailers)}
+          <CategoryCard {...CATEGORY_CARDS.trailers} />
 
           <div className="flex flex-col min-[961px]:flex-row">
-            {renderCategoryCard(CATEGORY_CARDS.ferrata)}
-            {renderCategoryCard(CATEGORY_CARDS.gravel)}
+            <CategoryCard {...CATEGORY_CARDS.ferrata} />
+            <CategoryCard {...CATEGORY_CARDS.gravel} />
           </div>
         </div>
-        {renderCategoryCard(CATEGORY_CARDS.tents)}
+        <CategoryCard {...CATEGORY_CARDS.tents} />
       </div>
 
       <CategoryBar />
