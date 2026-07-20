@@ -1,3 +1,5 @@
+export const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+
 export type RentalDate = {
   id: number;
   quantity: number;
@@ -8,6 +10,13 @@ export type RentalDate = {
 
 export function toDayTimestamp(date: Date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function getInclusiveDayCount(startDate: Date, endDate: Date) {
+  const start = toDayTimestamp(startDate);
+  const end = toDayTimestamp(endDate);
+
+  return Math.floor(Math.abs(end - start) / DAY_IN_MILLISECONDS) + 1;
 }
 
 export function isDateInPast(date: Date) {
