@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { scrollElementIntoViewIfBelow } from '../../utils/scrollElementIntoViewIfBelow.ts';
 import Switch from '../../components/core/Switch.tsx';
@@ -9,18 +9,30 @@ type SettingsCardProps = {
   title: string;
   subtitle: string;
   isExpanded: boolean;
+  scrollOnCollapse: boolean;
   onToggle: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: SettingsCardProps) {
+function SettingsCard({
+  title,
+  subtitle,
+  isExpanded,
+  scrollOnCollapse,
+  onToggle,
+  children,
+}: SettingsCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const previousExpandedStateRef = useRef(isExpanded);
 
   useEffect(() => {
-    if (!isExpanded || !cardRef.current) return;
+    if (previousExpandedStateRef.current === isExpanded) return;
+
+    previousExpandedStateRef.current = isExpanded;
+    if ((!isExpanded && !scrollOnCollapse) || !cardRef.current) return;
 
     return scrollElementIntoViewIfBelow(cardRef.current);
-  }, [isExpanded]);
+  }, [isExpanded, scrollOnCollapse]);
 
   return (
     <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated min-[961px]:scroll-mt-16">
@@ -82,7 +94,7 @@ export default function AccountSection() {
     setExpandedSection(null);
   };
 
-  const handleSavePersonal = (e: React.SyntheticEvent) => {
+  const handleSavePersonal = (e: SyntheticEvent) => {
     e.preventDefault();
 
     const trimmedData = {
@@ -100,7 +112,7 @@ export default function AccountSection() {
     setExpandedSection(null);
   };
 
-  const handleEmailChange = (e: React.SyntheticEvent) => {
+  const handleEmailChange = (e: SyntheticEvent) => {
     e.preventDefault();
     const trimmedNewEmail = emailForm.newEmail.trim();
 
@@ -124,7 +136,7 @@ export default function AccountSection() {
     setExpandedSection(null);
   };
 
-  const handlePasswordChange = (e: React.SyntheticEvent) => {
+  const handlePasswordChange = (e: SyntheticEvent) => {
     e.preventDefault();
 
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -158,6 +170,7 @@ export default function AccountSection() {
           title="Dane osobowe i adres"
           subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
           isExpanded={expandedSection === 'personal'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('personal')}
         >
           <form onSubmit={handleSavePersonal}>
@@ -247,6 +260,7 @@ export default function AccountSection() {
           title="Adres e-mail"
           subtitle={currentEmail}
           isExpanded={expandedSection === 'email'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('email')}
         >
           <form onSubmit={handleEmailChange}>
@@ -290,6 +304,7 @@ export default function AccountSection() {
           title="Hasło"
           subtitle="••••••••"
           isExpanded={expandedSection === 'password'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('password')}
         >
           <form onSubmit={handlePasswordChange}>
