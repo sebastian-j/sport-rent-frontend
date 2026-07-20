@@ -7,6 +7,7 @@ type ButtonProps = {
   text?: string;
   children?: ReactNode;
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
   disabled?: boolean;
   ariaLabel?: string;
@@ -20,13 +21,14 @@ export default function ButtonCore({
   inverted,
   disabled,
   ariaLabel,
+  type = 'button',
   className = '',
 }: ButtonProps) {
   const tone = inverted ? 'inversed' : 'default';
 
   return (
     <motion.button
-      type="button"
+      type={type}
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}
