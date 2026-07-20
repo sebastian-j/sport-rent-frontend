@@ -52,3 +52,4 @@ export const PAYMENT_METHODS = [
 ] as const;
 
 export type PaymentMethodId = (typeof PAYMENT_METHODS)[number]['id'];
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
