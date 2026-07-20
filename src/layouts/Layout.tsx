@@ -10,7 +10,7 @@ export default function Layout({ showCategoryBar = true }: LayoutProps) {
   return (
     <div className="flex flex-col min-h-screen text-app-text bg-app-surface">
       <Header showCategoryBar={showCategoryBar} />
-      <main className={`flex-grow ${showCategoryBar ? 'mt-24' : 'mt-12'}`}>
+      <main className={`flex-grow ${showCategoryBar ? 'mt-12 min-[961px]:mt-24' : 'mt-12'}`}>
         <Outlet />
       </main>
       <Footer />

@@ -1,21 +1,22 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Monitor, Moon, Sun } from 'lucide-react';
 
 type ThemeMode = 'light' | 'system' | 'dark';
+type ManualTheme = Exclude<ThemeMode, 'system'>;
 
 type ThemeContextValue = {
   theme: ThemeMode;
+  manualTheme: ManualTheme;
   setTheme: (theme: ThemeMode) => void;
 };
 
 const THEME_STORAGE_KEY = 'theme';
+const MANUAL_THEME_STORAGE_KEY = 'manual-theme';
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const themeOptions = [
-  { value: 'light', label: 'Jasny motyw', Icon: Sun },
-  { value: 'system', label: 'Motyw systemowy', Icon: Monitor },
-  { value: 'dark', label: 'Ciemny motyw', Icon: Moon },
-] satisfies { value: ThemeMode; label: string; Icon: typeof Sun }[];
+  { value: 'light', label: 'Jasny' },
+  { value: 'dark', label: 'Ciemny' },
+] satisfies { value: ManualTheme; label: string }[];
 
 function getInitialTheme(): ThemeMode {
   const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
@@ -27,6 +28,24 @@ function getInitialTheme(): ThemeMode {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const [manualTheme, setManualTheme] = useState<ManualTheme>(() => {
+    const storedManualTheme = localStorage.getItem(MANUAL_THEME_STORAGE_KEY);
+
+    if (storedManualTheme === 'light' || storedManualTheme === 'dark') {
+      return storedManualTheme;
+    }
+
+    const initialTheme = getInitialTheme();
+
+    if (initialTheme !== 'system') return initialTheme;
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  const selectTheme = (nextTheme: ThemeMode) => {
+    if (nextTheme !== 'system') setManualTheme(nextTheme);
+    setTheme(nextTheme);
+  };
 
   useEffect(() => {
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -37,12 +56,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     applyTheme();
     localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.setItem(MANUAL_THEME_STORAGE_KEY, manualTheme);
     systemTheme.addEventListener('change', applyTheme);
 
     return () => systemTheme.removeEventListener('change', applyTheme);
-  }, [theme]);
+  }, [manualTheme, theme]);
 
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={{ theme, manualTheme, setTheme: selectTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export default function ThemeSelector() {
@@ -52,34 +76,50 @@ export default function ThemeSelector() {
     throw new Error('ThemeSelector must be used within ThemeProvider');
   }
 
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Motyw kolorystyczny"
-      className="grid grid-cols-3 gap-1 border-t border-app-borderSoft pt-2"
-    >
-      {themeOptions.map(({ value, label, Icon }) => {
-        const isSelected = context.theme === value;
+  const isAuto = context.theme === 'system';
 
-        return (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={isSelected}
-            aria-label={label}
-            title={label}
-            onClick={() => context.setTheme(value)}
-            className={`flex h-9 w-9 items-center justify-center rounded-md transition-colors ${
-              isSelected
-                ? 'bg-app-surfaceStrong text-app-textInverted'
-                : 'text-app-textMuted hover:bg-app-surfaceSoft hover:text-app-text'
-            }`}
-          >
-            <Icon size={18} aria-hidden="true" />
-          </button>
-        );
-      })}
+  return (
+    <div className="border-t border-app-borderSoft pt-2">
+      <div
+        role="radiogroup"
+        aria-label="Motyw kolorystyczny"
+        className={`grid grid-cols-2 rounded-lg bg-app-surfaceSoft p-1 ${isAuto ? 'opacity-50' : ''}`}
+      >
+        {themeOptions.map(({ value, label }) => {
+          const isSelected = context.manualTheme === value;
+
+          return (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              disabled={isAuto}
+              onClick={() => context.setTheme(value)}
+              className={`min-w-20 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                isSelected
+                  ? 'bg-app-surfaceStrong text-app-textInverted shadow-sm'
+                  : 'text-app-textMuted hover:text-app-text'
+              } disabled:cursor-not-allowed`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      <label className="mt-2 flex cursor-pointer items-center justify-between gap-4 rounded-lg px-2 py-2 hover:bg-app-surfaceSoft">
+        <span className="text-sm font-medium">Tryb auto</span>
+        <input
+          type="checkbox"
+          className="peer sr-only"
+          checked={isAuto}
+          onChange={(event) =>
+            context.setTheme(event.target.checked ? 'system' : context.manualTheme)
+          }
+        />
+        <span className="relative h-6 w-11 shrink-0 rounded-full bg-app-border transition-colors peer-checked:bg-app-surfaceStrong peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-app-text after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5" />
+      </label>
     </div>
   );
 }
