@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 import FormActions from '../../components/core/FormActions.tsx';
 import UserDetailsFields from '../userDetails/UserDetailsFields.tsx';
 import type { UserDetails } from '../userDetails/userDetailsTypes.ts';
@@ -16,7 +16,7 @@ export default function RecipientDetailsForm({
 }: RecipientDetailsFormProps) {
   const [details, setDetails] = useState(initialDetails);
 
-  const handleSave = (event: SyntheticEvent<HTMLFormElement>) => {
+  const handleSave = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     onSave({
