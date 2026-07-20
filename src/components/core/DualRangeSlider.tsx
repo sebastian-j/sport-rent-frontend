@@ -14,7 +14,7 @@ type DualRangeSliderProps = {
 };
 
 const RANGE_INPUT_CLASS =
-  'pointer-events-none absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 appearance-none bg-transparent outline-none [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-app-surfaceStrong [&::-moz-range-track]:h-1 [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:-mt-1.5 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-app-surfaceStrong';
+  'pointer-events-none absolute -left-4 top-1/2 h-8 w-[calc(100%+2rem)] -translate-y-1/2 appearance-none bg-transparent outline-none [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:box-border [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[radial-gradient(circle,rgb(var(--app-text))_0_8px,transparent_8px)] [&::-moz-range-track]:h-1 [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:-mt-3.5 [&::-webkit-slider-thumb]:box-border [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:bg-[radial-gradient(circle,rgb(var(--app-text))_0_8px,transparent_8px)]';
 
 export default function DualRangeSlider({
   label,
@@ -58,7 +58,7 @@ export default function DualRangeSlider({
       <div className="relative h-6 w-full">
         <div className="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-app-borderSoft" />
         <div
-          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-app-surfaceStrong"
+          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-app-text"
           style={{ left: `${startPosition}%`, right: `${100 - endPosition}%` }}
         />
 
