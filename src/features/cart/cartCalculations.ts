@@ -1,19 +1,15 @@
-import { isRentalDateValid, toDayTimestamp } from './rentalDate.ts';
+import {
+  DAY_IN_MILLISECONDS,
+  getInclusiveDayCount,
+  isRentalDateValid,
+  toDayTimestamp,
+} from './rentalDate.ts';
 import type {
   CartProduct,
   InvalidRentalDate,
   OrderInformation,
   ProductInformation,
 } from './cartTypes.ts';
-
-const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
-
-export function getInclusiveDayCount(startDate: Date, endDate: Date) {
-  const start = toDayTimestamp(startDate);
-  const end = toDayTimestamp(endDate);
-
-  return Math.floor(Math.abs(end - start) / DAY_IN_MILLISECONDS) + 1;
-}
 
 export function getProductInformation(product: CartProduct): ProductInformation {
   const rentalDays = new Set<number>();

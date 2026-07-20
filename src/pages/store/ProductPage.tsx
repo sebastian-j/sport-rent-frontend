@@ -21,10 +21,10 @@ export default function ProductPage() {
         <h1 className="mb-4 text-center text-4xl font-semibold text-app-text">{product?.name}</h1>
         <div className="mb-[2vh] mt-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:items-start min-[961px]:gap-4">
           <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start font-bold min-[961px]:sticky min-[961px]:top-[110px]">
-            <ProductGallery product={product} />
+            <ProductGallery key={product.id} product={product} />
           </div>
           <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start min-[961px]:sticky min-[961px]:top-[110px]">
-            <AddToCart product={product} />
+            <AddToCart key={product.id} product={product} />
           </div>
         </div>
         {product.sizes?.some((sizeOption) => sizeOption.description) && (

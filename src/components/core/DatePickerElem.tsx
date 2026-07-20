@@ -1,7 +1,8 @@
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { forwardRef, useEffect, useState, type ComponentPropsWithoutRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useMediaQuery } from '../../hooks/useMediaQuery.ts';
 
 const MOBILE_MEDIA_QUERY = '(max-width: 960px)';
 
@@ -38,18 +39,7 @@ export default function DatePickerElem({
   className,
   wrapperClassName,
 }: DatePickerElemProps) {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window === 'undefined' ? false : window.matchMedia(MOBILE_MEDIA_QUERY).matches
-  );
-
-  useEffect(() => {
-    const mobileMedia = window.matchMedia(MOBILE_MEDIA_QUERY);
-    const handleBreakpointChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
-
-    mobileMedia.addEventListener('change', handleBreakpointChange);
-
-    return () => mobileMedia.removeEventListener('change', handleBreakpointChange);
-  }, []);
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   return (
     <DatePicker

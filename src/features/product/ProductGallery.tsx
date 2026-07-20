@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { AnimatePresence, motion, type PanInfo, useReducedMotion } from 'motion/react';
 import { type ProductProps } from './productProps';
 
@@ -11,27 +11,54 @@ const SLIDE_VARIANTS = {
   exit: (direction: 1 | -1) => ({ x: direction === 1 ? '-100%' : '100%' }),
 };
 
+type GalleryState = {
+  position: number;
+  direction: 1 | -1;
+};
+
+type GalleryAction =
+  | { type: 'change'; direction: 1 | -1 }
+  | { type: 'select'; index: number; imageCount: number };
+
+const INITIAL_GALLERY_STATE: GalleryState = { position: 0, direction: 1 };
+
+function getImageIndex(position: number, imageCount: number) {
+  return ((position % imageCount) + imageCount) % imageCount;
+}
+
+function galleryReducer(state: GalleryState, action: GalleryAction): GalleryState {
+  if (action.type === 'change') {
+    return {
+      position: state.position + action.direction,
+      direction: action.direction,
+    };
+  }
+
+  const currentIndex = getImageIndex(state.position, action.imageCount);
+  if (currentIndex === action.index) return state;
+
+  return {
+    position: state.position + action.index - currentIndex,
+    direction: action.index > currentIndex ? 1 : -1,
+  };
+}
+
 export default function ProductGallery({ product }: { product: ProductProps }) {
-  const [slidePosition, setSlidePosition] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
+  const [{ position: slidePosition, direction: slideDirection }, dispatch] = useReducer(
+    galleryReducer,
+    INITIAL_GALLERY_STATE
+  );
   const prefersReducedMotion = useReducedMotion();
 
   const images = product.images;
-  const selectedImage = ((slidePosition % images.length) + images.length) % images.length;
+  const selectedImage = getImageIndex(slidePosition, images.length);
 
   const changeImage = (direction: 1 | -1) => {
-    setSlideDirection(direction);
-    setSlidePosition((currentPosition) => currentPosition + direction);
+    dispatch({ type: 'change', direction });
   };
 
   const selectImage = (index: number) => {
-    if (index === selectedImage) return;
-
-    setSlideDirection(index > selectedImage ? 1 : -1);
-    setSlidePosition((currentPosition) => {
-      const currentIndex = ((currentPosition % images.length) + images.length) % images.length;
-      return currentPosition + index - currentIndex;
-    });
+    dispatch({ type: 'select', index, imageCount: images.length });
   };
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {

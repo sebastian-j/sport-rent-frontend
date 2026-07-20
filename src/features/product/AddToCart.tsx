@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { CircleMinus, CirclePlus } from 'lucide-react';
 import ButtonCore from '../../components/core/ButtonCore';
 import { type ProductProps } from './productProps';
-import { isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
-import { getInclusiveDayCount } from '../cart/cartCalculations.ts';
+import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { formatPrice } from '../../utils/formatPrice.ts';
@@ -134,7 +133,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
         text="Dodaj do koszyka"
         onClick={handleAddToCart}
         disabled={isSizeSelectionRequired}
-        className="mb-[1vh] mt-[1vh] w-full max-w-xl p-[1.5vh] text-base disabled:cursor-not-allowed disabled:opacity-50"
+        className="my-[1vh] w-full max-w-xl p-[1.5vh] text-base disabled:cursor-not-allowed disabled:opacity-50"
       />
     </ContentPanel>
   );
