@@ -19,11 +19,11 @@ export default function ProductPage() {
     <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface px-4 sm:px-6 lg:px-8">
       <main className="flex-grow mt-[2vh]">
         <h1 className="mb-4 text-center text-4xl font-semibold text-app-text">{product?.name}</h1>
-        <div className="mb-[2vh] mt-[2vh] flex flex-row gap-4 text-lg text-app-textMuted">
-          <div className="font-bold w-full items-center justify-center flex flex-col gap-4 h-full w-full">
+        <div className="mb-[2vh] mt-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:gap-4">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-4 font-bold">
             <ProductGallery product={product} />
           </div>
-          <div className="flex flex-col gap-4 w-full sticky top-[110px] h-fit items-center justify-center">
+          <div className="flex h-fit w-full flex-col items-center justify-center gap-4 min-[961px]:sticky min-[961px]:top-[110px]">
             <AddToCart product={product} />
           </div>
         </div>
