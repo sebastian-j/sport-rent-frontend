@@ -15,7 +15,7 @@ export default function PaymentMethodsPanel({
   onMethodChange,
 }: PaymentMethodsPanelProps) {
   return (
-    <fieldset className="flex w-full flex-col gap-3">
+    <fieldset className="flex min-w-0 w-full flex-col gap-3">
       <legend className="mb-3 w-full text-center text-2xl font-semibold text-app-textStrong">
         Płatność
       </legend>
@@ -27,8 +27,10 @@ export default function PaymentMethodsPanel({
         const logos = (
           <span
             aria-hidden="true"
-            className={`flex h-10 shrink-0 items-center justify-end ${
-              method.logos.length > 1 ? 'w-40 gap-2' : 'w-20'
+            className={`flex h-10 min-w-0 shrink-0 items-center justify-end ${
+              method.logos.length > 1
+                ? 'w-[6.5rem] gap-2 min-[480px]:w-40'
+                : 'w-12 min-[480px]:w-20'
             }`}
           >
             {method.logos.map((logo) => (
@@ -47,10 +49,10 @@ export default function PaymentMethodsPanel({
         return (
           <label
             key={method.id}
-            className={`flex w-full items-center gap-4 rounded-lg border p-4 transition-colors ${
+            className={`flex min-w-0 w-full flex-wrap items-center gap-4 rounded-lg border p-4 transition-colors ${
               isDisabled
                 ? 'cursor-not-allowed border-app-borderSoft bg-app-surfaceSoft'
-                : 'cursor-pointer hover:bg-app-surface/60'
+                : 'cursor-pointer [@media(hover:hover)]:hover:bg-app-surface/60'
             } ${
               selectedMethodId === method.id
                 ? 'border-app-border bg-app-surface'

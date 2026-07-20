@@ -59,10 +59,11 @@ export default function RecipientDetailsPanel({
           <button
             type="button"
             onClick={handleEdit}
-            className="absolute right-0 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-app-textMuted transition-colors hover:bg-app-surfaceNeutral hover:text-app-text"
+            aria-label="Edytuj dane odbiorcy"
+            className="absolute right-0 inline-flex h-10 w-10 items-center justify-center rounded-lg text-sm text-app-textMuted transition-colors hover:bg-app-surfaceNeutral hover:text-app-text min-[480px]:h-auto min-[480px]:w-auto min-[480px]:gap-2 min-[480px]:px-3 min-[480px]:py-2"
           >
             <Pencil size={17} />
-            Edytuj
+            <span className="hidden min-[480px]:inline">Edytuj</span>
           </button>
         )}
       </div>
