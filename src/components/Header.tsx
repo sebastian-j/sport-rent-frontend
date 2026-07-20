@@ -1,7 +1,7 @@
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
 import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { healthCheck } from '../api/health.ts';
 import SearchBar from './SearchBar.tsx';
@@ -18,6 +18,8 @@ const CATEGORIES = [
   'Namioty',
 ];
 
+const CATEGORY_GAP_PX = 24;
+
 type HeaderProps = {
   showCategoryBar?: boolean;
 };
@@ -25,7 +27,10 @@ type HeaderProps = {
 export default function Header({ showCategoryBar = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [visibleCategoryCount, setVisibleCategoryCount] = useState(CATEGORIES.length);
   const menuRef = useRef<HTMLDivElement>(null);
+  const categoryBarRef = useRef<HTMLDivElement>(null);
+  const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const navigate = useNavigate();
   const hasAccessToken = Boolean(localStorage.getItem('accessToken'));
 
@@ -50,6 +55,46 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       document.removeEventListener('keydown', closeMenuOnEscape);
     };
   }, [isMenuOpen]);
+
+  useLayoutEffect(() => {
+    const categoryBar = categoryBarRef.current;
+    if (!categoryBar) return;
+
+    const updateVisibleCategoryCount = () => {
+      const styles = getComputedStyle(categoryBar);
+      const availableWidth =
+        categoryBar.clientWidth -
+        Number.parseFloat(styles.paddingLeft) -
+        Number.parseFloat(styles.paddingRight);
+      let occupiedWidth = 0;
+      let nextVisibleCount = 0;
+
+      for (const category of categoryMeasureRefs.current) {
+        if (!category) continue;
+
+        const categoryWidth = category.getBoundingClientRect().width;
+        const nextOccupiedWidth =
+          occupiedWidth + categoryWidth + (nextVisibleCount > 0 ? CATEGORY_GAP_PX : 0);
+
+        if (nextOccupiedWidth > availableWidth && nextVisibleCount > 0) break;
+
+        occupiedWidth = nextOccupiedWidth;
+        nextVisibleCount += 1;
+      }
+
+      setVisibleCategoryCount(nextVisibleCount);
+    };
+
+    updateVisibleCategoryCount();
+
+    const resizeObserver = new ResizeObserver(updateVisibleCategoryCount);
+    resizeObserver.observe(categoryBar);
+    categoryMeasureRefs.current.forEach((category) => {
+      if (category) resizeObserver.observe(category);
+    });
+
+    return () => resizeObserver.disconnect();
+  }, [showCategoryBar]);
 
   const handleAuthAction = () => {
     setIsMenuOpen(false);
@@ -169,16 +214,32 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       </div>
 
       {showCategoryBar && (
-        <div className="hidden h-12 flex-row items-center justify-between bg-app-surfaceStrong px-8 text-app-textInverted min-[961px]:flex">
-          {CATEGORIES.map((item) => (
+        <div
+          ref={categoryBarRef}
+          className="relative hidden h-12 flex-row items-center justify-between gap-6 overflow-hidden bg-app-surfaceStrong px-4 text-app-textInverted min-[961px]:flex"
+        >
+          {CATEGORIES.slice(0, visibleCategoryCount).map((item) => (
             <Link
               key={item}
               to={getCategorySearchPath(toCategorySlug(item))}
-              className="hover:underline"
+              className="shrink-0 whitespace-nowrap hover:underline"
             >
               {item}
             </Link>
           ))}
+          <div aria-hidden="true" className="invisible absolute whitespace-nowrap">
+            {CATEGORIES.map((item, index) => (
+              <span
+                key={item}
+                ref={(element) => {
+                  categoryMeasureRefs.current[index] = element;
+                }}
+                className="inline-block"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </header>
