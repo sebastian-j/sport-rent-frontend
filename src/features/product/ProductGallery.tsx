@@ -138,13 +138,13 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
       <div className="hidden w-full flex-col gap-4 min-[961px]:flex">
         <div className="flex w-full flex-row gap-4">
           {images.length > 1 && (
-            <div className="flex flex-col gap-2 align-middle">
+            <div className="flex shrink-0 flex-col gap-2 align-middle">
               {images.map((image, index) => (
                 <img
                   key={index}
                   src={image}
                   alt={product.alt}
-                  className={`h-[12vh] w-auto rounded-lg border-[2px] ${index === selectedImage ? 'border-app-border' : 'border-app-borderSoft'}`}
+                  className={`h-24 w-32 shrink-0 rounded-lg border-[2px] object-contain ${index === selectedImage ? 'border-app-border' : 'border-app-borderSoft'}`}
                   onClick={() => selectImage(index)}
                 />
               ))}
