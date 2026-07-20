@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import { scrollElementIntoViewIfBelow } from '../../utils/scrollElementIntoViewIfBelow.ts';
 
 type Section = 'personal' | 'email' | 'password' | null;
 
@@ -12,10 +13,18 @@ type SettingsCardProps = {
 };
 
 function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: SettingsCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isExpanded || !cardRef.current) return;
+
+    return scrollElementIntoViewIfBelow(cardRef.current);
+  }, [isExpanded]);
+
   return (
-    <div className="bg-app-surfaceElevated">
+    <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated min-[961px]:scroll-mt-16">
       <div
-        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-app-surfaceSoft/50 select-none"
+        className="flex cursor-pointer select-none items-center justify-between gap-4 p-4 transition-colors [@media(hover:hover)]:hover:bg-app-surfaceSoft/50 min-[961px]:p-6"
         onClick={onToggle}
       >
         <div>
@@ -28,7 +37,11 @@ function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: Setti
           <ChevronRight className="text-app-textMuted" />
         )}
       </div>
-      {isExpanded && <div className="p-6 pt-0 border-t border-app-borderSoft">{children}</div>}
+      {isExpanded && (
+        <div className="border-t border-app-borderSoft p-4 pt-0 min-[961px]:p-6 min-[961px]:pt-0">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -136,10 +149,10 @@ export default function AccountSection() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full pt-12 text-app-text">
-      <h2 className="text-5xl text-center">Ustawienia konta</h2>
+    <div className="flex w-full flex-col items-center pt-6 text-app-text min-[961px]:pt-12">
+      <h2 className="text-center text-3xl min-[961px]:text-5xl">Ustawienia konta</h2>
 
-      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft">
+      <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft min-[961px]:m-12 min-[961px]:max-w-[calc(100%-6rem)]">
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
@@ -211,7 +224,7 @@ export default function AccountSection() {
                 required
               />
             </div>
-            <div className="flex gap-3 mt-6">
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="submit"
                 className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
@@ -254,7 +267,7 @@ export default function AccountSection() {
                 required
               />
             </div>
-            <div className="flex gap-3 mt-6">
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="submit"
                 className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
@@ -305,7 +318,7 @@ export default function AccountSection() {
                 required
               />
             </div>
-            <div className="flex gap-3 mt-6">
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="submit"
                 className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
@@ -323,7 +336,7 @@ export default function AccountSection() {
           </form>
         </SettingsCard>
 
-        <div className="flex items-center justify-between p-6 bg-app-surfaceElevated select-none">
+        <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 min-[961px]:p-6">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
             <p className="mt-1 text-sm text-app-textMuted">Otrzymuj informacje o promocjach</p>
