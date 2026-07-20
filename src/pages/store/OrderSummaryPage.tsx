@@ -11,10 +11,9 @@ import {
   type PaymentMethodId,
 } from '../../features/orderSummary/paymentMethods.ts';
 import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
-import RecipientDetailsPanel, {
-  type RecipientDetails,
-} from '../../features/orderSummary/RecipientDetailsPanel.tsx';
+import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
+import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
 
 const PROMO_DISCOUNTS: Record<string, number> = {
   SPORT10: 0.1,
@@ -22,7 +21,7 @@ const PROMO_DISCOUNTS: Record<string, number> = {
 
 const USER_LOYALTY_POINTS = 7_200;
 
-const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
+const PROFILE_RECIPIENT_DETAILS: UserDetails = {
   firstName: 'Jan',
   lastName: 'Kowalski',
   country: 'Polska',
@@ -59,8 +58,7 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 }));
 
 export default function OrderSummaryPage() {
-  const [recipientDetails, setRecipientDetails] =
-    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
