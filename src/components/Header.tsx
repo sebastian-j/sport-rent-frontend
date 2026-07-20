@@ -188,7 +188,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
             {isMenuOpen && (
               <div
                 id="user-menu"
-                className="absolute right-0 top-full mt-2 w-max rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
+                className="absolute right-0 top-full z-10 mt-2 w-max rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
               >
                 <button
                   type="button"
