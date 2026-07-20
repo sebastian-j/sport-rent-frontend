@@ -13,11 +13,8 @@ import {
 import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
+import usePromo from '../../features/orderSummary/usePromo.ts';
 import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
-
-const PROMO_DISCOUNTS: Record<string, number> = {
-  SPORT10: 0.1,
-};
 
 const USER_LOYALTY_POINTS = 7_200;
 
@@ -60,10 +57,15 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 export default function OrderSummaryPage() {
   const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
-  const [discountRate, setDiscountRate] = useState(0);
-  const [promoCodeError, setPromoCodeError] = useState<string>();
+  const {
+    promoCode,
+    appliedPromoCode,
+    discountRate,
+    promoCodeError,
+    applyPromoCode,
+    changePromoCode,
+    removePromoCode,
+  } = usePromo();
   const cartPrice = getOrderInformation(SUMMARY_PRODUCTS).totalValue;
   const paymentPrice = PAYMENT_METHODS.find(
     (method) => method.id === selectedPaymentMethodId
@@ -71,38 +73,8 @@ export default function OrderSummaryPage() {
   const discount = cartPrice * discountRate;
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
 
-  const handleApplyPromoCode = () => {
-    const normalizedPromoCode = promoCode.trim().toUpperCase();
-    const matchedDiscountRate = PROMO_DISCOUNTS[normalizedPromoCode];
-
-    if (!normalizedPromoCode) {
-      setDiscountRate(0);
-      setPromoCodeError('Wpisz kod promocyjny.');
-      return;
-    }
-
-    if (matchedDiscountRate === undefined) {
-      setDiscountRate(0);
-      setPromoCodeError('Nieprawidłowy kod promocyjny.');
-      return;
-    }
-
-    setPromoCode(normalizedPromoCode);
-    setAppliedPromoCode(normalizedPromoCode);
-    setDiscountRate(matchedDiscountRate);
-    setPromoCodeError(undefined);
-  };
-
-  const handlePromoCodeChange = (value: string) => {
-    setPromoCode(value);
-    setPromoCodeError(undefined);
-  };
-
   const handleRemovePromoCode = () => {
-    setPromoCode('');
-    setAppliedPromoCode(undefined);
-    setDiscountRate(0);
-    setPromoCodeError(undefined);
+    removePromoCode();
     if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
 
@@ -140,8 +112,8 @@ export default function OrderSummaryPage() {
             promoCode={promoCode}
             appliedCode={appliedPromoCode}
             error={promoCodeError}
-            onPromoCodeChange={handlePromoCodeChange}
-            onApply={handleApplyPromoCode}
+            onPromoCodeChange={changePromoCode}
+            onApply={applyPromoCode}
             onRemove={handleRemovePromoCode}
           />
 
