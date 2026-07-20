@@ -64,7 +64,7 @@ export default function CategoryCard({
       onPointerLeave={resetTilt}
       whileHover={hoverAnimation}
       transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-      style={cardStyle}
+      style={{ ...cardStyle, containerType: 'inline-size' }}
       className={twMerge(
         `relative flex cursor-pointer select-none bg-app-surface hover:z-10 ${sizeClasses} ${flexRow}`,
         className
@@ -81,14 +81,16 @@ export default function CategoryCard({
       </div>
       <div
         className={twMerge(
-          'flex min-w-0 flex-col justify-center px-3 min-[961px]:px-4',
+          'mx-[clamp(1rem,4cqw,2rem)] flex min-w-0 flex-col justify-center',
           invertedText ? 'text-app-textInverted' : 'text-app-textNeutral'
         )}
       >
-        <p className="break-words text-xl font-semibold sm:text-2xl min-[961px]:text-3xl">
+        <p className="break-words text-[clamp(1.25rem,6cqw,1.875rem)] font-semibold leading-tight">
           {title}
         </p>
-        <p className="break-words text-app-textNeutralSoft">{description}</p>
+        <p className="break-words text-[clamp(0.75rem,3.2cqw,1rem)] text-app-textNeutralSoft">
+          {description}
+        </p>
       </div>
     </motion.div>
   );
