@@ -8,7 +8,7 @@ type DateRangeFieldsProps = {
 };
 
 const DATE_INPUT_CLASSES =
-  'h-auto rounded-lg border border-app-borderSoft bg-app-surface p-2 text-left text-base font-semibold text-app-text';
+  'h-auto rounded-lg border border-app-borderSoft p-2 text-left text-base font-semibold text-app-text';
 
 export default function DateRangeFields({
   startDate,

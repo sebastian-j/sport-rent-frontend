@@ -55,7 +55,7 @@ export default function DatePickerElem({
       wrapperClassName={twMerge('min-w-0 flex-1', wrapperClassName)}
       placeholderText={placeholder}
       className={twMerge(
-        'box-border h-12 w-full select-none rounded-xl border border-transparent bg-app-surface px-4 text-center text-2xl text-app-text outline-none',
+        'box-border h-12 w-full select-none rounded-xl border border-transparent bg-app-surfaceElevated px-4 text-center text-2xl text-app-text outline-none',
         className
       )}
     />
