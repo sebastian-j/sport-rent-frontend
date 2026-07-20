@@ -8,7 +8,7 @@ import type {
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-function getInclusiveDayCount(startDate: Date, endDate: Date) {
+export function getInclusiveDayCount(startDate: Date, endDate: Date) {
   const start = toDayTimestamp(startDate);
   const end = toDayTimestamp(endDate);
 

@@ -11,7 +11,7 @@ export const PRODUCTS = [
     name: 'Rower szosowy',
     slug: 'rower-szosowy',
     price: 89,
-    images: [productImage('01-road-bike.jpg')],
+    images: [productImage('01-road-bike.jpg'), productImage('03-bike-helmet.jpg')],
     alt: 'Rower szosowy',
     category: 'Rowery i akcesoria',
     description: 'Lekki rower do szybkiej jazdy po asfalcie i dłuższych trasach.',

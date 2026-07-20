@@ -9,21 +9,21 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="mx-auto w-full max-w-[1400px] px-4 py-8 text-center text-4xl font-semibold text-app-danger sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1400px] px-4 py-8 text-center text-4xl font-semibold text-app-danger lg:px-8">
         Produkt nie został znaleziony
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface px-4">
       <main className="flex-grow mt-[2vh]">
         <h1 className="mb-4 text-center text-4xl font-semibold text-app-text">{product?.name}</h1>
-        <div className="mb-[2vh] mt-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:gap-4">
-          <div className="flex h-full w-full flex-col items-center justify-center gap-4 font-bold">
+        <div className="mb-[2vh] mt-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:items-start min-[961px]:gap-4">
+          <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start font-bold min-[961px]:sticky min-[961px]:top-[110px]">
             <ProductGallery product={product} />
           </div>
-          <div className="flex h-fit w-full flex-col items-center justify-center gap-4 min-[961px]:sticky min-[961px]:top-[110px]">
+          <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start min-[961px]:sticky min-[961px]:top-[110px]">
             <AddToCart product={product} />
           </div>
         </div>
