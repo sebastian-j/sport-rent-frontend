@@ -20,7 +20,7 @@ import SearchPage from './pages/store/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
 import { ThemeProvider } from './components/core/ThemeSelector.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
-import OrderSummaryPage from "./pages/store/OrderSummaryPage.tsx";
+import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
 
 function App() {
   return (

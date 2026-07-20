@@ -36,7 +36,7 @@ export default function ButtonCore({
       whileTap={disabled ? undefined : { scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 250, damping: 20 }}
       className={twMerge(
-        'select-none',
+        'select-none disabled:cursor-not-allowed disabled:opacity-50',
         componentStyles.button.base,
         componentStyles.button.tone[tone],
         className
