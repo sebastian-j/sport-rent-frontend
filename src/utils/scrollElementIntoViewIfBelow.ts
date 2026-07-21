@@ -7,7 +7,7 @@ export function scrollElementIntoViewIfBelow(element: HTMLElement) {
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (prefersReducedMotion || window.matchMedia('(min-width: 961px)').matches) {
+  if (prefersReducedMotion || window.matchMedia('(min-width: 768px)').matches) {
     element.scrollIntoView({
       behavior: prefersReducedMotion ? 'auto' : 'smooth',
       block: 'start',

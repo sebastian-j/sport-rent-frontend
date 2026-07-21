@@ -47,10 +47,10 @@ export default function AccountSection() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center pt-6 text-app-text min-[961px]:pt-12">
-      <h2 className="text-center text-3xl min-[961px]:text-5xl">Ustawienia konta</h2>
+    <div className="flex w-full flex-col items-center pt-6 text-app-text md:pt-12">
+      <h2 className="text-center text-3xl md:text-5xl">Ustawienia konta</h2>
 
-      <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft min-[961px]:m-12 min-[961px]:max-w-[calc(100%-6rem)]">
+      <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${personalData.firstName} ${personalData.lastName}, ${personalData.city}`}
@@ -85,7 +85,7 @@ export default function AccountSection() {
           <PasswordForm onSave={savePassword} onCancel={closeSection} />
         </SettingsCard>
 
-        <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 min-[961px]:p-6">
+        <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 md:p-6">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
             <p className="mt-1 text-sm text-app-textMuted">Otrzymuj informacje o promocjach</p>

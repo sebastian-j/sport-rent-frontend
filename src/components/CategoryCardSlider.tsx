@@ -65,7 +65,7 @@ export default function CategoryCardSlider({ children }: CategoryCardSliderProps
   if (cards.length === 0) return null;
 
   return (
-    <section aria-label="Polecane kategorie" className="min-[961px]:hidden">
+    <section aria-label="Polecane kategorie" className="lg:hidden">
       <div className="relative h-[16rem] overflow-hidden">
         <AnimatePresence initial={false} custom={slideDirection}>
           <motion.div

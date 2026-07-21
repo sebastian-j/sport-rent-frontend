@@ -76,18 +76,18 @@ export default function CategoryBar() {
   const groupWidth = isOverflowing ? dimensions.contentWidth : dimensions.viewportWidth;
   const duration = groupWidth / SCROLL_SPEED_PX_PER_SECOND;
 
-  const categoryGroupClassName = `flex h-[68px] shrink-0 items-start min-[961px]:h-[82px] ${
+  const categoryGroupClassName = `flex h-[68px] shrink-0 items-start md:h-[82px] ${
     isOverflowing ? 'justify-center' : 'justify-between'
   }`;
   const categoryGroupStyle = { width: groupWidth || '100%' };
   const categoryItems = CATEGORIES.map((category) => (
     <div
       key={category.name}
-      className="group flex w-16 shrink-0 cursor-pointer flex-col items-center gap-2 min-[961px]:w-[75px] min-[961px]:gap-3"
+      className="group flex w-16 shrink-0 cursor-pointer flex-col items-center gap-2 md:w-[75px] md:gap-3"
     >
       <span
         aria-hidden="true"
-        className="h-8 w-8 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110 min-[961px]:h-10 min-[961px]:w-10"
+        className="h-8 w-8 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110 md:h-10 md:w-10"
         style={{
           WebkitMaskImage: `url(${category.icon})`,
           maskImage: `url(${category.icon})`,
@@ -99,7 +99,7 @@ export default function CategoryBar() {
           maskSize: 'contain',
         }}
       />
-      <span className="line-clamp-2 px-1 text-center text-[11px] font-medium leading-[14px] min-[961px]:px-2 min-[961px]:text-[12px] min-[961px]:leading-tight">
+      <span className="line-clamp-2 px-1 text-center text-[11px] font-medium leading-[14px] md:px-2 md:text-[12px] md:leading-tight">
         {category.name}
       </span>
     </div>

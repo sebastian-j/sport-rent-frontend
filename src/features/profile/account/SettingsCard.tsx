@@ -23,13 +23,13 @@ export default function SettingsCard({
   const contentId = useId();
 
   return (
-    <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated min-[961px]:scroll-mt-16">
+    <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated md:scroll-mt-16">
       <button
         type="button"
         aria-expanded={isExpanded}
         aria-controls={contentId}
         onClick={onToggle}
-        className="flex w-full select-none items-center justify-between gap-4 p-4 text-left transition-colors [@media(hover:hover)]:hover:bg-app-surfaceSoft/50 min-[961px]:p-6"
+        className="flex w-full select-none items-center justify-between gap-4 p-4 text-left transition-colors [@media(hover:hover)]:hover:bg-app-surfaceSoft/50 md:p-6"
       >
         <span>
           <span className="block text-lg font-bold">{title}</span>
@@ -42,10 +42,7 @@ export default function SettingsCard({
         )}
       </button>
       {isExpanded && (
-        <div
-          id={contentId}
-          className="border-t border-app-borderSoft p-4 pt-0 min-[961px]:p-6 min-[961px]:pt-0"
-        >
+        <div id={contentId} className="border-t border-app-borderSoft p-4 pt-0 md:p-6 md:pt-0">
           {children}
         </div>
       )}

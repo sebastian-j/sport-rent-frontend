@@ -16,15 +16,15 @@ type CategoryCardProps = {
 };
 
 const SIZE_CLASSES: Record<CategoryCardProps['size'], string> = {
-  small: 'h-[16rem] w-full min-[961px]:w-1/2',
+  small: 'h-[16rem] w-full lg:w-1/2',
   medium: 'h-[16rem] w-full',
-  large: 'h-[16rem] w-full min-[961px]:h-[32rem]',
+  large: 'h-[16rem] w-full lg:h-[32rem]',
 };
 
 const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
   small: 'w-1/3',
   medium: 'w-1/3',
-  large: 'w-1/3 min-[961px]:w-1/2',
+  large: 'w-1/3 lg:w-1/2',
 };
 
 const TILT_BY_SIZE: Record<
