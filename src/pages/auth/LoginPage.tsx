@@ -65,6 +65,9 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     //TODO: Implement Google login logic here
+    localStorage.setItem('accessToken', 'accessTokenValue');
+    localStorage.setItem('refreshToken', 'refreshTokenValue');
+    navigate('/');
   };
 
   return (
