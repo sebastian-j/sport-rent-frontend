@@ -21,10 +21,12 @@ export default function ProfileCard({ title, icon: Icon, selected, onClick }: Pr
       onClick={onClick}
       whileHover={{ scale: 1.015 }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-      className={`relative flex min-h-16 min-w-0 flex-1 cursor-pointer select-none flex-row items-center justify-center border border-app-border p-3 font-semibold hover:z-10 min-[961px]:w-full min-[961px]:max-w-96 min-[961px]:flex-none min-[961px]:justify-start min-[961px]:gap-8 min-[961px]:p-4 min-[961px]:text-2xl ${selectedClasses}`}
+      className={`relative flex min-h-16 min-w-0 flex-1 cursor-pointer select-none flex-row items-center justify-center border border-app-border p-3 font-semibold hover:z-10 md:flex-col md:gap-2 lg:w-full lg:max-w-96 lg:flex-none lg:flex-row lg:justify-start lg:gap-8 lg:p-4 lg:text-2xl ${selectedClasses}`}
     >
-      <Icon className="h-8 w-8 shrink-0 min-[961px]:h-12 min-[961px]:w-12" strokeWidth={1} />
-      <span className="hidden min-[961px]:block">{title}</span>
+      <Icon className="h-8 w-8 shrink-0 lg:h-12 lg:w-12" strokeWidth={1} />
+      <span className="hidden min-w-0 text-center leading-tight md:block lg:text-left">
+        {title}
+      </span>
     </motion.button>
   );
 }

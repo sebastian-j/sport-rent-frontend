@@ -33,14 +33,14 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[100rem] flex-col">
-      <p className="mt-6 px-4 text-center text-3xl font-semibold text-app-text min-[961px]:mt-12 min-[961px]:text-5xl">
+      <p className="mt-6 px-4 text-center text-3xl font-semibold text-app-text lg:mt-12 lg:text-5xl">
         Jan Kowalski
       </p>
 
-      <div className="my-6 flex flex-col gap-4 px-4 min-[961px]:my-12 min-[961px]:flex-row min-[961px]:gap-16 min-[961px]:px-16">
+      <div className="my-6 flex flex-col gap-4 px-4 lg:mx-auto lg:my-12 lg:grid lg:w-full lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16 lg:px-16">
         <nav
           aria-label="Sekcje profilu"
-          className="sticky top-12 z-40 -mx-4 flex h-fit w-[calc(100%+2rem)] flex-row gap-0.5 self-start rounded-none bg-app-surface px-4 py-2 text-app-textInverted [&>*:first-child]:rounded-l-xl [&>*:last-child]:rounded-r-xl min-[961px]:top-16 min-[961px]:mx-0 min-[961px]:w-auto min-[961px]:flex-col min-[961px]:rounded-xl min-[961px]:bg-transparent min-[961px]:px-0 min-[961px]:py-0 min-[961px]:[&>*:first-child]:rounded-bl-none min-[961px]:[&>*:first-child]:rounded-tr-xl min-[961px]:[&>*:last-child]:rounded-bl-xl min-[961px]:[&>*:last-child]:rounded-tr-none"
+          className="sticky top-12 z-40 -mx-4 flex h-fit w-[calc(100%+2rem)] flex-row gap-0.5 self-start rounded-none bg-app-surface px-4 py-2 text-app-textInverted [&>*:first-child]:rounded-l-xl [&>*:last-child]:rounded-r-xl lg:top-16 lg:mx-0 lg:w-full lg:max-w-96 lg:justify-self-end lg:flex-col lg:rounded-xl lg:bg-transparent lg:px-0 lg:py-0 lg:[&>*:first-child]:rounded-bl-none lg:[&>*:first-child]:rounded-tr-xl lg:[&>*:last-child]:rounded-bl-xl lg:[&>*:last-child]:rounded-tr-none"
         >
           <ProfileCard
             title="Ustawienia konta"
@@ -63,7 +63,7 @@ export default function ProfilePage() {
         </nav>
         <ContentPanel
           ref={sectionContentRef}
-          className="w-full flex-none scroll-mt-36 items-stretch p-4 min-[961px]:flex-[2] min-[961px]:scroll-mt-16 min-[961px]:p-8"
+          className="min-w-0 w-full flex-none scroll-mt-36 items-stretch p-4 lg:max-w-[64rem] lg:justify-self-start lg:scroll-mt-16 lg:p-8"
         >
           <SelectedSection />
         </ContentPanel>
