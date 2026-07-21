@@ -119,7 +119,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
-      <div className="grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-4 sm:px-6 min-[961px]:grid-cols-3 min-[961px]:px-12">
+      <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-4 sm:px-6 min-[961px]:grid-cols-3 min-[961px]:px-12">
         <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
           <span
             role="img"
