@@ -1,14 +1,8 @@
+import type { components } from './generated/schema.ts';
 import { request } from './client.ts';
 
-type LoginRequest = {
-  email: string;
-  password: string;
-};
+type LoginRequest = components['schemas']['LoginRequest'];
+type LoginResponse = components['schemas']['LoginResponse'];
 
-type LoginResponse = {
-  access_token: string;
-  refresh_token: string;
-};
-
-export const login = (req: LoginRequest): Promise<LoginResponse | undefined> =>
-  request('/auth/login', { method: 'POST', body: req });
+export const login = (body: LoginRequest): Promise<LoginResponse | undefined> =>
+  request('auth/login', { method: 'POST', body });
