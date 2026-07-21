@@ -3,6 +3,7 @@ import ButtonCore from '../../components/core/ButtonCore';
 import { type ProductProps } from './productProps';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { checkProductAvailability } from '../../assets/products/products.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
 import SizeSelector from './addToCart/SizeSelector.tsx';
@@ -39,6 +40,18 @@ export default function AddToCart({ product }: { product: ProductProps }) {
     if (isSizeSelectionRequired) {
       alert('Proszę wybrać rozmiar produktu.');
       return;
+    }
+
+    if (
+      !checkProductAvailability(
+        product.slug,
+        startDate.toLocaleDateString('pl'),
+        endDate.toLocaleDateString('pl')
+      )
+    ) {
+      alert(
+        `Produkt niedostępny w okresie od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
+      );
     }
 
     alert(

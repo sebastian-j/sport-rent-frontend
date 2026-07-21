@@ -1,3 +1,9 @@
+import {
+  getProducts,
+  getProductBySlug as fetchProductBySlug,
+  getProductAvailability,
+} from '../../api/product.ts';
+
 const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
   eager: true,
   import: 'default',
@@ -5,6 +11,43 @@ const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
 
 export const productImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`];
 
+const rawProducts = (await getProducts()) || [];
+
+export const PRODUCTS = rawProducts.map((product) => {
+  return {
+    ...product,
+    images: product.images.map((filename) => productImage(filename)),
+  };
+});
+
+export const getProductBySlug = async (slug: string) => {
+  const product = await fetchProductBySlug(slug);
+
+  if (!product) {
+    return undefined;
+  }
+
+  return {
+    ...product,
+    images: product.images.map((filename) => productImage(filename)),
+  };
+};
+
+export const checkProductAvailability = async (
+  slug: string,
+  startDate: string,
+  endDate: string
+) => {
+  const response = await getProductAvailability(slug, startDate, endDate);
+
+  if (!response) {
+    return false;
+  }
+
+  return response;
+};
+
+/*
 export const PRODUCTS = [
   {
     id: 1,
@@ -450,5 +493,4 @@ export const PRODUCTS = [
     description: 'Worek chroniący rzeczy przed wodą, deszczem i zabrudzeniem.',
   },
 ];
-
-export const getProductBySlug = (slug: string) => PRODUCTS.find((product) => product.slug === slug);
+*/
