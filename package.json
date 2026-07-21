@@ -9,8 +9,8 @@
     "lint": "oxlint",
     "type-check": "tsc --noEmit",
     "api:generate": "node --env-file=.env scripts/generate-api-types.mjs",
-    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx}\"",
-    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx}\"",
+    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
+    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
     "preview": "vite preview"
   },
   "dependencies": {
