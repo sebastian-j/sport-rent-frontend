@@ -48,7 +48,9 @@ export default function UserDetailsFields({
   };
 
   return (
-    <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 ${className}`}>
+    <div
+      className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 ${className}`}
+    >
       {USER_DETAILS_FIELDS.map(({ name, label, placeholder, required, fullWidth }) => {
         const input = (
           <FormInput
@@ -64,7 +66,9 @@ export default function UserDetailsFields({
         return showLabels ? (
           <label
             key={name}
-            className={`flex flex-col gap-1 text-sm text-app-textMuted ${fullWidth ? 'md:col-span-2' : ''}`}
+            className={`flex flex-col gap-1 text-sm text-app-textMuted ${
+              fullWidth ? 'sm:col-span-2 md:col-span-1 lg:col-span-2' : ''
+            }`}
           >
             {label}
             {input}

@@ -79,17 +79,17 @@ export default function OrderSummaryPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[78rem] px-6 py-6 min-[961px]:px-8 min-[961px]:py-12">
-      <div className="grid items-start justify-center gap-6 min-[961px]:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] min-[961px]:gap-8">
+    <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
+      <div className="grid items-start justify-center gap-6 md:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] md:gap-8">
         <div className="mx-auto flex w-full max-w-[48rem] flex-col gap-6">
-          <ContentPanel className="w-full p-4 sm:p-6 min-[961px]:p-8">
+          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
             <RecipientDetailsPanel
               details={recipientDetails}
               onDetailsChange={setRecipientDetails}
             />
           </ContentPanel>
 
-          <ContentPanel className="w-full px-3 py-4 sm:py-6 min-[961px]:py-8">
+          <ContentPanel className="w-full px-3 py-4 sm:py-6 md:py-8">
             <PaymentMethodsPanel
               selectedMethodId={selectedPaymentMethodId}
               pointsRequired={pointsRequired}
@@ -99,7 +99,7 @@ export default function OrderSummaryPage() {
           </ContentPanel>
         </div>
 
-        <ContentPanel className="w-full max-w-[48rem] gap-6 justify-self-center p-4 sm:p-6 min-[961px]:max-w-[24rem] min-[961px]:justify-self-end min-[961px]:p-8">
+        <ContentPanel className="w-full max-w-[48rem] gap-6 justify-self-center p-4 sm:p-6 md:max-w-[24rem] md:justify-self-end md:p-8">
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
