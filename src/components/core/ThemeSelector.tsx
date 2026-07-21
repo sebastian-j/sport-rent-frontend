@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import Switch from './Switch.tsx';
 
 type ThemeMode = 'light' | 'system' | 'dark';
 type ManualTheme = Exclude<ThemeMode, 'system'>;
@@ -110,15 +111,11 @@ export default function ThemeSelector() {
 
       <label className="mt-2 flex cursor-pointer items-center justify-between gap-4 rounded-lg px-2 py-2 hover:bg-app-surfaceSoft">
         <span className="text-sm font-medium">Tryb auto</span>
-        <input
-          type="checkbox"
-          className="peer sr-only"
+        <Switch
+          ariaLabel="Tryb automatyczny motywu"
           checked={isAuto}
-          onChange={(event) =>
-            context.setTheme(event.target.checked ? 'system' : context.manualTheme)
-          }
+          onCheckedChange={(checked) => context.setTheme(checked ? 'system' : context.manualTheme)}
         />
-        <span className="relative h-6 w-11 shrink-0 rounded-full bg-app-border transition-colors peer-checked:bg-app-surfaceStrong peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-app-text after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5" />
       </label>
     </div>
   );

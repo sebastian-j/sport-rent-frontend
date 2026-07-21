@@ -8,8 +8,6 @@ import 'react-social-icons/tiktok';
 import 'react-social-icons/twitter';
 import footerLogo from '../assets/logo_footer.svg';
 
-const DESKTOP_MEDIA_QUERY = '(min-width: 961px)';
-
 type FooterSectionProps = {
   children: ReactNode;
   id: string;
@@ -18,23 +16,8 @@ type FooterSectionProps = {
 
 function FooterSection({ children, id, title }: FooterSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(() =>
-    typeof window === 'undefined' ? false : window.matchMedia(DESKTOP_MEDIA_QUERY).matches
-  );
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const desktopMedia = window.matchMedia(DESKTOP_MEDIA_QUERY);
-    const handleBreakpointChange = (event: MediaQueryListEvent) => {
-      setShouldAnimate(false);
-      setIsDesktop(event.matches);
-    };
-
-    desktopMedia.addEventListener('change', handleBreakpointChange);
-
-    return () => desktopMedia.removeEventListener('change', handleBreakpointChange);
-  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -68,11 +51,11 @@ function FooterSection({ children, id, title }: FooterSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="border-t border-white/20 text-center min-[961px]:border-0 min-[961px]:text-left"
+      className="border-t border-white/20 text-center lg:border-0 lg:text-left"
     >
       <button
         type="button"
-        className="relative flex w-full items-center justify-center py-4 text-center text-lg font-bold min-[961px]:hidden"
+        className="relative flex w-full items-center justify-center py-4 text-center text-lg font-bold lg:hidden"
         aria-controls={id}
         aria-expanded={isOpen}
         onClick={() => {
@@ -88,13 +71,13 @@ function FooterSection({ children, id, title }: FooterSectionProps) {
         />
       </button>
 
-      <h2 className="hidden pb-3 text-2xl font-bold min-[961px]:block">{title}</h2>
+      <h2 className="hidden pb-3 text-2xl font-bold lg:block">{title}</h2>
       <div
         id={id}
-        className={`grid motion-reduce:transition-none ${
-          isDesktop || isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        className={`grid motion-reduce:transition-none lg:grid-rows-[1fr] lg:opacity-100 lg:transition-none ${
+          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         } ${
-          !isDesktop && shouldAnimate
+          shouldAnimate
             ? 'transition-[grid-template-rows,opacity] duration-500 ease-in-out'
             : 'transition-none'
         }`}
@@ -108,8 +91,8 @@ function FooterSection({ children, id, title }: FooterSectionProps) {
 export default function Footer() {
   return (
     <footer className="bg-black px-5 py-10 text-app-textInverted sm:px-8 md:px-12 md:py-14 lg:px-20">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-0 min-[961px]:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] min-[961px]:gap-x-16">
-        <div className="mb-8 flex max-w-xl justify-self-center flex-col items-center gap-5 text-center min-[961px]:mb-0">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-0 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-x-16">
+        <div className="mb-8 flex max-w-xl justify-self-center flex-col items-center gap-5 text-center lg:mb-0">
           <img className="h-auto w-64 max-w-full" src={footerLogo} alt="Logo Polar Sport Rent" />
           <p className="text-base leading-relaxed text-app-textInvertedMuted lg:text-lg">
             Polar Sport Rent - wypożyczalnia sprzętu outdoorowego dla aktywnych. W naszej ofercie
@@ -141,7 +124,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-b border-white/20 min-[961px]:border-0">
+        <div className="border-b border-white/20 lg:border-0">
           <FooterSection id="footer-information" title="Informacje">
             <ul className="space-y-3 pb-4 text-base text-app-textInvertedMuted [&_a:hover]:text-app-textInverted lg:pb-0 lg:text-lg">
               <li>
@@ -170,7 +153,7 @@ export default function Footer() {
           </FooterSection>
         </div>
 
-        <div className="border-b border-white/20 min-[961px]:border-0">
+        <div className="border-b border-white/20 lg:border-0">
           <FooterSection id="footer-contact" title="Polar Sport Rent">
             <address className="pb-4 not-italic lg:pb-0">
               <ul className="space-y-3 text-base text-app-textInvertedMuted [&_a:hover]:text-app-textInverted lg:text-lg">

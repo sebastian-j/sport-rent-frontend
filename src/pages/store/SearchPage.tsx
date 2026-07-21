@@ -91,9 +91,31 @@ export default function SearchPage() {
     };
   }, [mobilePanel]);
 
+  useEffect(() => {
+    const filtersExpanded = window.matchMedia('(min-width: 1024px)');
+    const sortingExpanded = window.matchMedia('(min-width: 768px)');
+
+    const closeExpandedPanel = () => {
+      setMobilePanel((currentPanel) => {
+        if (currentPanel === 'filters' && filtersExpanded.matches) return null;
+        if (currentPanel === 'sorting' && sortingExpanded.matches) return null;
+
+        return currentPanel;
+      });
+    };
+
+    filtersExpanded.addEventListener('change', closeExpandedPanel);
+    sortingExpanded.addEventListener('change', closeExpandedPanel);
+
+    return () => {
+      filtersExpanded.removeEventListener('change', closeExpandedPanel);
+      sortingExpanded.removeEventListener('change', closeExpandedPanel);
+    };
+  }, []);
+
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 md:gap-8 md:p-8">
-      <ContentPanel className="sticky top-32 hidden h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start gap-6 overflow-y-auto md:flex">
+    <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 sm:p-6 md:p-8 lg:gap-8">
+      <ContentPanel className="sticky top-32 hidden h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
         <DualRangeSlider
           label="Cena"
           min={MIN_PRICE}
@@ -110,7 +132,7 @@ export default function SearchPage() {
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col">
-        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2">
+        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2 md:top-24">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
@@ -118,7 +140,7 @@ export default function SearchPage() {
               aria-label="Otwórz filtry"
               aria-expanded={mobilePanel === 'filters'}
               aria-controls="mobile-search-panel"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted md:hidden"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted lg:hidden"
             >
               <Funnel size={20} aria-hidden="true" />
             </button>
@@ -129,12 +151,12 @@ export default function SearchPage() {
               aria-label="Otwórz sortowanie"
               aria-expanded={mobilePanel === 'sorting'}
               aria-controls="mobile-search-panel"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted min-[480px]:hidden"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted md:hidden"
             >
               <ArrowUpDown size={20} aria-hidden="true" />
             </button>
 
-            <div className="hidden min-[480px]:block">
+            <div className="hidden md:block">
               <SortToggles
                 value={sortField}
                 options={SORT_OPTIONS}
@@ -162,7 +184,9 @@ export default function SearchPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="fixed inset-0 z-[60] md:hidden"
+            className={`fixed inset-0 z-[60] ${
+              mobilePanel === 'filters' ? 'lg:hidden' : 'md:hidden'
+            }`}
           >
             <button
               type="button"

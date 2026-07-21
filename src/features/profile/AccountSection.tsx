@@ -1,342 +1,96 @@
 import { useState } from 'react';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import Switch from '../../components/core/Switch.tsx';
+import EmailForm from './account/EmailForm.tsx';
+import PasswordForm from './account/PasswordForm.tsx';
+import PersonalDataForm, { type PersonalData } from './account/PersonalDataForm.tsx';
+import SettingsCard from './account/SettingsCard.tsx';
 
 type Section = 'personal' | 'email' | 'password' | null;
 
-type SettingsCardProps = {
-  title: string;
-  subtitle: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
+const INITIAL_PERSONAL_DATA: PersonalData = {
+  firstName: 'Jan',
+  lastName: 'Kowalski',
+  country: 'Polska',
+  city: 'Kraków',
+  addressLine1: 'ul. Kałuży 1',
+  addressLine2: '',
+  postalCode: '30-111',
 };
-
-function SettingsCard({ title, subtitle, isExpanded, onToggle, children }: SettingsCardProps) {
-  return (
-    <div className="bg-app-surfaceElevated">
-      <div
-        className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-app-surfaceSoft/50 select-none"
-        onClick={onToggle}
-      >
-        <div>
-          <h2 className="text-lg font-bold">{title}</h2>
-          <p className="mt-1 text-sm text-app-textMuted">{subtitle}</p>
-        </div>
-        {isExpanded ? (
-          <ChevronDown className="text-app-textMuted" />
-        ) : (
-          <ChevronRight className="text-app-textMuted" />
-        )}
-      </div>
-      {isExpanded && <div className="p-6 pt-0 border-t border-app-borderSoft">{children}</div>}
-    </div>
-  );
-}
 
 export default function AccountSection() {
   const [expandedSection, setExpandedSection] = useState<Section>(null);
   const [newsletter, setNewsletter] = useState(true);
-
-  const [userData, setUserData] = useState({
-    firstName: 'Jan',
-    lastName: 'Kowalski',
-    country: 'Polska',
-    city: 'Kraków',
-    addressLine1: 'ul. Kałuży 1',
-    addressLine2: '',
-    postalCode: '30-111',
-  });
-
-  const [tempUserData, setTempUserData] = useState(userData);
+  const [personalData, setPersonalData] = useState(INITIAL_PERSONAL_DATA);
   const [currentEmail, setCurrentEmail] = useState('jankowalski@gmail.com');
-  const [emailForm, setEmailForm] = useState({ newEmail: '', password: '' });
-  const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' });
 
-  const resetForms = () => {
-    setTempUserData(userData);
-    setEmailForm({ newEmail: '', password: '' });
-    setPasswordForm({ current: '', new: '', confirm: '' });
+  const toggleSection = (section: Exclude<Section, null>) => {
+    setExpandedSection((currentSection) => (currentSection === section ? null : section));
   };
 
-  const toggleSection = (section: Section) => {
-    resetForms();
-    setExpandedSection(expandedSection === section ? null : section);
-  };
+  const closeSection = () => setExpandedSection(null);
 
-  const handleCancel = () => {
-    resetForms();
-    setExpandedSection(null);
-  };
-
-  const handleSavePersonal = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const trimmedData = {
-      firstName: tempUserData.firstName.trim(),
-      lastName: tempUserData.lastName.trim(),
-      country: tempUserData.country.trim(),
-      city: tempUserData.city.trim(),
-      addressLine1: tempUserData.addressLine1.trim(),
-      addressLine2: tempUserData.addressLine2.trim(),
-      postalCode: tempUserData.postalCode.trim(),
-    };
-
-    setUserData(trimmedData);
+  const savePersonalData = (data: PersonalData) => {
+    setPersonalData(data);
     alert('Dane osobowe zostały pomyślnie zapisane!');
-    setExpandedSection(null);
+    closeSection();
   };
 
-  const handleEmailChange = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const trimmedNewEmail = emailForm.newEmail.trim();
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedNewEmail)) {
-      alert('Proszę podać poprawny adres e-mail!');
-      return;
-    }
-
-    if (trimmedNewEmail === currentEmail) {
-      alert('Nowy adres e-mail nie może być taki sam jak obecny!');
-      return;
-    }
-    if (emailForm.password !== 'haslo123') {
-      alert('Podano błędne aktualne hasło!');
-      return;
-    }
-
-    setCurrentEmail(trimmedNewEmail);
+  const saveEmail = (email: string) => {
+    setCurrentEmail(email);
     alert('Adres e-mail został zmieniony!');
-    setExpandedSection(null);
+    closeSection();
   };
 
-  const handlePasswordChange = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(passwordForm.new)) {
-      alert('Nowe hasło musi mieć co najmniej 8 znaków, zawierać min. 1 literę i 1 cyfrę!');
-      return;
-    }
-    if (passwordForm.current !== 'haslo123') {
-      alert('Podano błędne aktualne hasło!');
-      return;
-    }
-    if (passwordForm.new !== passwordForm.confirm) {
-      alert('Nowe hasła nie są identyczne!');
-      return;
-    }
-    if (passwordForm.current === passwordForm.new) {
-      alert('Nowe hasło musi różnić się od starego!');
-      return;
-    }
-
+  const savePassword = () => {
     alert('Hasło zostało zaktualizowane!');
-    setExpandedSection(null);
+    closeSection();
   };
 
   return (
-    <div className="flex flex-col items-center w-full pt-12 text-app-text">
-      <h2 className="text-5xl text-center">Ustawienia konta</h2>
+    <div className="flex w-full flex-col items-center pt-6 text-app-text md:pt-12">
+      <h2 className="text-center text-3xl md:text-5xl">Ustawienia konta</h2>
 
-      <div className="m-12 flex w-full max-w-[calc(100%-6rem)] flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft">
+      <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
         <SettingsCard
           title="Dane osobowe i adres"
-          subtitle={`${userData.firstName} ${userData.lastName}, ${userData.city}`}
+          subtitle={`${personalData.firstName} ${personalData.lastName}, ${personalData.city}`}
           isExpanded={expandedSection === 'personal'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('personal')}
         >
-          <form onSubmit={handleSavePersonal}>
-            <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
-              <input
-                type="text"
-                name="firstName"
-                value={tempUserData.firstName}
-                onChange={(e) => setTempUserData({ ...tempUserData, firstName: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                placeholder="Imię"
-                required
-              />
-              <input
-                type="text"
-                name="lastName"
-                value={tempUserData.lastName}
-                onChange={(e) => setTempUserData({ ...tempUserData, lastName: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                placeholder="Nazwisko"
-                required
-              />
-              <input
-                type="text"
-                name="country"
-                value={tempUserData.country}
-                onChange={(e) => setTempUserData({ ...tempUserData, country: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                placeholder="Państwo"
-                required
-              />
-              <input
-                type="text"
-                name="city"
-                value={tempUserData.city}
-                onChange={(e) => setTempUserData({ ...tempUserData, city: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                placeholder="Miasto"
-                required
-              />
-              <input
-                type="text"
-                name="addressLine1"
-                value={tempUserData.addressLine1}
-                onChange={(e) => setTempUserData({ ...tempUserData, addressLine1: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border col-span-full"
-                placeholder="Adres - pierwsza linia"
-                required
-              />
-              <input
-                type="text"
-                name="addressLine2"
-                value={tempUserData.addressLine2}
-                onChange={(e) => setTempUserData({ ...tempUserData, addressLine2: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border col-span-full"
-                placeholder="Adres - druga linia (opcjonalne)"
-              />
-              <input
-                type="text"
-                name="postalCode"
-                value={tempUserData.postalCode}
-                onChange={(e) => setTempUserData({ ...tempUserData, postalCode: e.target.value })}
-                className="p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                placeholder="Kod pocztowy"
-                required
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
-              >
-                Zapisz
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
-              >
-                Anuluj
-              </button>
-            </div>
-          </form>
+          <PersonalDataForm
+            initialData={personalData}
+            onSave={savePersonalData}
+            onCancel={closeSection}
+          />
         </SettingsCard>
 
         <SettingsCard
           title="Adres e-mail"
           subtitle={currentEmail}
           isExpanded={expandedSection === 'email'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('email')}
         >
-          <form onSubmit={handleEmailChange}>
-            <div className="mt-4 space-y-4">
-              <input
-                type="email"
-                value={emailForm.newEmail}
-                onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
-                placeholder="Nowy adres e-mail"
-                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                required
-              />
-              <input
-                type="password"
-                value={emailForm.password}
-                onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
-                placeholder="Aktualne hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                required
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
-              >
-                Zmień
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
-              >
-                Anuluj
-              </button>
-            </div>
-          </form>
+          <EmailForm currentEmail={currentEmail} onSave={saveEmail} onCancel={closeSection} />
         </SettingsCard>
 
         <SettingsCard
           title="Hasło"
           subtitle="••••••••"
           isExpanded={expandedSection === 'password'}
+          scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('password')}
         >
-          <form onSubmit={handlePasswordChange}>
-            <div className="mt-4 space-y-4">
-              <input
-                type="password"
-                value={passwordForm.current}
-                onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                placeholder="Obecne hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                required
-              />
-              <input
-                type="password"
-                value={passwordForm.new}
-                onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
-                placeholder="Nowe hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                required
-              />
-              <input
-                type="password"
-                value={passwordForm.confirm}
-                onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                placeholder="Powtórz nowe hasło"
-                className="w-full p-3 border rounded-lg border-app-borderSoft bg-app-surface text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                required
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                type="submit"
-                className="px-6 py-2 text-white transition-colors rounded-lg bg-app-surfaceStrong hover:bg-app-surfaceStrong/90"
-              >
-                Zaktualizuj
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-app-textMuted hover:bg-app-surfaceNeutral"
-              >
-                Anuluj
-              </button>
-            </div>
-          </form>
+          <PasswordForm onSave={savePassword} onCancel={closeSection} />
         </SettingsCard>
 
-        <div className="flex items-center justify-between p-6 bg-app-surfaceElevated select-none">
+        <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 md:p-6">
           <div>
             <h2 className="text-lg font-bold">Newsletter</h2>
             <p className="mt-1 text-sm text-app-textMuted">Otrzymuj informacje o promocjach</p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={newsletter}
-              onChange={() => setNewsletter(!newsletter)}
-            />
-            <div className="w-11 h-6 bg-app-borderSoft rounded-full peer peer-checked:bg-app-text transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-app-surfaceElevated after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
-          </label>
+          <Switch ariaLabel="Newsletter" checked={newsletter} onCheckedChange={setNewsletter} />
         </div>
       </div>
     </div>

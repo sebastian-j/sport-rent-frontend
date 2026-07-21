@@ -84,11 +84,11 @@ export default function HomePage() {
         ))}
       </CategoryCardSlider>
 
-      <div className="hidden min-[961px]:flex min-[961px]:flex-row">
+      <div className="hidden lg:flex lg:flex-row">
         <div className="flex flex-col w-full">
           <CategoryCard {...CATEGORY_CARDS.trailers} />
 
-          <div className="flex flex-col min-[961px]:flex-row">
+          <div className="flex flex-col lg:flex-row">
             <CategoryCard {...CATEGORY_CARDS.ferrata} />
             <CategoryCard {...CATEGORY_CARDS.gravel} />
           </div>
