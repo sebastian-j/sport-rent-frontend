@@ -16,7 +16,7 @@ import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
 import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
 
-const USER_LOYALTY_POINTS = 7_200;
+const USER_LOYALTY_POINTS = 16_000;
 
 const PROFILE_RECIPIENT_DETAILS: UserDetails = {
   firstName: 'Jan',
@@ -28,6 +28,14 @@ const PROFILE_RECIPIENT_DETAILS: UserDetails = {
   postalCode: '30-111',
 };
 
+const getDateAfterToday = (dayOffset: number) => {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + dayOffset);
+
+  return date;
+};
+
 const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
   (product) => product.id === 1 || product.id === 4
 ).map((product, index) => ({
@@ -37,8 +45,8 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
       id: index + 1,
       quantity: index === 0 ? 5 : 2,
       size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-      start_date: new Date(2026, 6, 15 + index * 5),
-      end_date: new Date(2026, 6, 16 + index * 7),
+      start_date: getDateAfterToday(3 + index * 5),
+      end_date: getDateAfterToday(4 + index * 7),
     },
     ...(index === 0
       ? [
@@ -46,8 +54,8 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
             id: 2,
             quantity: 1,
             size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-            start_date: new Date(2026, 6, 25),
-            end_date: new Date(2026, 6, 27),
+            start_date: getDateAfterToday(10),
+            end_date: getDateAfterToday(12),
           },
         ]
       : []),
