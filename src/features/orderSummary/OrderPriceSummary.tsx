@@ -45,7 +45,7 @@ export default function OrderPriceSummary({
       </p>
 
       <ButtonCore
-        text="Kupuję i płacę"
+        text="Rezerwuję i płacę"
         onClick={onBuy}
         disabled={!canBuy}
         className="mt-2 flex h-12 w-full items-center justify-center text-lg font-semibold"
