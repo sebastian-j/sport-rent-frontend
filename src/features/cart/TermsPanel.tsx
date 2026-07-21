@@ -15,7 +15,7 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
   return (
     <ContentPanel
       tone={highlighted ? 'danger' : 'default'}
-      className="mx-8 mt-12 flex-[2] flex-row flex-wrap justify-between transition-colors duration-200"
+      className="mx-8 mt-12 flex-[2] flex-col items-center gap-4 text-center transition-colors duration-200 lg:flex-row lg:justify-between lg:text-left"
       ref={ref}
     >
       <p className="text-2xl">

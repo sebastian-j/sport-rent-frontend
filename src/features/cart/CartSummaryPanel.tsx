@@ -10,7 +10,7 @@ type CartSummaryPanelProps = {
 
 export default function CartSummaryPanel({ orderInformation, onBuy }: CartSummaryPanelProps) {
   return (
-    <ContentPanel className="mx-8 mt-12 flex-[2] gap-2">
+    <ContentPanel className="mx-8 mt-12 flex-[2] items-center gap-2 text-center lg:items-stretch lg:text-left">
       <p className="text-3xl">Podsumowanie zamówienia</p>
       <p className="text-xl">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
       <p className="text-xl">Liczba produktów: {orderInformation.totalQuantity}</p>
