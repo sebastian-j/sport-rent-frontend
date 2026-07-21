@@ -20,6 +20,7 @@ import SearchPage from './pages/store/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
 import { ThemeProvider } from './components/core/ThemeSelector.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
+import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/summary" element={<OrderSummaryPage />} />
             </Route>
           </Route>
           <Route element={<LoginLayout />}>

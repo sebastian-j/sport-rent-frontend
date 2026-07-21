@@ -47,8 +47,8 @@ export default function AccountSection() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center pt-6 text-app-text md:pt-12">
-      <h2 className="text-center text-3xl md:text-5xl">Ustawienia konta</h2>
+    <div className="flex flex-col items-center w-full pt-6 text-app-text md:pt-12">
+      <h2 className="text-5xl text-center text-3xl md:text-5xl">Ustawienia konta</h2>
 
       <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
         <SettingsCard

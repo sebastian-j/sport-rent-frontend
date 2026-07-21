@@ -1,0 +1,138 @@
+import { useState } from 'react';
+import { PRODUCTS } from '../../assets/products/products.ts';
+import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
+import type { CartProduct } from '../../features/cart/cartTypes.ts';
+import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
+import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
+import PaymentMethodsPanel from '../../features/orderSummary/PaymentMethodsPanel.tsx';
+import {
+  PAYMENT_METHODS,
+  type PaymentMethodId,
+} from '../../features/orderSummary/paymentMethods.ts';
+import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
+import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
+import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
+import usePromo from '../../features/orderSummary/usePromo.ts';
+import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
+
+const USER_LOYALTY_POINTS = 16_000;
+
+const PROFILE_RECIPIENT_DETAILS: UserDetails = {
+  firstName: 'Jan',
+  lastName: 'Kowalski',
+  country: 'Polska',
+  city: 'Kraków',
+  addressLine1: 'ul. Kałuży 1',
+  addressLine2: '',
+  postalCode: '30-111',
+};
+
+const getDateAfterToday = (dayOffset: number) => {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + dayOffset);
+
+  return date;
+};
+
+const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
+  (product) => product.id === 1 || product.id === 4
+).map((product, index) => ({
+  ...product,
+  dates: [
+    {
+      id: index + 1,
+      quantity: index === 0 ? 5 : 2,
+      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+      start_date: getDateAfterToday(3 + index * 5),
+      end_date: getDateAfterToday(4 + index * 7),
+    },
+    ...(index === 0
+      ? [
+          {
+            id: 2,
+            quantity: 1,
+            size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+            start_date: getDateAfterToday(10),
+            end_date: getDateAfterToday(12),
+          },
+        ]
+      : []),
+  ],
+}));
+
+export default function OrderSummaryPage() {
+  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
+  const {
+    promoCode,
+    appliedPromoCode,
+    discountRate,
+    promoCodeError,
+    applyPromoCode,
+    changePromoCode,
+    removePromoCode,
+  } = usePromo();
+  const cartPrice = getOrderInformation(SUMMARY_PRODUCTS).totalValue;
+  const paymentPrice = PAYMENT_METHODS.find(
+    (method) => method.id === selectedPaymentMethodId
+  )?.price;
+  const discount = cartPrice * discountRate;
+  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
+
+  const handleRemovePromoCode = () => {
+    removePromoCode();
+    if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
+  };
+
+  return (
+    <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
+      <div className="grid items-start justify-center gap-6 md:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] md:gap-8">
+        <div className="mx-auto flex w-full max-w-[48rem] flex-col gap-6">
+          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+            <RecipientDetailsPanel
+              details={recipientDetails}
+              onDetailsChange={setRecipientDetails}
+            />
+          </ContentPanel>
+
+          <ContentPanel className="w-full px-3 py-4 sm:py-6 md:py-8">
+            <PaymentMethodsPanel
+              selectedMethodId={selectedPaymentMethodId}
+              pointsRequired={pointsRequired}
+              userPoints={USER_LOYALTY_POINTS}
+              onMethodChange={setSelectedPaymentMethodId}
+            />
+          </ContentPanel>
+        </div>
+
+        <ContentPanel className="w-full max-w-[48rem] gap-6 justify-self-center p-4 sm:p-6 md:max-w-[24rem] md:justify-self-end md:p-8">
+          <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
+
+          <div className="flex w-full flex-col gap-5">
+            {SUMMARY_PRODUCTS.map((product) => (
+              <SummaryProduct key={product.id} product={product} />
+            ))}
+          </div>
+
+          <PromoCodePanel
+            promoCode={promoCode}
+            appliedCode={appliedPromoCode}
+            error={promoCodeError}
+            onPromoCodeChange={changePromoCode}
+            onApply={applyPromoCode}
+            onRemove={handleRemovePromoCode}
+          />
+
+          <OrderPriceSummary
+            cartPrice={cartPrice}
+            paymentPrice={paymentPrice}
+            discount={discount}
+            canBuy={selectedPaymentMethodId !== undefined}
+          />
+        </ContentPanel>
+      </div>
+    </main>
+  );
+}

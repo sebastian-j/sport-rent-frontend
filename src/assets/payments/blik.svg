@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 64" role="img" aria-labelledby="title">
+  <title id="title">BLIK</title>
+  <rect width="136" height="64" rx="8" fill="#111111"/>
+  <circle cx="45" cy="15" r="7" fill="#e84b78"/>
+  <path fill="#ffffff" d="M106 55h10L104 39l11-13h-9L95 39V10h-8v45h8V39l11 16ZM72 26h8v29h-8V26ZM57 10h8v45h-8V10ZM37 25c-3 0-5 .6-7 2V10h-8v30a15 15 0 1 0 15-15Zm0 23a7 7 0 1 1 0-15 7 7 0 0 1 0 15Z"/>
+</svg>
