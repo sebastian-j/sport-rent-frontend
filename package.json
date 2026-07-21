@@ -8,13 +8,15 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "type-check": "tsc --noEmit",
-    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx}\"",
-    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx}\"",
+    "api:generate": "node --env-file=.env scripts/generate-api-types.mjs",
+    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
+    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
     "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^1.23.0",
     "motion": "^12.42.2",
+    "openapi-typescript": "^7.13.0",
     "oxfmt": "^0.57.0",
     "react": "^19.2.7",
     "react-datepicker": "^9.1.0",
