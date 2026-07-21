@@ -71,7 +71,7 @@ export default function CartPage() {
 
       {products.length > 0 && (
         <div>
-          <ContentPanel className="mx-8 mt-12 items-stretch gap-4">
+          <ContentPanel className="mx-4 mt-12 items-stretch gap-4 p-4 sm:mx-8 sm:p-8">
             {products.map((product) => {
               const information = getProductInformation(product);
 
