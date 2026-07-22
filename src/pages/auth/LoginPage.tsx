@@ -2,7 +2,6 @@ import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { type SubmitEvent, useState } from 'react';
 import { login } from '../../api/auth.ts';
-import { ApiError } from '../../api/client.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -34,30 +33,26 @@ export default function LoginPage() {
     setIsLoggingIn(true);
 
     try {
-      const res = await login(formData);
-      if (!res) {
+      const result = await login(formData);
+
+      if (result.error) {
+        if (result.response.status === 401) {
+          setHasInvalidCredentials(true);
+          setLoginError('Nieprawidłowy adres e-mail lub hasło');
+          return;
+        }
+
         setHasInvalidCredentials(false);
-        setLoginError('Logowanie się nie powiodło');
+        setLoginError(`Logowanie nie powiodło się (HTTP ${result.response.status})`);
         return;
       }
 
-      localStorage.setItem('accessToken', res?.access_token);
-      localStorage.setItem('refreshToken', res?.refresh_token);
+      localStorage.setItem('accessToken', result.data.access_token);
+      localStorage.setItem('refreshToken', result.data.refresh_token);
       navigate('/');
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 401) {
-        setHasInvalidCredentials(true);
-        setLoginError('Nieprawidłowy adres e-mail lub hasło');
-        return;
-      }
-
+    } catch {
       setHasInvalidCredentials(false);
-
-      if (error instanceof ApiError) {
-        setLoginError(error.message);
-        return;
-      }
-      setLoginError('Logowanie się nie powiodło');
+      setLoginError('Nie udało się połączyć z serwerem. Spróbuj ponownie.');
     } finally {
       setIsLoggingIn(false);
     }

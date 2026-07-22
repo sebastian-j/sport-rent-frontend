@@ -1,9 +1,6 @@
-import type { paths } from './generated/schema.ts';
-import { request } from './client.ts';
+import type { components } from './generated/schema.ts';
+import { api } from './client.ts';
 
-type LoginOperation = paths['/auth/login']['post'];
-type LoginRequest = LoginOperation['requestBody']['content']['application/json'];
-type LoginResponse = LoginOperation['responses'][200]['content']['application/json'];
+type LoginRequest = components['schemas']['LoginRequest'];
 
-export const login = (body: LoginRequest): Promise<LoginResponse | undefined> =>
-  request<LoginResponse>('/auth/login', { method: 'POST', body });
+export const login = (body: LoginRequest) => api.POST('/auth/login', { body });
