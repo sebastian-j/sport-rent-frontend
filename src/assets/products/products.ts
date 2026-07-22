@@ -1,7 +1,7 @@
 import {
-  getProducts,
+  getProducts as fetchProducts,
   getProductBySlug as fetchProductBySlug,
-  getProductAvailability,
+  getProductAvailability as fetchProductAvailability,
 } from '../../api/product.ts';
 
 const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
@@ -9,27 +9,32 @@ const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
   import: 'default',
 }) as Record<string, string>;
 
-export const productImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`];
+export const getProductImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`] || '';
 
-const rawProducts = (await getProducts()) || [];
+export const getAllProducts = async () => {
+  const { data, error } = await fetchProducts();
 
-export const PRODUCTS = rawProducts.map((product) => {
-  return {
+  if (error || !data) {
+    console.error('Błąd pobierania produktów:', error);
+    return [];
+  }
+
+  return data.map((product) => ({
     ...product,
-    images: product.images.map((filename) => productImage(filename)),
-  };
-});
+    images: product.images?.map(getProductImage) || [],
+  }));
+};
 
 export const getProductBySlug = async (slug: string) => {
-  const product = await fetchProductBySlug(slug);
+  const { data, error } = await fetchProductBySlug(slug);
 
-  if (!product) {
+  if (error || !data) {
     return undefined;
   }
 
   return {
-    ...product,
-    images: product.images.map((filename) => productImage(filename)),
+    ...data,
+    images: data.images?.map(getProductImage) || [],
   };
 };
 
@@ -38,14 +43,16 @@ export const checkProductAvailability = async (
   startDate: string,
   endDate: string
 ) => {
-  const response = await getProductAvailability(slug, startDate, endDate);
+  const { data, error } = await fetchProductAvailability(slug, startDate, endDate);
 
-  if (!response) {
+  if (error || data === undefined) {
     return false;
   }
 
-  return response;
+  return data;
 };
+
+export const PRODUCTS = await getAllProducts();
 
 /*
 export const PRODUCTS = [

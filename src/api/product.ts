@@ -1,21 +1,18 @@
-import { request } from './client.ts';
-import { type ProductProps } from '../features/product/productProps.ts';
-type ProductResponse = ProductProps;
+import { api } from './client.ts';
 
-export const getProducts = (): Promise<ProductResponse[] | undefined> => {
-  return request<ProductResponse[]>('/product');
-};
+export const getProducts = () => api.GET('/product');
 
-export const getProductBySlug = (slug: string): Promise<ProductResponse | undefined> => {
-  return request<ProductResponse>('/product/' + slug);
-};
+export const getProductBySlug = (slug: string) =>
+  api.GET('/product/{slug}', {
+    params: {
+      path: { slug },
+    },
+  });
 
-export const getProductAvailability = (
-  slug: string,
-  startDate: string,
-  endDate: string
-): Promise<ProductResponse | undefined> => {
-  return request<ProductResponse>(
-    '/product/' + slug + '/availability?start_date=' + startDate + '&end_date=' + endDate
-  );
-};
+export const getProductAvailability = (slug: string, startDate: string, endDate: string) =>
+  api.GET('/product/{slug}/availability', {
+    params: {
+      path: { slug },
+      query: { startDate, endDate },
+    },
+  });
