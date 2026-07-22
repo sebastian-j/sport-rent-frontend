@@ -1,15 +1,16 @@
 import { useState } from 'react';
+
 import { PRODUCTS } from '../../assets/products/products.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
 import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
-import PaymentMethodsPanel from '../../features/orderSummary/PaymentMethodsPanel.tsx';
 import {
   PAYMENT_METHODS,
   type PaymentMethodId,
 } from '../../features/orderSummary/paymentMethods.ts';
+import PaymentMethodsPanel from '../../features/orderSummary/PaymentMethodsPanel.tsx';
 import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';

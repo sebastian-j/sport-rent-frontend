@@ -1,26 +1,27 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './layouts/Layout';
-import HomePage from './pages/store/HomePage.tsx';
-import FavoritesPage from './pages/store/FavoritesPage.tsx';
-import CartPage from './pages/store/CartPage.tsx';
-import ProfilePage from './pages/account/ProfilePage.tsx';
-import AboutPage from './pages/info/AboutPage.tsx';
-import ContactPage from './pages/info/ContactPage.tsx';
-import PointsPage from './pages/info/PointsPage.tsx';
-import TosPage from './pages/document/TosPage.tsx';
-import FaqPage from './pages/info/FaqPage.tsx';
-import LoginLayout from './layouts/LoginLayout.tsx';
-import LoginPage from './pages/auth/LoginPage.tsx';
-import RegisterPage from './pages/auth/RegisterPage.tsx';
+
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
-import ProductPage from './pages/store/ProductPage.tsx';
-import DocumentLayout from './layouts/DocumentLayout.tsx';
-import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
-import SearchPage from './pages/store/SearchPage.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
 import { ThemeProvider } from './components/core/ThemeSelector.tsx';
+import DocumentLayout from './layouts/DocumentLayout.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
+import Layout from './layouts/Layout';
+import LoginLayout from './layouts/LoginLayout.tsx';
+import ProfilePage from './pages/account/ProfilePage.tsx';
+import LoginPage from './pages/auth/LoginPage.tsx';
+import RegisterPage from './pages/auth/RegisterPage.tsx';
+import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
+import TosPage from './pages/document/TosPage.tsx';
+import AboutPage from './pages/info/AboutPage.tsx';
+import ContactPage from './pages/info/ContactPage.tsx';
+import FaqPage from './pages/info/FaqPage.tsx';
+import PointsPage from './pages/info/PointsPage.tsx';
+import CartPage from './pages/store/CartPage.tsx';
+import FavoritesPage from './pages/store/FavoritesPage.tsx';
+import HomePage from './pages/store/HomePage.tsx';
 import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
+import ProductPage from './pages/store/ProductPage.tsx';
+import SearchPage from './pages/store/SearchPage.tsx';
 
 function App() {
   return (

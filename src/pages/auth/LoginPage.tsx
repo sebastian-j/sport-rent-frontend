@@ -1,7 +1,8 @@
-import ButtonCore from '../../components/core/ButtonCore.tsx';
-import { Link, useNavigate } from 'react-router-dom';
 import { type SubmitEvent, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { login } from '../../api/auth.ts';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 export default function LoginPage() {
   const navigate = useNavigate();

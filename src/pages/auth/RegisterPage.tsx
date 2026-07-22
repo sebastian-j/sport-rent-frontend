@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 export default function RegisterPage() {

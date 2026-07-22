@@ -1,5 +1,6 @@
 import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
+
 import { useCardTilt } from '../../components/core/useCardTilt.ts';
 
 export const PRODUCT_CARD_WIDTH = 256;

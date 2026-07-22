@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
-import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
+
 import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
 import { useCardTilt } from './core/useCardTilt.ts';
 

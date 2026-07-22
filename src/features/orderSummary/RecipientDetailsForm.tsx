@@ -1,4 +1,5 @@
 import { type SubmitEvent, useState } from 'react';
+
 import FormActions from '../../components/core/FormActions.tsx';
 import UserDetailsFields from '../userDetails/UserDetailsFields.tsx';
 import type { UserDetails } from '../userDetails/userDetailsTypes.ts';

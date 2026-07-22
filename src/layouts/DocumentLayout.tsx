@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+
 import DocumentPanel from '../components/core/DocumentPanel.tsx';
 
 export default function DocumentLayout() {

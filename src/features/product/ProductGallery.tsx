@@ -1,5 +1,6 @@
-import { useReducer } from 'react';
 import { AnimatePresence, motion, type PanInfo, useReducedMotion } from 'motion/react';
+import { useReducer } from 'react';
+
 import { type ProductProps } from './productProps';
 
 const SWIPE_OFFSET_THRESHOLD_PX = 50;

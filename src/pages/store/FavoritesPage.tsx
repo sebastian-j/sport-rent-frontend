@@ -1,6 +1,7 @@
-import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { PRODUCTS } from '../../assets/products/products.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';

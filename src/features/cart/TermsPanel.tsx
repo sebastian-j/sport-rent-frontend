@@ -1,5 +1,6 @@
-import { forwardRef } from 'react';
 import { Badge, BadgeCheck } from 'lucide-react';
+import { forwardRef } from 'react';
+
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 
 type TermsPanelProps = {
