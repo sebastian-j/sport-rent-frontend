@@ -1,10 +1,60 @@
+import {
+  getProducts as fetchProducts,
+  getProductBySlug as fetchProductBySlug,
+  getProductAvailability as fetchProductAvailability,
+} from '../../api/product.ts';
+
 const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;
 
-export const productImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`];
+export const getProductImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`] || '';
 
+export const getAllProducts = async () => {
+  const { data, error } = await fetchProducts();
+
+  if (error || !data) {
+    console.error('Błąd pobierania produktów:', error);
+    return [];
+  }
+
+  return data.map((product) => ({
+    ...product,
+    images: product.images?.map(getProductImage) || [],
+  }));
+};
+
+export const getProductBySlug = async (slug: string) => {
+  const { data, error } = await fetchProductBySlug(slug);
+
+  if (error || !data) {
+    return undefined;
+  }
+
+  return {
+    ...data,
+    images: data.images?.map(getProductImage) || [],
+  };
+};
+
+export const checkProductAvailability = async (
+  slug: string,
+  startDate: string,
+  endDate: string
+) => {
+  const { data, error } = await fetchProductAvailability(slug, startDate, endDate);
+
+  if (error || data === undefined) {
+    return false;
+  }
+
+  return data;
+};
+
+export const PRODUCTS = await getAllProducts();
+
+/*
 export const PRODUCTS = [
   {
     id: 1,
@@ -450,5 +500,4 @@ export const PRODUCTS = [
     description: 'Worek chroniący rzeczy przed wodą, deszczem i zabrudzeniem.',
   },
 ];
-
-export const getProductBySlug = (slug: string) => PRODUCTS.find((product) => product.slug === slug);
+*/

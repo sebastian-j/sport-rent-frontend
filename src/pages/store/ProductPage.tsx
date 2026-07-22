@@ -1,12 +1,45 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getProductBySlug } from '../../assets/products/products.ts';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function ProductPage() {
   const { slug } = useParams();
-  const product = slug ? getProductBySlug(slug) : null;
+  const [product, setProduct] = useState<ProductProps | null>(null);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+
+      if (slug) {
+        try {
+          const fetchedProduct = await getProductBySlug(slug);
+          setProduct((fetchedProduct as ProductProps) || null);
+        } catch (error) {
+          console.error(error);
+          setProduct(null);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setProduct(null);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="text-center text-5xl text-app-text mt-[10vh]">Ładowanie produktu...</div>
+    );
+  }
 
   if (!product) {
     return (

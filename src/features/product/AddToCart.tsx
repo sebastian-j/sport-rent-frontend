@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { checkProductAvailability } from '../../assets/products/products.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
@@ -40,6 +41,18 @@ export default function AddToCart({ product }: { product: ProductProps }) {
     if (isSizeSelectionRequired) {
       alert('Proszę wybrać rozmiar produktu.');
       return;
+    }
+
+    if (
+      !checkProductAvailability(
+        product.slug,
+        startDate.toLocaleDateString('pl'),
+        endDate.toLocaleDateString('pl')
+      )
+    ) {
+      alert(
+        `Produkt niedostępny w okresie od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
+      );
     }
 
     alert(

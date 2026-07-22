@@ -17,9 +17,6 @@ importers:
       openapi-fetch:
         specifier: ^0.17.0
         version: 0.17.0
-      openapi-typescript:
-        specifier: ^7.13.0
-        version: 7.13.0(typescript@6.0.3)
       oxfmt:
         specifier: ^0.57.0
         version: 0.57.0
@@ -57,6 +54,9 @@ importers:
       autoprefixer:
         specifier: ^10.5.2
         version: 10.5.2(postcss@8.5.16)
+      openapi-typescript:
+        specifier: ^7.13.0
+        version: 7.13.0(typescript@6.0.3)
       oxlint:
         specifier: ^1.71.0
         version: 1.72.0
