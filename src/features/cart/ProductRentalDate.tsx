@@ -4,8 +4,7 @@ import type { Ref } from 'react';
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import Select from '../../components/core/Select.tsx';
 import type { ProductProps } from '../product/productProps.ts';
-import { isRentalDateValid } from './rentalDate.ts';
-import type { RentalDate } from './rentalDate.ts';
+import { isRentalDateValid, type RentalDate } from './rentalDate.ts';
 
 type ProductRentalDateProps = {
   date: RentalDate;
