@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router-dom';
-import Footer from '../components/Footer';
+
 import LogoHeader from '../assets/logo_header.png';
+import Footer from '../components/Footer';
 export default function LoginLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-app-surface text-app-text">

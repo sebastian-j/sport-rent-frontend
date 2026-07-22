@@ -1,21 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import roofTentIcon from '../assets/categories/roof-tent.svg';
-import hitchTentIcon from '../assets/categories/hitch-tent.svg';
-import snowSledIcon from '../assets/categories/snow-sled.svg';
-import cityBikeIcon from '../assets/categories/city-bike.svg';
-import campingTentIcon from '../assets/categories/camping-tent.svg';
+import { useEffect, useRef, useState } from 'react';
+
+import avalancheGearIcon from '../assets/categories/avalanche-gear.svg';
+import bikeAccessoriesIcon from '../assets/categories/bike-accessories.svg';
 import bikeTrailerIcon from '../assets/categories/bike-trailer.svg';
+import campingTentIcon from '../assets/categories/camping-tent.svg';
+import canoeIcon from '../assets/categories/canoe.svg';
+import childCarrierIcon from '../assets/categories/child-carrier.svg';
+import cityBikeIcon from '../assets/categories/city-bike.svg';
 import electricBikeIcon from '../assets/categories/electric-bike.svg';
 import gravelBikeIcon from '../assets/categories/gravel-bike.svg';
-import bikeAccessoriesIcon from '../assets/categories/bike-accessories.svg';
-import mountainGearIcon from '../assets/categories/mountain-gear.svg';
-import childCarrierIcon from '../assets/categories/child-carrier.svg';
-import touringSkisIcon from '../assets/categories/touring-skis.svg';
-import avalancheGearIcon from '../assets/categories/avalanche-gear.svg';
-import canoeIcon from '../assets/categories/canoe.svg';
-import supBoardIcon from '../assets/categories/sup-board.svg';
+import hitchTentIcon from '../assets/categories/hitch-tent.svg';
 import kayakIcon from '../assets/categories/kayak.svg';
+import mountainGearIcon from '../assets/categories/mountain-gear.svg';
+import roofTentIcon from '../assets/categories/roof-tent.svg';
+import snowSledIcon from '../assets/categories/snow-sled.svg';
+import supBoardIcon from '../assets/categories/sup-board.svg';
+import touringSkisIcon from '../assets/categories/touring-skis.svg';
 
 const CATEGORIES = [
   { name: 'Namioty dachowe', icon: roofTentIcon },

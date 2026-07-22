@@ -1,4 +1,5 @@
 import { twMerge } from 'tailwind-merge';
+
 import ButtonCore from './ButtonCore.tsx';
 
 type DualRangeSliderProps = {

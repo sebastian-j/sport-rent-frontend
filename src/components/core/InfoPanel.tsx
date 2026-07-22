@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+
 import ContentPanel from './ContentPanel.tsx';
 
 type InfoPanelProps = {

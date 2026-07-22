@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { twMerge } from 'tailwind-merge';
-import { componentStyles } from './componentStyles.ts';
 import type { ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { componentStyles } from './componentStyles.ts';
 
 type ButtonProps = {
   text?: string;

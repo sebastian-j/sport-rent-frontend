@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 type PromoCodePanelProps = {

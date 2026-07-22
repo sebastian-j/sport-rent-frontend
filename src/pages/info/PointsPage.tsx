@@ -1,4 +1,5 @@
 import { Coins, Gift, ShoppingBag } from 'lucide-react';
+
 import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
