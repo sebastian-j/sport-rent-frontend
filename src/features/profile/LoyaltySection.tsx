@@ -1,8 +1,25 @@
 import PointsCard from './loyalty/PointsCard.tsx';
-import { POINTS_ACQUISITIONS } from './loyalty/pointsAcquisitions.ts';
+
+import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts';
+import { useEffect, useState } from 'react';
 
 export default function LoyaltySection() {
-  const pointsSum = POINTS_ACQUISITIONS.reduce((sum, acquisition) => sum + acquisition.amount, 0);
+  const [items, setItems] = useState<LoyaltyHistoryItem[]>([]);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    async function loadHistory() {
+      const { data, error } = await getLoyaltyHistory();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+      setItems(data.items.toSorted((a, b) => b.created_at.localeCompare(a.created_at)));
+      setBalance(data.balance);
+    }
+    void loadHistory();
+  }, []);
 
   return (
     <section className="flex w-full flex-col items-center justify-center pt-6 text-app-text [container-type:inline-size] lg:pt-12">
@@ -10,11 +27,15 @@ export default function LoyaltySection() {
         Program lojalnościowy
       </p>
       <p className="mt-4 w-full text-center text-[clamp(1.25rem,5cqi,1.875rem)] leading-tight">
-        Posiadasz <span className="font-semibold">{pointsSum}</span> punktów
+        Posiadasz <span className="font-semibold">{balance}</span> punktów
       </p>
       <div className="mx-auto my-6 flex w-full flex-col divide-y divide-app-borderSoft overflow-hidden rounded-xl border border-app-border lg:my-12 lg:w-[calc(100%-6rem)]">
-        {POINTS_ACQUISITIONS.map((acquisition) => (
-          <PointsCard key={acquisition.id} date={acquisition.date} amount={acquisition.amount} />
+        {items.map((acquisition) => (
+          <PointsCard
+            key={acquisition.id}
+            date={new Date(acquisition.created_at).getTime()}
+            amount={acquisition.amount}
+          />
         ))}
       </div>
     </section>

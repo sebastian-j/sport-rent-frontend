@@ -55,6 +55,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/loyalty": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Points */
+        get: operations["get_points_loyalty_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Points History */
+        get: operations["get_points_history_loyalty_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product/": {
         parameters: {
             query?: never;
@@ -143,6 +177,32 @@ export interface components {
             access_token: string;
             /** Refresh Token */
             refresh_token: string;
+        };
+        /** LoyaltyHistoryItemResponse */
+        LoyaltyHistoryItemResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Amount */
+            amount: number;
+            /** Order Id */
+            order_id: number;
+        };
+        /** LoyaltyHistoryResponse */
+        LoyaltyHistoryResponse: {
+            /** Items */
+            items: components["schemas"]["LoyaltyHistoryItemResponse"][];
+            /** Balance */
+            balance: number;
+        };
+        /** LoyaltyResponse */
+        LoyaltyResponse: {
+            /** Balance */
+            balance: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -248,6 +308,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    get_points_loyalty_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyResponse"];
+                };
+            };
+        };
+    };
+    get_points_history_loyalty_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyHistoryResponse"];
                 };
             };
         };
