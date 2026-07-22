@@ -1,11 +1,12 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
+
 import { PRODUCTS } from '../../assets/products/products.ts';
-import type { SelectOption } from '../../components/core/Select.tsx';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
+import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';

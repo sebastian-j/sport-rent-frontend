@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
 import ButtonCore from './ButtonCore.tsx';
 
 type PageSelectorProps = {

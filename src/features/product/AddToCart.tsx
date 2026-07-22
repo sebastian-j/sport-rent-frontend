@@ -1,12 +1,13 @@
 import { useState } from 'react';
+
 import ButtonCore from '../../components/core/ButtonCore';
-import { type ProductProps } from './productProps';
-import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
-import SizeSelector from './addToCart/SizeSelector.tsx';
 import RentalPriceSummary from './addToCart/RentalPriceSummary.tsx';
+import SizeSelector from './addToCart/SizeSelector.tsx';
+import { type ProductProps } from './productProps';
 
 export default function AddToCart({ product }: { product: ProductProps }) {
   const [startDate, setStartDate] = useState<Date>(new Date());

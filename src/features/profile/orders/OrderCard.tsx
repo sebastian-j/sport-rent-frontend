@@ -1,5 +1,6 @@
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
+
 import { formatPrice } from '../../../utils/formatPrice.ts';
 import { useDisclosureScroll } from '../useDisclosureScroll.ts';
 import { type Order, ORDER_STATUS_MAP } from './orderTypes.ts';

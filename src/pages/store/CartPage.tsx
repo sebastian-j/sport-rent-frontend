@@ -1,17 +1,18 @@
 import { useRef, useState } from 'react';
-import CartProductCard from '../../features/cart/CartProductCard.tsx';
 import { useNavigate } from 'react-router-dom';
+
+import ContentPanel from '../../components/core/ContentPanel.tsx';
 import {
   findFirstInvalidRentalDate,
   getOrderInformation,
   getProductInformation,
 } from '../../features/cart/cartCalculations.ts';
-import TermsPanel from '../../features/cart/TermsPanel.tsx';
+import CartProductCard from '../../features/cart/CartProductCard.tsx';
 import CartSummaryPanel from '../../features/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../../features/cart/EmptyCartPanel.tsx';
-import { useCart } from '../../features/cart/useCart.ts';
 import { INITIAL_CART } from '../../features/cart/initialCart.ts';
-import ContentPanel from '../../components/core/ContentPanel.tsx';
+import TermsPanel from '../../features/cart/TermsPanel.tsx';
+import { useCart } from '../../features/cart/useCart.ts';
 
 export default function CartPage() {
   const {

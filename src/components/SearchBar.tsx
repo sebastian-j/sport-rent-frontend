@@ -1,6 +1,7 @@
 import { Search, X } from 'lucide-react';
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 import { PRODUCTS } from '../assets/products/products.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
 

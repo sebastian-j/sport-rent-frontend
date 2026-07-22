@@ -1,5 +1,5 @@
-import PointsCard from './loyalty/PointsCard.tsx';
 import { POINTS_ACQUISITIONS } from './loyalty/pointsAcquisitions.ts';
+import PointsCard from './loyalty/PointsCard.tsx';
 
 export default function LoyaltySection() {
   const pointsSum = POINTS_ACQUISITIONS.reduce((sum, acquisition) => sum + acquisition.amount, 0);

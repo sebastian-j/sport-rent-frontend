@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
+
 import { useDisclosureScroll } from '../useDisclosureScroll.ts';
 
 type SettingsCardProps = {

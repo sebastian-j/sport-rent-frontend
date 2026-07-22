@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+
 import { scrollElementIntoViewIfBelow } from '../../utils/scrollElementIntoViewIfBelow.ts';
 
 type DisclosureScrollOptions = {

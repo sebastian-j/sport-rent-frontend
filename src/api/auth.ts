@@ -1,5 +1,5 @@
-import type { paths } from './generated/schema.ts';
 import { request } from './client.ts';
+import type { paths } from './generated/schema.ts';
 
 type LoginOperation = paths['/auth/login']['post'];
 type LoginRequest = LoginOperation['requestBody']['content']['application/json'];

@@ -1,8 +1,9 @@
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
+
+import type { UserDetails } from '../userDetails/userDetailsTypes.ts';
 import RecipientDetailsForm from './RecipientDetailsForm.tsx';
 import RecipientDetailsView from './RecipientDetailsView.tsx';
-import type { UserDetails } from '../userDetails/userDetailsTypes.ts';
 
 type RecipientDetailsPanelProps = {
   details: UserDetails;

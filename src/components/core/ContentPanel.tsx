@@ -1,5 +1,6 @@
 import { forwardRef, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { componentStyles, type ContentPanelTone } from './componentStyles.ts';
 
 type ContentPanelProps = {

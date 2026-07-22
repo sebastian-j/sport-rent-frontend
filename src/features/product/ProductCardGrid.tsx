@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { PRODUCT_CARD_WIDTH } from './ProductCard.tsx';
 
 const DEFAULT_GAP = 16;

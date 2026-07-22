@@ -1,10 +1,11 @@
 import { Minus, Trash2, X } from 'lucide-react';
+import type { Ref } from 'react';
+
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import Select from '../../components/core/Select.tsx';
+import type { ProductProps } from '../product/productProps.ts';
 import { isRentalDateValid } from './rentalDate.ts';
 import type { RentalDate } from './rentalDate.ts';
-import type { Ref } from 'react';
-import type { ProductProps } from '../product/productProps.ts';
 
 type ProductRentalDateProps = {
   date: RentalDate;

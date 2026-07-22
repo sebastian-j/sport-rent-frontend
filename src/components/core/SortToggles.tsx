@@ -1,8 +1,9 @@
 import { ArrowUp } from 'lucide-react';
 import { motion } from 'motion/react';
+
+import type { SortDirection } from '../../types/search.ts';
 import ButtonCore from './ButtonCore.tsx';
 import Select, { type SelectOption } from './Select.tsx';
-import type { SortDirection } from '../../types/search.ts';
 
 type SortTogglesProps = {
   value: string;

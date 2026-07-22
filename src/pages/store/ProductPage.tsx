@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import ProductGallery from '../../features/product/ProductGallery.tsx';
-import AddToCart from '../../features/product/AddToCart.tsx';
+
 import { getProductBySlug } from '../../assets/products/products.ts';
+import AddToCart from '../../features/product/AddToCart.tsx';
+import ProductGallery from '../../features/product/ProductGallery.tsx';
 
 export default function ProductPage() {
   const { slug } = useParams();
