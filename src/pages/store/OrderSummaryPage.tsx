@@ -80,6 +80,8 @@ export default function OrderSummaryPage() {
   const discount = cartPrice * discountRate;
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
   const [points, setPoints] = useState(0);
+  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   const handleRemovePromoCode = () => {
     removePromoCode();
@@ -87,17 +89,36 @@ export default function OrderSummaryPage() {
   };
 
   useEffect(() => {
+    let active = true;
+
     async function loadPoints() {
-      const { data, error } = await getLoyalty();
+      try {
+        const { data, error } = await getLoyalty();
 
-      if (error) {
+        if (!active) return;
+
+        if (error) {
+          console.error(error);
+          setHasPointsLoadError(true);
+          return;
+        }
+
+        setPoints(data.balance);
+      } catch (error) {
+        if (!active) return;
+
         console.error(error);
-        return;
+        setHasPointsLoadError(true);
+      } finally {
+        if (active) setIsPointsLoading(false);
       }
-
-      setPoints(data.balance);
     }
+
     void loadPoints();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -116,6 +137,8 @@ export default function OrderSummaryPage() {
               selectedMethodId={selectedPaymentMethodId}
               pointsRequired={pointsRequired}
               userPoints={points}
+              isUserPointsLoading={isPointsLoading}
+              hasUserPointsLoadError={hasPointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>
