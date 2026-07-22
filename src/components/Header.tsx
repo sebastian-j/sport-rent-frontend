@@ -110,10 +110,16 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
 
   const handleHealthCheck = async () => {
     try {
-      const response = await healthCheck();
-      alert(JSON.stringify(response, null, 2));
-    } catch (error) {
-      alert(error instanceof Error ? error.message : String(error));
+      const result = await healthCheck();
+
+      if (!result.response.ok) {
+        alert(`Serwer zwrócił błąd HTTP ${result.response.status}.`);
+        return;
+      }
+
+      alert(JSON.stringify(result.data, null, 2));
+    } catch {
+      alert('Nie udało się połączyć z serwerem.');
     }
   };
 

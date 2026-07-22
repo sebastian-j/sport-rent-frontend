@@ -9,13 +9,14 @@
     "lint": "oxlint",
     "type-check": "tsc --noEmit",
     "api:generate": "node --env-file=.env scripts/generate-api-types.mjs",
-    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
-    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx}\" \"!**/generated/**\"",
+    "format": "oxfmt --write \"**/*.{js,jsx,ts,tsx,mjs}\" \"!**/generated/**\"",
+    "format-check": "oxfmt --check \"**/*.{js,jsx,ts,tsx,mjs}\" \"!**/generated/**\"",
     "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^1.23.0",
     "motion": "^12.42.2",
+    "openapi-fetch": "^0.17.0",
     "openapi-typescript": "^7.13.0",
     "oxfmt": "^0.57.0",
     "react": "^19.2.7",
