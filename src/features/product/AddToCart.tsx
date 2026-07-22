@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
+import { checkProductAvailability } from '../../assets/products/products.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
-import { checkProductAvailability } from '../../assets/products/products.ts';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';

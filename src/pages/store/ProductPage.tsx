@@ -1,8 +1,9 @@
-import { useParams } from 'react-router-dom';
-import ProductGallery from '../../features/product/ProductGallery.tsx';
-import AddToCart from '../../features/product/AddToCart.tsx';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { getProductBySlug } from '../../assets/products/products.ts';
+import AddToCart from '../../features/product/AddToCart.tsx';
+import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function ProductPage() {
