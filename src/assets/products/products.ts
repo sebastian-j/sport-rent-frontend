@@ -22,6 +22,10 @@ export const getAllProducts = async () => {
   return data.map((product) => ({
     ...product,
     images: product.images?.map(getProductImage) || [],
+    sizes: product.sizes?.map((size: any) => ({
+      ...(typeof size === 'string' ? { size } : size),
+      available: Math.random() < 0.5,
+    })),
   }));
 };
 
@@ -35,6 +39,10 @@ export const getProductBySlug = async (slug: string) => {
   return {
     ...data,
     images: data.images?.map(getProductImage) || [],
+    sizes: data.sizes?.map((size: any) => ({
+      ...size,
+      available: Math.random() < 0.5,
+    })),
   };
 };
 
