@@ -24,7 +24,7 @@ export default function SizeSelector({ sizes, selectedSize, onSelect }: SizeSele
               aria-pressed={selectedSize === sizeOption.size}
               className={
                 !isAvailable
-                  ? 'min-h-12 min-w-12 cursor-not-allowed rounded-lg border border-app-borderSoft bg-app-surfaceSoft px-3 text-xl font-semibold text-app-textMuted opacity-50'
+                  ? 'min-h-12 min-w-12 rounded-lg border border-app-borderSoft bg-app-surfaceSoft px-3 text-xl font-semibold text-app-textMuted opacity-50'
                   : selectedSize === sizeOption.size
                     ? 'min-h-12 min-w-12 cursor-pointer rounded-lg border border-app-text bg-app-text px-3 text-xl font-semibold text-app-surface'
                     : 'min-h-12 min-w-12 cursor-pointer rounded-lg border border-app-border bg-app-surfaceElevated px-3 text-xl font-semibold text-app-text [@media(hover:hover)]:hover:bg-app-surfaceSoft'
