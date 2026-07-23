@@ -9,6 +9,7 @@ const PLACEHOLDER_REVEAL_DURATION_SECONDS = 0.24;
 const PLACEHOLDER_REVEAL_GAP_SECONDS = 0.02;
 const PLACEHOLDER_FADE_DELAY_SECONDS = 0.08;
 const PLACEHOLDER_FADE_DURATION_SECONDS = 0.14;
+const PLACEHOLDER_PULSE_DURATION_SECONDS = 2.4;
 
 export default function LoyaltySection() {
   const [items, setItems] = useState<LoyaltyHistoryItem[]>([]);
@@ -125,10 +126,19 @@ export default function LoyaltySection() {
                         },
                       }}
                     >
-                      <div
-                        className="min-h-16 w-full animate-pulse bg-app-surfaceStrong [animation-duration:2.4s] motion-reduce:animate-none lg:min-h-24"
-                        style={{ animationDelay: `${pulseDelay}ms` }}
-                      />
+                      <div className="relative min-h-16 w-full overflow-hidden bg-app-surfaceStrong lg:min-h-24">
+                        <motion.div
+                          className="absolute inset-0 bg-app-cartCard"
+                          initial={{ opacity: 0 }}
+                          animate={prefersReducedMotion ? undefined : { opacity: [0, 1, 0] }}
+                          transition={{
+                            duration: PLACEHOLDER_PULSE_DURATION_SECONDS,
+                            delay: pulseDelay / 1000,
+                            ease: 'easeInOut',
+                            repeat: Infinity,
+                          }}
+                        />
+                      </div>
                     </motion.div>
                   );
                 })}
