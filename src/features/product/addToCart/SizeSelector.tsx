@@ -13,21 +13,28 @@ export default function SizeSelector({ sizes, selectedSize, onSelect }: SizeSele
     <div className="flex w-full max-w-xl flex-col gap-2">
       <p className="text-base font-semibold text-app-text">Rozmiar</p>
       <div className="flex flex-wrap gap-2">
-        {sizes.map((sizeOption) => (
-          <button
-            key={sizeOption.size}
-            type="button"
-            aria-pressed={selectedSize === sizeOption.size}
-            className={
-              selectedSize === sizeOption.size
-                ? 'min-h-12 min-w-12 rounded-lg border border-app-text bg-app-text px-3 text-xl font-semibold text-app-surface'
-                : 'min-h-12 min-w-12 rounded-lg border border-app-border bg-app-surfaceElevated px-3 text-xl font-semibold text-app-text [@media(hover:hover)]:hover:bg-app-surfaceSoft'
-            }
-            onClick={() => onSelect(sizeOption.size)}
-          >
-            {sizeOption.size}
-          </button>
-        ))}
+        {sizes.map((sizeOption) => {
+          const isAvailable = sizeOption.available !== false;
+
+          return (
+            <button
+              key={sizeOption.size}
+              type="button"
+              disabled={!isAvailable}
+              aria-pressed={selectedSize === sizeOption.size}
+              className={
+                !isAvailable
+                  ? 'min-h-12 min-w-12 cursor-not-allowed rounded-lg border border-app-borderSoft bg-app-surfaceSoft px-3 text-xl font-semibold text-app-textMuted opacity-50'
+                  : selectedSize === sizeOption.size
+                  ? 'min-h-12 min-w-12 cursor-pointer rounded-lg border border-app-text bg-app-text px-3 text-xl font-semibold text-app-surface'
+                  : 'min-h-12 min-w-12 cursor-pointer rounded-lg border border-app-border bg-app-surfaceElevated px-3 text-xl font-semibold text-app-text [@media(hover:hover)]:hover:bg-app-surfaceSoft'
+              }
+              onClick={() => onSelect(sizeOption.size)}
+            >
+              {sizeOption.size}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
