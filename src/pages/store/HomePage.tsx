@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
 import przyczepkiImage from '../../assets/categories/przyczepki.png';
 import roweryImage from '../../assets/categories/rowery.png';
 import panoramicImage from '../../assets/panoramic_small.png';
-import { PRODUCTS } from '../../assets/products/products.ts';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 const CATEGORY_CARDS = {
   trailers: {
@@ -58,6 +59,26 @@ const CATEGORY_CARDS = {
 export default function HomePage() {
   const navigate = useNavigate();
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
+  const [products, setProducts] = useState<ProductProps[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        setProducts(
+          data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }))
+        );
+      }
+    });
+  }, []);
 
   const toggleFavorite = (productId: number) => {
     setFavoriteIds((previous) => {
@@ -99,12 +120,12 @@ export default function HomePage() {
 
       <CategoryBar />
       <ProductCardGrid className="my-4">
-        {PRODUCTS.map((product) => (
+        {products.map((product) => (
           <ProductCard
             key={product.id}
             name={product.name}
             price={product.price}
-            image={product.images[0]}
+            image={product.images[0] ?? ''}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
             isFavorite={favoriteIds.has(product.id)}

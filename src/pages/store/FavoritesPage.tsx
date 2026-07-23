@@ -1,16 +1,34 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { getProducts } from '../../api/product.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
-
-const INITIAL_FAVORITES = PRODUCTS.slice(0, 12);
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState(INITIAL_FAVORITES);
+  const [favorites, setFavorites] = useState<ProductProps[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        setFavorites(
+          data.slice(0, 12).map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }))
+        );
+      }
+    });
+  }, []);
 
   const handleRemoveFavorite = (id: number) => {
     setFavorites(favorites.filter((item) => item.id !== id));
