@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getProductBySlug } from '../../assets/products/products.ts';
+import Markdown from '../../components/core/Markdown.tsx';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -76,9 +77,9 @@ export default function ProductPage() {
             </div>
           </section>
         )}
+        <div className="border-b-2 border-app-borderSoft mt-[2vh]" />
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
-          <h2 className="text-2xl font-semibold text-app-text">Opis produktu</h2>
-          <p className="mt-[2vh] text-lg">{product.description}</p>
+          <Markdown>{product.description}</Markdown>
         </div>
       </main>
     </div>
