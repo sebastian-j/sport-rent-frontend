@@ -3,6 +3,7 @@ import {
   getProductBySlug as fetchProductBySlug,
   getProductAvailability as fetchProductAvailability,
 } from '../../api/product.ts';
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
   eager: true,
@@ -11,15 +12,15 @@ const PRODUCT_IMAGES = import.meta.glob('./pictures/*.jpg', {
 
 export const getProductImage = (filename: string) => PRODUCT_IMAGES[`./pictures/${filename}`] || '';
 
-export const getAllProducts = async () => {
+export const getAllProducts = async (): Promise<ProductProps[]> => {
   const { data, error } = await fetchProducts();
 
-  if (error || !data) {
+  if (error || !data || !Array.isArray(data)) {
     console.error('Błąd pobierania produktów:', error);
     return [];
   }
 
-  return data.map((product) => ({
+  return (data as any[]).map((product) => ({
     ...product,
     images: product.images?.map(getProductImage) || [],
     sizes: product.sizes?.map((size: any) => ({
@@ -29,17 +30,18 @@ export const getAllProducts = async () => {
   }));
 };
 
-export const getProductBySlug = async (slug: string) => {
+export const getProductBySlug = async (slug: string): Promise<ProductProps | undefined> => {
   const { data, error } = await fetchProductBySlug(slug);
 
   if (error || !data) {
     return undefined;
   }
 
+  const product = data as any;
   return {
-    ...data,
-    images: data.images?.map(getProductImage) || [],
-    sizes: data.sizes?.map((size: any) => ({
+    ...product,
+    images: product.images?.map(getProductImage) || [],
+    sizes: product.sizes?.map((size: any) => ({
       ...size,
       available: Math.random() < 0.5,
     })),
@@ -50,17 +52,25 @@ export const checkProductAvailability = async (
   slug: string,
   startDate: string,
   endDate: string
-) => {
+): Promise<boolean> => {
   const { data, error } = await fetchProductAvailability(slug, startDate, endDate);
 
-  if (error || data === undefined) {
+  if (error || data === undefined || data === null) {
     return false;
   }
 
-  return data;
+  if (typeof data === 'boolean') {
+    return data;
+  }
+
+  if (typeof data === 'object') {
+    return Boolean((data as any).available ?? (data as any).is_available ?? false);
+  }
+
+  return Boolean(data);
 };
 
-export const PRODUCTS = await getAllProducts();
+export const PRODUCTS: ProductProps[] = await getAllProducts();
 
 /*
 export const PRODUCTS = [
