@@ -5,6 +5,7 @@ type UserDetailsFieldsProps = {
   details: UserDetails;
   onDetailsChange: (details: UserDetails) => void;
   showLabels?: boolean;
+  allOptional?: boolean;
   className?: string;
 };
 
@@ -32,7 +33,6 @@ const USER_DETAILS_FIELDS: UserDetailsField[] = [
     name: 'addressLine2',
     label: 'Druga linia adresu (opcjonalnie)',
     placeholder: 'Adres - druga linia (opcjonalne)',
-    fullWidth: true,
   },
   { name: 'postalCode', label: 'Kod pocztowy', placeholder: 'Kod pocztowy', required: true },
 ];
@@ -41,6 +41,7 @@ export default function UserDetailsFields({
   details,
   onDetailsChange,
   showLabels = false,
+  allOptional = false,
   className = '',
 }: UserDetailsFieldsProps) {
   const updateField = (name: keyof UserDetails, value: string) => {
@@ -59,7 +60,7 @@ export default function UserDetailsFields({
             value={details[name]}
             onChange={(event) => updateField(name, event.currentTarget.value)}
             placeholder={showLabels ? undefined : placeholder}
-            required={required}
+            required={allOptional ? false : required}
           />
         );
 

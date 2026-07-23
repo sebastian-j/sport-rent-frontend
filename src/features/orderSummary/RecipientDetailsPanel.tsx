@@ -1,13 +1,13 @@
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 
-import type { UserDetails } from '../userDetails/userDetailsTypes.ts';
+import type { RecipientDetails } from '../userDetails/userDetailsTypes.ts';
 import RecipientDetailsForm from './RecipientDetailsForm.tsx';
 import RecipientDetailsView from './RecipientDetailsView.tsx';
 
 type RecipientDetailsPanelProps = {
-  details: UserDetails;
-  onDetailsChange: (details: UserDetails) => void;
+  details: RecipientDetails;
+  onDetailsChange: (details: RecipientDetails) => void;
 };
 
 export default function RecipientDetailsPanel({
@@ -16,7 +16,7 @@ export default function RecipientDetailsPanel({
 }: RecipientDetailsPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSave = (updatedDetails: UserDetails) => {
+  const handleSave = (updatedDetails: RecipientDetails) => {
     onDetailsChange(updatedDetails);
     setIsEditing(false);
   };

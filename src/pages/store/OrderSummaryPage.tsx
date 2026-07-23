@@ -5,6 +5,7 @@ import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
 import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
+import InvoiceDetailsPanel from '../../features/orderSummary/InvoiceDetailsPanel.tsx';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
 import {
   PAYMENT_METHODS,
@@ -15,13 +16,22 @@ import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
-import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
+import type {
+  InvoiceDetails,
+  RecipientDetails,
+} from '../../features/userDetails/userDetailsTypes.ts';
 
 const USER_LOYALTY_POINTS = 16_000;
 
-const PROFILE_RECIPIENT_DETAILS: UserDetails = {
+const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
   firstName: 'Jan',
   lastName: 'Kowalski',
+};
+
+const INITIAL_INVOICE_DETAILS: InvoiceDetails = {
+  ...PROFILE_RECIPIENT_DETAILS,
+  company: 'Polar Sport',
+  nip: '123456789',
   country: 'Polska',
   city: 'Kraków',
   addressLine1: 'ul. Kałuży 1',
@@ -64,7 +74,10 @@ const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
 }));
 
 export default function OrderSummaryPage() {
-  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [recipientDetails, setRecipientDetails] =
+    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetails>(INITIAL_INVOICE_DETAILS);
+  const [wantsInvoice, setWantsInvoice] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const {
     promoCode,
@@ -95,6 +108,15 @@ export default function OrderSummaryPage() {
             <RecipientDetailsPanel
               details={recipientDetails}
               onDetailsChange={setRecipientDetails}
+            />
+          </ContentPanel>
+
+          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+            <InvoiceDetailsPanel
+              enabled={wantsInvoice}
+              details={invoiceDetails}
+              onEnabledChange={setWantsInvoice}
+              onDetailsChange={setInvoiceDetails}
             />
           </ContentPanel>
 
