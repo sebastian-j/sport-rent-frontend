@@ -71,6 +71,7 @@ export default function OrderSummaryPage() {
     appliedPromoCode,
     discountRate,
     promoCodeError,
+    isPromoCodeValidating,
     applyPromoCode,
     changePromoCode,
     removePromoCode,
@@ -121,6 +122,7 @@ export default function OrderSummaryPage() {
             promoCode={promoCode}
             appliedCode={appliedPromoCode}
             error={promoCodeError}
+            isValidating={isPromoCodeValidating}
             onPromoCodeChange={changePromoCode}
             onApply={applyPromoCode}
             onRemove={handleRemovePromoCode}

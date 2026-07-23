@@ -269,8 +269,6 @@ export interface components {
         };
         /** PromoCodeValidationResponse */
         PromoCodeValidationResponse: {
-            /** Usable */
-            usable: boolean;
             /** Discount Rate */
             discount_rate?: number | null;
         };

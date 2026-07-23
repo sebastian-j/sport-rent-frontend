@@ -7,17 +7,23 @@ export default function usePromo() {
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
   const [discountRate, setDiscountRate] = useState(0);
   const [promoCodeError, setPromoCodeError] = useState<string>();
+  const [isPromoCodeValidating, setIsPromoCodeValidating] = useState(false);
 
   const applyPromoCode = async () => {
+    if (isPromoCodeValidating) return;
+
+    const normalizedPromoCode = promoCode.trim().toUpperCase();
+
+    if (!normalizedPromoCode) {
+      setDiscountRate(0);
+      setPromoCodeError('Wpisz kod promocyjny.');
+      return;
+    }
+
+    setIsPromoCodeValidating(true);
+    setPromoCodeError(undefined);
+
     try {
-      const normalizedPromoCode = promoCode.trim().toUpperCase();
-
-      if (!normalizedPromoCode) {
-        setDiscountRate(0);
-        setPromoCodeError('Wpisz kod promocyjny.');
-        return;
-      }
-
       const { data, error } = await validatePromoCode({ promo_code: normalizedPromoCode });
 
       if (error || !data) {
@@ -34,9 +40,15 @@ export default function usePromo() {
 
       setPromoCode(normalizedPromoCode);
       setAppliedPromoCode(normalizedPromoCode);
-      setDiscountRate(data?.discount_rate);
+      setDiscountRate(data.discount_rate);
       setPromoCodeError(undefined);
-    } catch (error) {}
+    } catch (error) {
+      console.error('Błąd podczas sprawdzania kodu promocyjnego:', error);
+      setDiscountRate(0);
+      setPromoCodeError('Nie udało się sprawdzić kodu promocyjnego. Spróbuj ponownie.');
+    } finally {
+      setIsPromoCodeValidating(false);
+    }
   };
 
   const changePromoCode = (value: string) => {
@@ -56,6 +68,7 @@ export default function usePromo() {
     appliedPromoCode,
     discountRate,
     promoCodeError,
+    isPromoCodeValidating,
     applyPromoCode,
     changePromoCode,
     removePromoCode,
