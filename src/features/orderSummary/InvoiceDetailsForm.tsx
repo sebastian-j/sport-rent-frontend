@@ -43,14 +43,13 @@ export default function InvoiceDetailsForm({
       <p className="mb-4 text-sm text-app-textMuted">Pole oznaczone * jest wymagane.</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm text-app-textMuted">
-          Firma *
+          Firma
           <FormInput
             type="text"
             name="company"
             autoComplete="organization"
             value={details.company}
             onChange={(event) => setDetails({ ...details, company: event.currentTarget.value })}
-            required
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-app-textMuted">
@@ -69,7 +68,7 @@ export default function InvoiceDetailsForm({
         details={details}
         onDetailsChange={handleUserDetailsChange}
         className="mt-4"
-        allOptional
+        optionalFields={['firstName', 'lastName']}
         showLabels
       />
       <FormActions submitLabel="Zapisz" onCancel={onCancel} />

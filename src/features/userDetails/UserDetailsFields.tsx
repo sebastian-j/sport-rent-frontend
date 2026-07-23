@@ -5,7 +5,7 @@ type UserDetailsFieldsProps = {
   details: UserDetails;
   onDetailsChange: (details: UserDetails) => void;
   showLabels?: boolean;
-  allOptional?: boolean;
+  optionalFields?: readonly (keyof UserDetails)[];
   className?: string;
 };
 
@@ -41,7 +41,7 @@ export default function UserDetailsFields({
   details,
   onDetailsChange,
   showLabels = false,
-  allOptional = false,
+  optionalFields = [],
   className = '',
 }: UserDetailsFieldsProps) {
   const updateField = (name: keyof UserDetails, value: string) => {
@@ -53,6 +53,7 @@ export default function UserDetailsFields({
       className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 ${className}`}
     >
       {USER_DETAILS_FIELDS.map(({ name, label, placeholder, required, fullWidth }) => {
+        const isRequired = required && !optionalFields.includes(name);
         const input = (
           <FormInput
             type="text"
@@ -60,7 +61,7 @@ export default function UserDetailsFields({
             value={details[name]}
             onChange={(event) => updateField(name, event.currentTarget.value)}
             placeholder={showLabels ? undefined : placeholder}
-            required={allOptional ? false : required}
+            required={isRequired}
           />
         );
 
@@ -72,6 +73,7 @@ export default function UserDetailsFields({
             }`}
           >
             {label}
+            {isRequired ? ' *' : ''}
             {input}
           </label>
         ) : (
