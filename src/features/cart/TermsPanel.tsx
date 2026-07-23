@@ -3,6 +3,8 @@ import { forwardRef } from 'react';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 
+const TOS_URL = 'https://dok.agh.edu.pl/doc.php?id=17184';
+
 type TermsPanelProps = {
   readTos: boolean;
   highlighted: boolean;
@@ -23,7 +25,7 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
         Przeczytaj{' '}
         <a
           className="font-semibold underline"
-          href="https://dok.agh.edu.pl/doc.php?id=17184"
+          href={TOS_URL}
           target="_blank"
           rel="noopener noreferrer"
           onClick={onReadTos}
@@ -36,7 +38,16 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
         {readTos ? (
           <BadgeCheck size={32} className="text-app-success" />
         ) : (
-          <Badge size={32} className="text-app-danger" />
+          <a
+            href={TOS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onReadTos}
+            aria-label="Otwórz regulamin w nowej karcie"
+            className="inline-flex text-app-danger"
+          >
+            <Badge size={32} aria-hidden="true" />
+          </a>
         )}
       </div>
     </ContentPanel>
