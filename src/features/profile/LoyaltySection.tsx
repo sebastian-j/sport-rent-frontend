@@ -75,8 +75,35 @@ export default function LoyaltySection() {
         Program lojalnościowy
       </p>
       {!hasLoadError && (
-        <p className="mt-4 w-full text-center text-[clamp(1.25rem,5cqi,1.875rem)] leading-tight">
-          Posiadasz <span className="font-semibold">{displayedBalance}</span> punktów
+        <p
+          className="mt-4 w-full text-center text-[clamp(1.25rem,5cqi,1.875rem)] leading-tight"
+          aria-live="polite"
+        >
+          {isLoading ? (
+            <>
+              <span className="sr-only">Ładowanie salda punktów…</span>
+              <span aria-hidden="true">
+                Posiadasz{' '}
+                <span className="relative inline-block h-[0.8em] w-[2.5em] overflow-hidden rounded bg-app-surfaceStrong align-middle">
+                  <motion.span
+                    className="absolute inset-0 bg-app-cartCard"
+                    initial={{ opacity: 0 }}
+                    animate={prefersReducedMotion ? undefined : { opacity: [0, 1, 0] }}
+                    transition={{
+                      duration: PLACEHOLDER_PULSE_DURATION_SECONDS,
+                      ease: 'easeInOut',
+                      repeat: Infinity,
+                    }}
+                  />
+                </span>{' '}
+                punktów
+              </span>
+            </>
+          ) : (
+            <>
+              Posiadasz <span className="font-semibold">{displayedBalance}</span> punktów
+            </>
+          )}
         </p>
       )}
       <motion.div
