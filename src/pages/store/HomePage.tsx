@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { addFavorite, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
@@ -58,7 +59,10 @@ const CATEGORY_CARDS = {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
+  const [favoritesSlugs, setFavoritesSlugs] = useState<Set<string>>(() => new Set());
+  const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
+  const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
+  const errorTimeouts = useRef<Map<string, number>>(new Map());
   const [products, setProducts] = useState<ProductProps[]>([]);
 
   useEffect(() => {
@@ -80,19 +84,72 @@ export default function HomePage() {
     });
   }, []);
 
-  const toggleFavorite = (productId: number) => {
-    setFavoriteIds((previous) => {
-      const next = new Set(previous);
+  const toggleFavorite = async (productSlug: string) => {
+    if (pendingFavoriteSlugs.has(productSlug)) return;
 
-      if (next.has(productId)) {
-        next.delete(productId);
-      } else {
-        next.add(productId);
-      }
-
-      return next;
+    const isFavorite = favoritesSlugs.has(productSlug);
+    setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
+    setFailedFavoriteSlugs((currentSlugs) => {
+      const nextSlugs = new Set(currentSlugs);
+      nextSlugs.delete(productSlug);
+      return nextSlugs;
     });
+
+    try {
+      const { error } = isFavorite
+        ? await removeFavorite(productSlug)
+        : await addFavorite(productSlug);
+
+      if (error) throw error;
+
+      setFavoritesSlugs((currentSlugs) => {
+        const nextSlugs = new Set(currentSlugs);
+
+        if (isFavorite) {
+          nextSlugs.delete(productSlug);
+        } else {
+          nextSlugs.add(productSlug);
+        }
+
+        return nextSlugs;
+      });
+    } catch (error) {
+      console.error(
+        `Błąd ${isFavorite ? 'usuwania produktu z' : 'dodawania produktu do'} ulubionych (${productSlug}):`,
+        error
+      );
+      setFailedFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
+
+      const previousTimeout = errorTimeouts.current.get(productSlug);
+      if (previousTimeout) window.clearTimeout(previousTimeout);
+
+      const timeout = window.setTimeout(() => {
+        setFailedFavoriteSlugs((currentSlugs) => {
+          const nextSlugs = new Set(currentSlugs);
+          nextSlugs.delete(productSlug);
+          return nextSlugs;
+        });
+        errorTimeouts.current.delete(productSlug);
+      }, 1200);
+
+      errorTimeouts.current.set(productSlug, timeout);
+    } finally {
+      setPendingFavoriteSlugs((currentSlugs) => {
+        const nextSlugs = new Set(currentSlugs);
+        nextSlugs.delete(productSlug);
+        return nextSlugs;
+      });
+    }
   };
+
+  useEffect(() => {
+    const activeErrorTimeouts = errorTimeouts.current;
+
+    return () => {
+      activeErrorTimeouts.forEach((timeout) => window.clearTimeout(timeout));
+      activeErrorTimeouts.clear();
+    };
+  }, []);
 
   return (
     <div>
@@ -122,14 +179,18 @@ export default function HomePage() {
       <ProductCardGrid className="my-4">
         {products.map((product) => (
           <ProductCard
-            key={product.id}
+            key={product.slug}
             name={product.name}
             price={product.price}
             image={product.images[0] ?? ''}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
-            isFavorite={favoriteIds.has(product.id)}
-            onFavoriteToggle={() => toggleFavorite(product.id)}
+            isFavorite={favoritesSlugs.has(product.slug)}
+            isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+            hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+            favoriteErrorTarget="button"
+            showFavoriteUpdatingOverlay={false}
+            onFavoriteToggle={() => void toggleFavorite(product.slug)}
           />
         ))}
       </ProductCardGrid>
