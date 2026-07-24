@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { checkProductAvailability } from '../../assets/products/products.ts';
+import { getProductAvailability } from '../../api/product.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
@@ -27,7 +27,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (isDateAfter(startDate, endDate)) {
       alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
       return;
@@ -43,16 +43,17 @@ export default function AddToCart({ product }: { product: ProductProps }) {
       return;
     }
 
-    if (
-      !checkProductAvailability(
-        product.slug,
-        startDate.toLocaleDateString('pl'),
-        endDate.toLocaleDateString('pl')
-      )
-    ) {
+    const { data, error } = await getProductAvailability(
+      product.slug,
+      startDate.toLocaleDateString('pl'),
+      endDate.toLocaleDateString('pl')
+    );
+
+    if (error || !data?.available) {
       alert(
         `Produkt niedostępny w okresie od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
       );
+      return;
     }
 
     alert(

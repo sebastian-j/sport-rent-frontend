@@ -2,18 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
+import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
 import przyczepkiImage from '../../assets/categories/przyczepki.png';
 import roweryImage from '../../assets/categories/rowery.png';
 import panoramicImage from '../../assets/panoramic_small.png';
-import { PRODUCTS } from '../../assets/products/products.ts';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 const CATEGORY_CARDS = {
   trailers: {
@@ -62,6 +63,26 @@ export default function HomePage() {
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
+  const [products, setProducts] = useState<ProductProps[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        setProducts(
+          data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }))
+        );
+      }
+    });
+  }, []);
 
   const toggleFavorite = async (productSlug: string) => {
     if (pendingFavoriteSlugs.has(productSlug)) return;
@@ -156,12 +177,12 @@ export default function HomePage() {
 
       <CategoryBar />
       <ProductCardGrid className="my-4">
-        {PRODUCTS.map((product) => (
+        {products.map((product) => (
           <ProductCard
             key={product.slug}
             name={product.name}
             price={product.price}
-            image={product.images[0]}
+            image={product.images[0] ?? ''}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
             isFavorite={favoritesSlugs.has(product.slug)}

@@ -2,10 +2,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { getProducts } from '../../api/product.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
+import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
+import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
