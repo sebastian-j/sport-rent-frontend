@@ -55,6 +55,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Password */
+        post: operations["change_password_auth_change_password_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/promo-code/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sprawdź kod promocyjny */
+        post: operations["validate_promo_code_cart_promo_code_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Favorites */
+        get: operations["get_favorites_favorites_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/favorites/{product_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add To Favorites */
+        post: operations["add_to_favorites_favorites__product_slug__post"];
+        /** Remove From Favorites */
+        delete: operations["remove_from_favorites_favorites__product_slug__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -106,6 +175,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/product": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Products */
+        get: operations["get_products_product_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Points History */
+        get: operations["get_points_history_loyalty_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product/": {
         parameters: {
             query?: never;
@@ -123,15 +226,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/product/{product_slug}": {
+    "/user": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Product */
-        get: operations["get_product_product__product_slug__get"];
+        /** Get User */
+        get: operations["get_user_user_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -157,10 +260,49 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/history/{order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Order Details */
+        get: operations["get_order_details_user_history__order_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ChangePasswordRequest */
+        ChangePasswordRequest: {
+            /** Current Password */
+            current_password: string;
+            /** New Password */
+            new_password: string;
+        };
+        /** FavoritesResponse */
+        FavoritesResponse: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            /** Image */
+            image: string;
+            /** Alt */
+            alt: string;
+            /** Price */
+            price: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -221,6 +363,114 @@ export interface components {
             /** Balance */
             balance: number;
         };
+        /** OrderDetailResponse */
+        OrderDetailResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Status */
+            status: string;
+            /** Total */
+            total: number;
+            /** Discount */
+            discount: number | null;
+            /** Items */
+            items: components["schemas"]["OrderItemDetailsResponse"][];
+        };
+        /** OrderItemDetailsResponse */
+        OrderItemDetailsResponse: {
+            /** Product Id */
+            product_id: number;
+            /** Product Name */
+            product_name: string;
+            /** Image */
+            image: string | null;
+            /** Size */
+            size: string | null;
+            /** Quantity */
+            quantity: number;
+            /**
+             * Start Date
+             * Format: date-time
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date-time
+             */
+            end_date: string;
+            /** Unit Price */
+            unit_price: number;
+        };
+        /** ProductAvailabilityResponse */
+        ProductAvailabilityResponse: {
+            /** Available */
+            available: boolean;
+        };
+        /** ProductFilter */
+        ProductFilter: {
+            /** Sort */
+            sort?: string | null;
+            /** Order */
+            order?: string | null;
+            /**
+             * Minprice
+             * @default 0
+             */
+            minPrice: number | null;
+            /**
+             * Maxprice
+             * @default 200
+             */
+            maxPrice: number | null;
+            /**
+             * Category
+             * @default []
+             */
+            category: string[] | null;
+        };
+        /** ProductResponse */
+        ProductResponse: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Price */
+            price?: number | null;
+            /** Description */
+            description?: string | null;
+            /** Images */
+            images?: string[] | null;
+            /** Alt */
+            alt?: string | null;
+            /** Category */
+            category?: string | null;
+            /** Sizes */
+            sizes?: components["schemas"]["ProductSize"][] | null;
+        };
+        /** ProductSize */
+        ProductSize: {
+            /** Size */
+            size: string;
+            /** Description */
+            description?: string | null;
+        };
+        /** PromoCodeValidationRequest */
+        PromoCodeValidationRequest: {
+            /** Promo Code */
+            promo_code: string;
+        };
+        /** PromoCodeValidationResponse */
+        PromoCodeValidationResponse: {
+            /** Discount Rate */
+            discount_rate?: number | null;
+        };
         /** ResetPasswordRequest */
         ResetPasswordRequest: {
             /**
@@ -228,6 +478,43 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /** UserHistoryItemResponse */
+        UserHistoryItemResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Status */
+            status: string;
+            /** Payment Code */
+            payment_code: string | null;
+            /** Total */
+            total: number;
+        };
+        /** UserResponse */
+        UserResponse: {
+            /** Email */
+            email: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+            /** City */
+            city: string;
+            /** First Line */
+            first_line: string;
+            /** Second Line */
+            second_line: string | null;
+            /** Postal Code */
+            postal_code: string;
+            /** Country */
+            country: string;
+            /** Privacy Policy Accepted */
+            privacy_policy_accepted: boolean;
         };
         /** ValidationError */
         ValidationError: {
@@ -348,6 +635,280 @@ export interface operations {
             };
         };
     };
+    change_password_auth_change_password_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangePasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_promo_code_cart_promo_code_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromoCodeValidationRequest"];
+            };
+        };
+        responses: {
+            /** @description Wartość rabatu przypisana do kodu promocyjnego */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PromoCodeValidationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_favorites_favorites_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FavoritesResponse"][];
+                };
+            };
+        };
+    };
+    add_to_favorites_favorites__product_slug__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_from_favorites_favorites__product_slug__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    health_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    get_points_loyalty_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyResponse"];
+                };
+            };
+        };
+    };
+    get_points_history_loyalty_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyHistoryResponse"];
+                };
+            };
+        };
+    };
+    get_products_product_get: {
+        parameters: {
+            query?: {
+                filter?: components["schemas"]["ProductFilter"] | null;
+                page?: number | null;
+                pageSize?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LogoutRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_password_auth_reset_password_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_health_get: {
         parameters: {
             query?: never;
@@ -363,7 +924,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HealthResponse"];
+                    "application/json": components["schemas"]["ProductResponse"];
                 };
             };
         };
@@ -426,7 +987,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ProductAvailabilityResponse"];
                 };
             };
             /** @description Validation Error */
@@ -440,7 +1001,7 @@ export interface operations {
             };
         };
     };
-    get_product_product__product_slug__get: {
+    get_user_user_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -457,7 +1018,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["UserResponse"];
                 };
             };
             /** @description Validation Error */
@@ -473,10 +1034,7 @@ export interface operations {
     };
     get_product_availability_product__product_slug__availability_get: {
         parameters: {
-            query: {
-                start_date: string;
-                end_date: string;
-            };
+            query?: never;
             header?: never;
             path: {
                 product_slug: string;
@@ -491,7 +1049,29 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["UserHistoryItemResponse"][];
+                };
+            };
+        };
+    };
+    get_order_details_user_history__order_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDetailResponse"];
                 };
             };
             /** @description Validation Error */

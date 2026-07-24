@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
@@ -37,45 +37,63 @@ const getDateAfterToday = (dayOffset: number) => {
   return date;
 };
 
-const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
-  (product) => product.id === 1 || product.id === 4
-).map((product, index) => ({
-  ...product,
-  dates: [
-    {
-      id: index + 1,
-      quantity: index === 0 ? 5 : 2,
-      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-      start_date: getDateAfterToday(3 + index * 5),
-      end_date: getDateAfterToday(4 + index * 7),
-    },
-    ...(index === 0
-      ? [
-          {
-            id: 2,
-            quantity: 1,
-            size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-            start_date: getDateAfterToday(10),
-            end_date: getDateAfterToday(12),
-          },
-        ]
-      : []),
-  ],
-}));
-
 export default function OrderSummaryPage() {
   const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
+  const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        const filtered = data
+          .filter((product) => product.id === 1 || product.id === 4)
+          .map((product: any, index) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+            sizes: product.sizes ?? [],
+            dates: [
+              {
+                id: index + 1,
+                quantity: index === 0 ? 5 : 2,
+                size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+                start_date: getDateAfterToday(3 + index * 5),
+                end_date: getDateAfterToday(4 + index * 7),
+              },
+              ...(index === 0
+                ? [
+                    {
+                      id: 2,
+                      quantity: 1,
+                      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+                      start_date: getDateAfterToday(10),
+                      end_date: getDateAfterToday(12),
+                    },
+                  ]
+                : []),
+            ],
+          }));
+        setSummaryProducts(filtered);
+      }
+    });
+  }, []);
+
   const {
     promoCode,
     appliedPromoCode,
     discountRate,
     promoCodeError,
+    isPromoCodeValidating,
     applyPromoCode,
     changePromoCode,
     removePromoCode,
   } = usePromo();
-  const cartPrice = getOrderInformation(SUMMARY_PRODUCTS).totalValue;
+  const cartPrice = getOrderInformation(summaryProducts).totalValue;
   const paymentPrice = PAYMENT_METHODS.find(
     (method) => method.id === selectedPaymentMethodId
   )?.price;
@@ -112,7 +130,7 @@ export default function OrderSummaryPage() {
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
-            {SUMMARY_PRODUCTS.map((product) => (
+            {summaryProducts.map((product) => (
               <SummaryProduct key={product.id} product={product} />
             ))}
           </div>
@@ -121,6 +139,7 @@ export default function OrderSummaryPage() {
             promoCode={promoCode}
             appliedCode={appliedPromoCode}
             error={promoCodeError}
+            isValidating={isPromoCodeValidating}
             onPromoCodeChange={changePromoCode}
             onApply={applyPromoCode}
             onRemove={handleRemovePromoCode}

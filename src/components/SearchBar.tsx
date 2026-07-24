@@ -2,7 +2,8 @@ import { Search, X } from 'lucide-react';
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { PRODUCTS } from '../assets/products/products.ts';
+import { getProducts } from '../api/product.ts';
+import type { ProductProps } from '../features/product/productProps.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
 
 type SearchBarProps = {
@@ -20,12 +21,32 @@ export default function SearchBar({
   const queryFromUrl = new URLSearchParams(location.search).get('q') ?? '';
   const [searchValue, setSearchValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [products, setProducts] = useState<ProductProps[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const normalizedSearchValue = searchValue.trim().toLocaleLowerCase();
   const matchingProducts = normalizedSearchValue
-    ? PRODUCTS.filter((product) => product.name.toLocaleLowerCase().includes(normalizedSearchValue))
+    ? products.filter((product) => product.name.toLocaleLowerCase().includes(normalizedSearchValue))
     : [];
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        setProducts(
+          data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }))
+        );
+      }
+    });
+  }, []);
 
   useEffect(() => {
     setSearchValue(queryFromUrl);
