@@ -1,20 +1,45 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
 import { PRODUCTS } from '../../assets/products/products.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 
-const INITIAL_FAVORITES = PRODUCTS.slice(0, 12);
-
 export default function FavoritesPage() {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState(INITIAL_FAVORITES);
+  const [favorites, setFavorites] = useState<FavoritesResponse[]>([]);
 
-  const handleRemoveFavorite = (id: number) => {
-    setFavorites(favorites.filter((item) => item.id !== id));
+  const handleRemoveFavorite = async (slug: string) => {
+    removeFavorite(slug);
+    setFavorites((currentFavorites) => currentFavorites.filter((item) => item.slug !== slug));
   };
+
+  useEffect(() => {
+    async function loadFavorites() {
+      const { data, error } = await getFavorites();
+
+      if (error || !data) {
+        console.error('Błąd pobierania ulubionych produktów:', error);
+        return;
+      }
+
+      // TODO: Change if photos come from backend
+      setFavorites(
+        data.map((item) => {
+          const matchedProduct = PRODUCTS.find((product) => product.slug === item.slug);
+
+          return {
+            ...item,
+            image: matchedProduct?.images[0] ?? item.image,
+          };
+        })
+      );
+      // setFavorites(data)
+    }
+    void loadFavorites();
+  }, []);
 
   return (
     <div className="w-full">
@@ -36,7 +61,7 @@ export default function FavoritesPage() {
           ) : (
             favorites.map((product) => (
               <motion.div
-                key={product.id}
+                key={product.slug}
                 layout
                 exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
                 transition={{ duration: 0.28, times: [0, 0.4, 1], ease: 'easeOut' }}
@@ -44,10 +69,10 @@ export default function FavoritesPage() {
                 <ProductCard
                   name={product.name}
                   price={product.price}
-                  image={product.images[0]}
+                  image={product.image}
                   alt={product.alt}
                   isFavorite={true}
-                  onFavoriteToggle={() => handleRemoveFavorite(product.id)}
+                  onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
                   onClick={() => navigate(`/product/${product.slug}`)}
                 />
               </motion.div>
