@@ -10,6 +10,7 @@ import LoginLayout from './layouts/LoginLayout.tsx';
 import ProfilePage from './pages/account/ProfilePage.tsx';
 import LoginPage from './pages/auth/LoginPage.tsx';
 import RegisterPage from './pages/auth/RegisterPage.tsx';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
 import TosPage from './pages/document/TosPage.tsx';
 import AboutPage from './pages/info/AboutPage.tsx';
@@ -47,6 +48,8 @@ function App() {
           <Route element={<LoginLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ResetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
           </Route>
           <Route element={<DocumentLayout />}>
             <Route path="/tos" element={<TosPage />} />

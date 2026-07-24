@@ -1,4 +1,4 @@
-import { type SubmitEvent, useState } from 'react';
+import { type ChangeEvent, type SubmitEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { login } from '../../api/auth.ts';
@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [hasInvalidCredentials, setHasInvalidCredentials] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginError(null);
     setHasInvalidCredentials(false);
@@ -129,7 +129,7 @@ export default function LoginPage() {
         </form>
 
         <div className="w-[90%] text-left my-3">
-          <Link to="/forgot-password" className="text-app-textStrong underline">
+          <Link to="/reset-password" className="text-app-textStrong underline">
             Zapomniałeś hasła?
           </Link>
         </div>
