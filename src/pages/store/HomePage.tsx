@@ -64,12 +64,65 @@ export default function HomePage() {
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const calculateItemsPerRow = () => {
+    const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const availableWidth = containerWidth - 32;
+    return Math.max(1, Math.floor((availableWidth + 16) / 272)) + 1;
+  };
+
+  const calculateInitialRows = () => {
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const observerMargin = 800;
+    const rowHeight = 360;
+    const gridOffsetTop = 500;
+    const neededRows = Math.ceil((viewportHeight + observerMargin - gridOffsetTop) / rowHeight);
+    return Math.max(2, neededRows);
+  };
+
+  const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow);
 
   useEffect(() => {
-    getProducts().then(({ data }) => {
-      if (data) {
-        setProducts(
-          data.map((product) => ({
+    const handleResize = () => {
+      setItemsPerRow(calculateItemsPerRow());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const [fetchTrigger, setFetchTrigger] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const itemsPerRowRef = useRef(itemsPerRow);
+  itemsPerRowRef.current = itemsPerRow;
+
+  const productsLengthRef = useRef(products.length);
+  productsLengthRef.current = products.length;
+
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+
+    const fetchPage = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        if (!active) return; // Prevent double fetch in React Strict Mode
+
+        const limit = itemsPerRowRef.current;
+
+        if (productsLengthRef.current === 0) {
+          const initialRows = calculateInitialRows();
+          const initialLimit = initialRows * limit;
+
+          const res = await getProducts(1, initialLimit);
+          if (!active) return;
+
+          const data = res.data || [];
+
+          const combined = data.map((product) => ({
             id: product.id,
             name: product.name,
             description: product.description ?? '',
@@ -78,11 +131,86 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
-          }))
-        );
+          }));
+
+          const uniqueProducts: typeof combined = [];
+          const seen = new Set<string>();
+          for (const p of combined) {
+            if (!seen.has(p.slug)) {
+              seen.add(p.slug);
+              uniqueProducts.push(p);
+            }
+          }
+
+          setProducts(uniqueProducts);
+          if (data.length < initialLimit) {
+            setHasMore(false);
+          }
+        } else {
+          const actualPageToFetch = Math.floor(productsLengthRef.current / limit) + 1;
+          const res = await getProducts(actualPageToFetch, limit);
+          if (!active) return;
+
+          const data = res.data || [];
+          const newProducts = data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }));
+
+          setProducts((prev) => {
+            const existingSlugs = new Set(prev.map((p) => p.slug));
+            return [...prev, ...newProducts.filter((p) => !existingSlugs.has(p.slug))];
+          });
+
+          if (data.length < limit) {
+            setHasMore(false);
+          }
+        }
+      } catch (error) {
+        console.error('Błąd pobierania produktów:', error);
+      } finally {
+        if (active) setIsLoading(false);
       }
-    });
+    };
+
+    void fetchPage();
+
+    return () => {
+      active = false;
+    };
+  }, [fetchTrigger]); // Only triggers on mount and when fetchTrigger changes!
+
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const observerNodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { rootMargin: '0px 0px 800px 0px' }
+    );
+
+    if (observerNodeRef.current) {
+      observer.observe(observerNodeRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    if (isIntersecting && !isLoading && hasMore) {
+      setFetchTrigger((prev) => prev + 1);
+    }
+  }, [isIntersecting, isLoading, hasMore]);
 
   const toggleFavorite = async (productSlug: string) => {
     if (pendingFavoriteSlugs.has(productSlug)) return;
@@ -194,6 +322,14 @@ export default function HomePage() {
           />
         ))}
       </ProductCardGrid>
+
+      {hasMore && (
+        <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
+          {isLoading && (
+            <div className="size-8 animate-spin rounded-full border-4 border-app-border border-t-app-textStrong" />
+          )}
+        </div>
+      )}
     </div>
   );
 }

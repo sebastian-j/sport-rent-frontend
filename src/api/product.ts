@@ -1,6 +1,15 @@
 import { api } from './client.ts';
 
-export const getProducts = () => api.GET('/product');
+export const getProducts = (page?: number, pageSize?: number, signal?: AbortSignal) =>
+  api.GET('/product', {
+    params: {
+      query: {
+        ...(page !== undefined ? { page } : {}),
+        ...(pageSize !== undefined ? { pageSize } : {}),
+      },
+    },
+    signal,
+  });
 
 export const getProductBySlug = (slug: string) =>
   api.GET('/product/{product_slug}', {
