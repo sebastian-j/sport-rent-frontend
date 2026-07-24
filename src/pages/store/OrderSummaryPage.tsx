@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
 import { getLoyalty } from '../../api/loyalty.ts';
 import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
@@ -50,9 +51,32 @@ const getDateAfterToday = (dayOffset: number) => {
 };
 
 export default function OrderSummaryPage() {
-  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
+  const summaryPanelRef = useRef<HTMLDivElement>(null);
+  const [recipientDetails, setRecipientDetails] =
+    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetails>(INITIAL_INVOICE_DETAILS);
+  const [wantsInvoice, setWantsInvoice] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
+  const {
+    promoCode,
+    appliedPromoCode,
+    discountRate,
+    promoCodeError,
+    isPromoCodeValidating,
+    applyPromoCode,
+    changePromoCode,
+    removePromoCode,
+  } = usePromo();
+  const cartPrice = getOrderInformation(summaryProducts).totalValue;
+  const paymentPrice = PAYMENT_METHODS.find(
+    (method) => method.id === selectedPaymentMethodId
+  )?.price;
+  const discount = cartPrice * discountRate;
+  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
+  const [points, setPoints] = useState(0);
+  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   useEffect(() => {
     getProducts().then(({ data }) => {
@@ -94,33 +118,6 @@ export default function OrderSummaryPage() {
       }
     });
   }, []);
-
-export default function OrderSummaryPage() {
-  const summaryPanelRef = useRef<HTMLDivElement>(null);
-  const [recipientDetails, setRecipientDetails] =
-    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
-  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetails>(INITIAL_INVOICE_DETAILS);
-  const [wantsInvoice, setWantsInvoice] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
-  const {
-    promoCode,
-    appliedPromoCode,
-    discountRate,
-    promoCodeError,
-    isPromoCodeValidating,
-    applyPromoCode,
-    changePromoCode,
-    removePromoCode,
-  } = usePromo();
-  const cartPrice = getOrderInformation(summaryProducts).totalValue;
-  const paymentPrice = PAYMENT_METHODS.find(
-    (method) => method.id === selectedPaymentMethodId
-  )?.price;
-  const discount = cartPrice * discountRate;
-  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
-  const [points, setPoints] = useState(0);
-  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
-  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   useLayoutEffect(() => {
     const summaryPanel = summaryPanelRef.current;
