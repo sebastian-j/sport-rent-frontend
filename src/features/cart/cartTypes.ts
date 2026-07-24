@@ -1,7 +1,7 @@
-import type { PRODUCTS } from '../../assets/products/products.ts';
+import type { ProductProps } from '../product/productProps.ts';
 import type { RentalDate } from './rentalDate.ts';
 
-type Product = (typeof PRODUCTS)[number];
+type Product = ProductProps;
 
 export type CartProduct = Product & {
   dates: RentalDate[];

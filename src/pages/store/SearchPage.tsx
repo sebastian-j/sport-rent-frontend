@@ -1,13 +1,14 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
+import type { ProductProps } from '../../features/product/productProps.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
@@ -20,30 +21,60 @@ const SORT_OPTIONS: readonly SelectOption[] = [
   { value: 'price', label: 'Cena' },
 ];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
-const PRODUCT_CATEGORY_FACETS = Array.from(
-  new Set(PRODUCTS.map((product) => product.category))
-).map((category, index) => ({
-  id: index + 1,
-  slug: toCategorySlug(category),
-  name: category,
-  productCount: PRODUCTS.filter((product) => product.category === category).length,
-}));
-const CATEGORY_FACETS: CategoryFacets = {
-  categories: [
-    ...PRODUCT_CATEGORY_FACETS,
-    {
-      id: PRODUCT_CATEGORY_FACETS.length + 1,
-      slug: 'sporty-zimowe',
-      name: 'Sporty zimowe',
-      productCount: 0,
-    },
-  ],
-};
-const CATEGORY_SLUGS = CATEGORY_FACETS.categories
-  .filter((category) => category.productCount > 0)
-  .map((category) => category.slug);
 
 export default function SearchPage() {
+  const [products, setProducts] = useState<ProductProps[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        setProducts(
+          data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }))
+        );
+      }
+    });
+  }, []);
+
+  const categoryFacets: CategoryFacets = useMemo(() => {
+    const validCategories = Array.from(
+      new Set(products.map((p) => p.category).filter((cat): cat is string => Boolean(cat)))
+    );
+    const productFacets = validCategories.map((category, index) => ({
+      id: index + 1,
+      slug: toCategorySlug(category),
+      name: category,
+      productCount: products.filter((p) => p.category === category).length,
+    }));
+    return {
+      categories: [
+        ...productFacets,
+        {
+          id: productFacets.length + 1,
+          slug: 'sporty-zimowe',
+          name: 'Sporty zimowe',
+          productCount: 0,
+        },
+      ],
+    };
+  }, [products]);
+
+  const categorySlugs = useMemo(
+    () =>
+      categoryFacets.categories
+        .filter((category) => category.productCount > 0)
+        .map((category) => category.slug),
+    [categoryFacets]
+  );
+
   const {
     pageNumber,
     sortField,
@@ -61,7 +92,7 @@ export default function SearchPage() {
     maxPrice: MAX_PRICE,
     sortFields: SORT_FIELDS,
     defaultSortField: 'name',
-    categorySlugs: CATEGORY_SLUGS,
+    categorySlugs,
   });
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
@@ -127,7 +158,7 @@ export default function SearchPage() {
           formatValue={(value) => `${value} zł`}
         />
         <CategoryFilter
-          facets={CATEGORY_FACETS}
+          facets={categoryFacets}
           selectedCategorySlugs={selectedCategorySlugs}
           onSelectedCategorySlugsChange={setSelectedCategorySlugs}
         />
@@ -236,7 +267,7 @@ export default function SearchPage() {
                         formatValue={(value) => `${value} zł`}
                       />
                       <CategoryFilter
-                        facets={CATEGORY_FACETS}
+                        facets={categoryFacets}
                         selectedCategorySlugs={selectedCategorySlugs}
                         onSelectedCategorySlugsChange={setSelectedCategorySlugs}
                       />
