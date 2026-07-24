@@ -23,7 +23,7 @@ export default function QuantitySelector({
           aria-label="Zmniejsz liczbę sztuk"
           disabled={quantity <= 1}
           onClick={onDecrease}
-          className={`${QUANTITY_BUTTON_CLASSES} disabled:cursor-not-allowed disabled:opacity-40`}
+          className={`${QUANTITY_BUTTON_CLASSES} disabled:opacity-40`}
         >
           <CircleMinus className="h-7 w-7" />
         </button>
