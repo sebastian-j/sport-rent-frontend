@@ -192,15 +192,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/loyalty/history": {
+    "/product/{product_slug}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Points History */
-        get: operations["get_points_history_loyalty_history_get"];
+        /** Get Product */
+        get: operations["get_product_product__product_slug__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -209,15 +209,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/product/": {
+    "/product/{product_slug}/availability": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Products */
-        get: operations["get_products_product__get"];
+        /** Get Product Availability */
+        get: operations["get_product_availability_product__product_slug__availability_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -243,15 +243,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/product/{product_slug}/availability": {
+    "/user/history": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Product Availability */
-        get: operations["get_product_availability_product__product_slug__availability_get"];
+        /** Get User History */
+        get: operations["get_user_history_user_history_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -784,11 +784,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -852,11 +848,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LogoutRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -878,42 +870,13 @@ export interface operations {
             };
         };
     };
-    reset_password_auth_reset_password_post: {
+    get_product_product__product_slug__get: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetPasswordRequest"];
+            path: {
+                product_slug: string;
             };
-        };
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    health_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -927,56 +890,27 @@ export interface operations {
                     "application/json": components["schemas"]["ProductResponse"];
                 };
             };
-        };
-    };
-    get_points_loyalty_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
+            /** @description Validation Error */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoyaltyResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
     };
-    get_points_history_loyalty_history_get: {
+    get_product_availability_product__product_slug__availability_get: {
         parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LoyaltyHistoryResponse"];
-                };
-            };
-        };
-    };
-    get_products_product__get: {
-        parameters: {
-            query?: {
-                filter?: string;
-                page?: number;
+            query: {
+                start_date: string;
+                end_date: string;
             };
             header?: never;
-            path?: never;
+            path: {
+                product_slug: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -1005,9 +939,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                product_slug: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -1021,24 +953,13 @@ export interface operations {
                     "application/json": components["schemas"]["UserResponse"];
                 };
             };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
         };
     };
-    get_product_availability_product__product_slug__availability_get: {
+    get_user_history_user_history_get: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                product_slug: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
