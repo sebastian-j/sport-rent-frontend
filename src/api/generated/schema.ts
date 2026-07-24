@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/promo-code/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sprawdź kod promocyjny */
+        post: operations["validate_promo_code_cart_promo_code_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/favorites": {
         parameters: {
             query?: never;
@@ -444,6 +461,16 @@ export interface components {
             /** Description */
             description?: string | null;
         };
+        /** PromoCodeValidationRequest */
+        PromoCodeValidationRequest: {
+            /** Promo Code */
+            promo_code: string;
+        };
+        /** PromoCodeValidationResponse */
+        PromoCodeValidationResponse: {
+            /** Discount Rate */
+            discount_rate?: number | null;
+        };
         /** ResetPasswordRequest */
         ResetPasswordRequest: {
             /**
@@ -627,6 +654,39 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_promo_code_cart_promo_code_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromoCodeValidationRequest"];
+            };
+        };
+        responses: {
+            /** @description Wartość rabatu przypisana do kodu promocyjnego */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PromoCodeValidationResponse"];
+                };
             };
             /** @description Validation Error */
             422: {

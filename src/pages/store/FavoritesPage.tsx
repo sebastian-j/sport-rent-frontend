@@ -2,11 +2,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
-import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
-import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
@@ -61,25 +60,26 @@ export default function FavoritesPage() {
     const activeErrorTimeouts = errorTimeouts.current;
 
     async function loadFavorites() {
-      const { data, error } = await getFavorites();
+      const [
+        { data: favoritesData, error: favoritesError },
+        { data: productsData, error: productsError },
+      ] = await Promise.all([getFavorites(), getProducts()]);
 
-      if (error || !data) {
-        console.error('Błąd pobierania ulubionych produktów:', error);
+      if (favoritesError || productsError || !favoritesData || !productsData) {
+        console.error('Błąd pobierania ulubionych produktów:', favoritesError || productsError);
         return;
       }
 
-      // TODO: Change if photos come from backend
       setFavorites(
-        data.map((item) => {
-          const matchedProduct = PRODUCTS.find((product) => product.slug === item.slug);
+        favoritesData.map((item) => {
+          const matchedProduct = productsData.find((product) => product.slug === item.slug);
 
           return {
             ...item,
-            image: matchedProduct?.images[0] ?? item.image,
+            image: matchedProduct?.images?.[0] ?? item.image,
           };
         })
       );
-      // setFavorites(data)
     }
     void loadFavorites();
 
