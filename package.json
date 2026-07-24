@@ -21,8 +21,10 @@
     "react": "^19.2.7",
     "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.1",
     "react-social-icons": "^6.26.0",
+    "rehype-raw": "^7.0.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

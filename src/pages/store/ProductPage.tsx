@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { getProductBySlug } from '../../assets/products/products.ts';
+import { getProductBySlug } from '../../api/product.ts';
+import Markdown from '../../components/core/Markdown.tsx';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -18,8 +19,26 @@ export default function ProductPage() {
 
       if (slug) {
         try {
-          const fetchedProduct = await getProductBySlug(slug);
-          setProduct((fetchedProduct as ProductProps) || null);
+          const { data, error } = await getProductBySlug(slug);
+          if (error || !data) {
+            setProduct(null);
+          } else {
+            setProduct({
+              id: data.id,
+              name: data.name,
+              description: data.description ?? '',
+              price: data.price ?? 0,
+              slug: data.slug,
+              images: data.images ?? [],
+              alt: data.alt ?? data.name,
+              category: data.category ?? '',
+              sizes:
+                data.sizes?.map((size) => ({
+                  ...size,
+                  available: Math.random() < 0.5,
+                })) ?? [],
+            });
+          }
         } catch (error) {
           console.error(error);
           setProduct(null);
@@ -76,9 +95,9 @@ export default function ProductPage() {
             </div>
           </section>
         )}
+        <div className="border-b-2 border-app-borderSoft mt-[2vh]" />
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
-          <h2 className="text-2xl font-semibold text-app-text">Opis produktu</h2>
-          <p className="mt-[2vh] text-lg">{product.description}</p>
+          <Markdown>{product.description}</Markdown>
         </div>
       </main>
     </div>

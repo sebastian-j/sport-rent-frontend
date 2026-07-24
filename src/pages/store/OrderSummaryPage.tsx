@@ -1,6 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import { getLoyalty } from '../../api/loyalty.ts';
+import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
@@ -21,7 +21,6 @@ import type {
   RecipientDetails,
 } from '../../features/userDetails/userDetailsTypes.ts';
 
-const USER_LOYALTY_POINTS = 16_000;
 const HEADER_OFFSET_PX = 64;
 const PANEL_VIEWPORT_GAP_PX = 16;
 const DESKTOP_BREAKPOINT_PX = 768;
@@ -50,31 +49,51 @@ const getDateAfterToday = (dayOffset: number) => {
   return date;
 };
 
-const SUMMARY_PRODUCTS: CartProduct[] = PRODUCTS.filter(
-  (product) => product.id === 1 || product.id === 4
-).map((product, index) => ({
-  ...product,
-  dates: [
-    {
-      id: index + 1,
-      quantity: index === 0 ? 5 : 2,
-      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-      start_date: getDateAfterToday(3 + index * 5),
-      end_date: getDateAfterToday(4 + index * 7),
-    },
-    ...(index === 0
-      ? [
-          {
-            id: 2,
-            quantity: 1,
-            size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-            start_date: getDateAfterToday(10),
-            end_date: getDateAfterToday(12),
-          },
-        ]
-      : []),
-  ],
-}));
+export default function OrderSummaryPage() {
+  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
+  const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
+
+  useEffect(() => {
+    getProducts().then(({ data }) => {
+      if (data) {
+        const filtered = data
+          .filter((product) => product.id === 1 || product.id === 4)
+          .map((product: any, index) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+            sizes: product.sizes ?? [],
+            dates: [
+              {
+                id: index + 1,
+                quantity: index === 0 ? 5 : 2,
+                size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+                start_date: getDateAfterToday(3 + index * 5),
+                end_date: getDateAfterToday(4 + index * 7),
+              },
+              ...(index === 0
+                ? [
+                    {
+                      id: 2,
+                      quantity: 1,
+                      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
+                      start_date: getDateAfterToday(10),
+                      end_date: getDateAfterToday(12),
+                    },
+                  ]
+                : []),
+            ],
+          }));
+        setSummaryProducts(filtered);
+      }
+    });
+  }, []);
 
 export default function OrderSummaryPage() {
   const summaryPanelRef = useRef<HTMLDivElement>(null);
@@ -88,16 +107,20 @@ export default function OrderSummaryPage() {
     appliedPromoCode,
     discountRate,
     promoCodeError,
+    isPromoCodeValidating,
     applyPromoCode,
     changePromoCode,
     removePromoCode,
   } = usePromo();
-  const cartPrice = getOrderInformation(SUMMARY_PRODUCTS).totalValue;
+  const cartPrice = getOrderInformation(summaryProducts).totalValue;
   const paymentPrice = PAYMENT_METHODS.find(
     (method) => method.id === selectedPaymentMethodId
   )?.price;
   const discount = cartPrice * discountRate;
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
+  const [points, setPoints] = useState(0);
+  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   useLayoutEffect(() => {
     const summaryPanel = summaryPanelRef.current;
@@ -131,6 +154,39 @@ export default function OrderSummaryPage() {
     if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadPoints() {
+      try {
+        const { data, error } = await getLoyalty();
+
+        if (!active) return;
+
+        if (error) {
+          console.error(error);
+          setHasPointsLoadError(true);
+          return;
+        }
+
+        setPoints(data.balance);
+      } catch (error) {
+        if (!active) return;
+
+        console.error(error);
+        setHasPointsLoadError(true);
+      } finally {
+        if (active) setIsPointsLoading(false);
+      }
+    }
+
+    void loadPoints();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
       <div className="grid items-start justify-center gap-6 md:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] md:gap-8">
@@ -155,7 +211,9 @@ export default function OrderSummaryPage() {
             <PaymentMethodsPanel
               selectedMethodId={selectedPaymentMethodId}
               pointsRequired={pointsRequired}
-              userPoints={USER_LOYALTY_POINTS}
+              userPoints={points}
+              isUserPointsLoading={isPointsLoading}
+              hasUserPointsLoadError={hasPointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>
@@ -168,7 +226,7 @@ export default function OrderSummaryPage() {
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
-            {SUMMARY_PRODUCTS.map((product) => (
+            {summaryProducts.map((product) => (
               <SummaryProduct key={product.id} product={product} />
             ))}
           </div>
@@ -177,6 +235,7 @@ export default function OrderSummaryPage() {
             promoCode={promoCode}
             appliedCode={appliedPromoCode}
             error={promoCodeError}
+            isValidating={isPromoCodeValidating}
             onPromoCodeChange={changePromoCode}
             onApply={applyPromoCode}
             onRemove={handleRemovePromoCode}

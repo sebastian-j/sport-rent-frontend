@@ -1,20 +1,93 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PRODUCTS } from '../../assets/products/products.ts';
+import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
+import { getProducts } from '../../api/product.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 
-const INITIAL_FAVORITES = PRODUCTS.slice(0, 12);
-
 export default function FavoritesPage() {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState(INITIAL_FAVORITES);
+  const [favorites, setFavorites] = useState<FavoritesResponse[]>([]);
+  const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
+  const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
+  const errorTimeouts = useRef<Map<string, number>>(new Map());
 
-  const handleRemoveFavorite = (id: number) => {
-    setFavorites(favorites.filter((item) => item.id !== id));
+  const handleRemoveFavorite = async (slug: string) => {
+    if (pendingFavoriteSlugs.has(slug)) return;
+
+    setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(slug));
+    setFailedFavoriteSlugs((currentSlugs) => {
+      const nextSlugs = new Set(currentSlugs);
+      nextSlugs.delete(slug);
+      return nextSlugs;
+    });
+
+    try {
+      const { error } = await removeFavorite(slug);
+
+      if (error) throw error;
+
+      setFavorites((currentFavorites) => currentFavorites.filter((item) => item.slug !== slug));
+    } catch (error) {
+      console.error(`Błąd usuwania produktu ${slug} z ulubionych:`, error);
+      setFailedFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(slug));
+
+      const previousTimeout = errorTimeouts.current.get(slug);
+      if (previousTimeout) window.clearTimeout(previousTimeout);
+
+      const timeout = window.setTimeout(() => {
+        setFailedFavoriteSlugs((currentSlugs) => {
+          const nextSlugs = new Set(currentSlugs);
+          nextSlugs.delete(slug);
+          return nextSlugs;
+        });
+        errorTimeouts.current.delete(slug);
+      }, 1200);
+
+      errorTimeouts.current.set(slug, timeout);
+    } finally {
+      setPendingFavoriteSlugs((currentSlugs) => {
+        const nextSlugs = new Set(currentSlugs);
+        nextSlugs.delete(slug);
+        return nextSlugs;
+      });
+    }
   };
+
+  useEffect(() => {
+    const activeErrorTimeouts = errorTimeouts.current;
+
+    async function loadFavorites() {
+      const [
+        { data: favoritesData, error: favoritesError },
+        { data: productsData, error: productsError },
+      ] = await Promise.all([getFavorites(), getProducts()]);
+
+      if (favoritesError || productsError || !favoritesData || !productsData) {
+        console.error('Błąd pobierania ulubionych produktów:', favoritesError || productsError);
+        return;
+      }
+
+      setFavorites(
+        favoritesData.map((item) => {
+          const matchedProduct = productsData.find((product) => product.slug === item.slug);
+
+          return {
+            ...item,
+            image: matchedProduct?.images?.[0] ?? item.image,
+          };
+        })
+      );
+    }
+    void loadFavorites();
+
+    return () => {
+      activeErrorTimeouts.forEach((timeout) => window.clearTimeout(timeout));
+      activeErrorTimeouts.clear();
+    };
+  }, []);
 
   return (
     <div className="w-full">
@@ -22,7 +95,7 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      <ProductCardGrid className="mt-4">
+      <ProductCardGrid className="mt-4" itemCount={favorites.length}>
         <AnimatePresence initial={false} mode="popLayout">
           {favorites.length === 0 ? (
             <motion.div
@@ -36,18 +109,26 @@ export default function FavoritesPage() {
           ) : (
             favorites.map((product) => (
               <motion.div
-                key={product.id}
+                key={product.slug}
                 layout
+                style={{ width: '100%' }}
                 exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
-                transition={{ duration: 0.28, times: [0, 0.4, 1], ease: 'easeOut' }}
+                transition={{
+                  layout: { duration: 0.35, ease: 'easeInOut' },
+                  duration: 0.28,
+                  times: [0, 0.4, 1],
+                  ease: 'easeOut',
+                }}
               >
                 <ProductCard
                   name={product.name}
                   price={product.price}
-                  image={product.images[0]}
+                  image={product.image}
                   alt={product.alt}
                   isFavorite={true}
-                  onFavoriteToggle={() => handleRemoveFavorite(product.id)}
+                  isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+                  hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                  onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
                   onClick={() => navigate(`/product/${product.slug}`)}
                 />
               </motion.div>
