@@ -94,7 +94,7 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      <ProductCardGrid className="mt-4">
+      <ProductCardGrid className="mt-4" itemCount={favorites.length}>
         <AnimatePresence initial={false} mode="popLayout">
           {favorites.length === 0 ? (
             <motion.div
@@ -110,8 +110,14 @@ export default function FavoritesPage() {
               <motion.div
                 key={product.slug}
                 layout
+                style={{ width: '100%' }}
                 exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
-                transition={{ duration: 0.28, times: [0, 0.4, 1], ease: 'easeOut' }}
+                transition={{
+                  layout: { duration: 0.35, ease: 'easeInOut' },
+                  duration: 0.28,
+                  times: [0, 0.4, 1],
+                  ease: 'easeOut',
+                }}
               >
                 <ProductCard
                   name={product.name}
