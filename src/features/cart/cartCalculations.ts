@@ -1,15 +1,15 @@
-import {
-  DAY_IN_MILLISECONDS,
-  getInclusiveDayCount,
-  isRentalDateValid,
-  toDayTimestamp,
-} from './rentalDate.ts';
 import type {
   CartProduct,
   InvalidRentalDate,
   OrderInformation,
   ProductInformation,
 } from './cartTypes.ts';
+import {
+  DAY_IN_MILLISECONDS,
+  getInclusiveDayCount,
+  isRentalDateValid,
+  toDayTimestamp,
+} from './rentalDate.ts';
 
 export function getProductInformation(product: CartProduct): ProductInformation {
   const rentalDays = new Set<number>();

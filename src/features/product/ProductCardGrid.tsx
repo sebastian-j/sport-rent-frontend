@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { PRODUCT_CARD_WIDTH } from './ProductCard.tsx';
 
 const DEFAULT_GAP = 16;
@@ -22,17 +23,20 @@ type ProductCardGridProps = {
   children: ReactNode;
   className?: string;
   gap?: number;
+  itemCount?: number;
 };
 
 export default function ProductCardGrid({
   children,
   className,
   gap = DEFAULT_GAP,
+  itemCount,
 }: ProductCardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState({ width: 0, itemCount: 0 });
   const normalizedGap = Math.max(0, gap);
-  const columnCount = getColumnCount(layout.width, layout.itemCount, normalizedGap);
+  const resolvedItemCount = itemCount ?? layout.itemCount;
+  const columnCount = getColumnCount(layout.width, resolvedItemCount, normalizedGap);
   const cardWidth = columnCount
     ? `min(calc((100cqw - ${(columnCount - 1) * normalizedGap}px) / ${columnCount}), ${PRODUCT_CARD_WIDTH}px)`
     : `${PRODUCT_CARD_WIDTH}px`;

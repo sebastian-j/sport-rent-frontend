@@ -1,7 +1,9 @@
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { forwardRef, type ComponentPropsWithoutRef } from 'react';
+
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 import { twMerge } from 'tailwind-merge';
+
 import { useMediaQuery } from '../../hooks/useMediaQuery.ts';
 
 const MOBILE_MEDIA_QUERY = '(max-width: 960px)';

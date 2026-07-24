@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+
 import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,

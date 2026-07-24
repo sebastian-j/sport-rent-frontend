@@ -1,12 +1,14 @@
 import { useState } from 'react';
+
+import { getProductAvailability } from '../../api/product.ts';
 import ButtonCore from '../../components/core/ButtonCore';
-import { type ProductProps } from './productProps';
-import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
-import SizeSelector from './addToCart/SizeSelector.tsx';
 import RentalPriceSummary from './addToCart/RentalPriceSummary.tsx';
+import SizeSelector from './addToCart/SizeSelector.tsx';
+import { type ProductProps } from './productProps';
 
 export default function AddToCart({ product }: { product: ProductProps }) {
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -25,7 +27,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (isDateAfter(startDate, endDate)) {
       alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
       return;
@@ -38,6 +40,19 @@ export default function AddToCart({ product }: { product: ProductProps }) {
 
     if (isSizeSelectionRequired) {
       alert('Proszę wybrać rozmiar produktu.');
+      return;
+    }
+
+    const { data, error } = await getProductAvailability(
+      product.slug,
+      startDate.toLocaleDateString('pl'),
+      endDate.toLocaleDateString('pl')
+    );
+
+    if (error || !data?.available) {
+      alert(
+        `Produkt niedostępny w okresie od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
+      );
       return;
     }
 

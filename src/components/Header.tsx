@@ -1,12 +1,13 @@
-import headerLogo from '../assets/logo_header.png';
-import headerLogoSmall from '../assets/logo_header_small.png';
 import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
 import { healthCheck } from '../api/health.ts';
-import SearchBar from './SearchBar.tsx';
+import headerLogo from '../assets/logo_header.png';
+import headerLogoSmall from '../assets/logo_header_small.png';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
+import SearchBar from './SearchBar.tsx';
 
 const CATEGORIES = [
   'Rowery i akcesoria',

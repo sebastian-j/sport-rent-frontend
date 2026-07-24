@@ -1,5 +1,5 @@
-import { Children, type ReactNode, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, type PanInfo, useReducedMotion } from 'motion/react';
+import { Children, type ReactNode, useEffect, useRef, useState } from 'react';
 
 type CategoryCardSliderProps = {
   children: ReactNode;

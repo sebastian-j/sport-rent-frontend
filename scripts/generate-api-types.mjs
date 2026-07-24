@@ -8,6 +8,11 @@ if (!backendUrl) {
 
 const schemaUrl = `${backendUrl.replace(/\/+$/, '')}/openapi.json`;
 
-execFileSync('openapi-typescript', [schemaUrl, '--output', 'src/api/generated/schema.ts'], {
-  stdio: 'inherit',
-});
+execFileSync(
+  'pnpm exec',
+  ['openapi-typescript', schemaUrl, '--output', 'src/api/generated/schema.ts'],
+  {
+    stdio: 'inherit',
+    shell: true,
+  }
+);

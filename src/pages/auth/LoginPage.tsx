@@ -1,7 +1,8 @@
-import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { type ChangeEvent, type SubmitEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { type SubmitEvent, useState } from 'react';
+
 import { login } from '../../api/auth.ts';
+import ButtonCore from '../../components/core/ButtonCore.tsx';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function LoginPage() {
   const [hasInvalidCredentials, setHasInvalidCredentials] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginError(null);
     setHasInvalidCredentials(false);
@@ -35,15 +36,15 @@ export default function LoginPage() {
     try {
       const result = await login(formData);
 
-      if (result.error) {
-        if (result.response.status === 401) {
+      if (result.error || !result.data) {
+        if (result.response?.status === 401) {
           setHasInvalidCredentials(true);
           setLoginError('Nieprawidłowy adres e-mail lub hasło');
           return;
         }
 
         setHasInvalidCredentials(false);
-        setLoginError(`Logowanie nie powiodło się (HTTP ${result.response.status})`);
+        setLoginError(`Logowanie nie powiodło się (HTTP ${result.response?.status ?? 'błąd'})`);
         return;
       }
 
@@ -128,7 +129,7 @@ export default function LoginPage() {
         </form>
 
         <div className="w-[90%] text-left my-3">
-          <Link to="/forgot-password" className="text-app-textStrong underline">
+          <Link to="/reset-password" className="text-app-textStrong underline">
             Zapomniałeś hasła?
           </Link>
         </div>

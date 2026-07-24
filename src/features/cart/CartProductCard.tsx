@@ -1,9 +1,10 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import ProductRentalDate from './ProductRentalDate.tsx';
-import { formatPrice } from '../../utils/formatPrice.ts';
 import type { Ref } from 'react';
+
+import { formatPrice } from '../../utils/formatPrice.ts';
 import type { CartProduct, DateField, ProductInformation } from './cartTypes.ts';
+import ProductRentalDate from './ProductRentalDate.tsx';
 
 type CartProductCardProps = {
   product: CartProduct;

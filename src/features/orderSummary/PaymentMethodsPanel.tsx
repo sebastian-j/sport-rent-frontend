@@ -1,5 +1,5 @@
-import { PAYMENT_METHODS, type PaymentMethodId } from './paymentMethods.ts';
 import PaymentMethodOption from './PaymentMethodOption.tsx';
+import { PAYMENT_METHODS, type PaymentMethodId } from './paymentMethods.ts';
 
 type PaymentMethodsPanelProps = {
   selectedMethodId?: PaymentMethodId;

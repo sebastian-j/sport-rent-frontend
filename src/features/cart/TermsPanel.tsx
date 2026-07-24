@@ -1,6 +1,10 @@
-import { forwardRef } from 'react';
 import { Badge, BadgeCheck } from 'lucide-react';
+import { forwardRef } from 'react';
+import { Link } from 'react-router-dom';
+
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+
+const TOS_URL = '/tos';
 
 type TermsPanelProps = {
   readTos: boolean;
@@ -20,22 +24,24 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
     >
       <p className="text-2xl">
         Przeczytaj{' '}
-        <a
-          className="font-semibold underline"
-          href="https://dok.agh.edu.pl/doc.php?id=17184"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onReadTos}
-        >
+        <Link className="font-semibold underline" to={TOS_URL} target="_blank" onClick={onReadTos}>
           Regulamin
-        </a>
+        </Link>
         , aby dokonać zakupu.
       </p>
       <div>
         {readTos ? (
           <BadgeCheck size={32} className="text-app-success" />
         ) : (
-          <Badge size={32} className="text-app-danger" />
+          <Link
+            to={TOS_URL}
+            target="_blank"
+            onClick={onReadTos}
+            aria-label="Otwórz regulamin w nowej karcie"
+            className="inline-flex text-app-danger"
+          >
+            <Badge size={32} aria-hidden="true" />
+          </Link>
         )}
       </div>
     </ContentPanel>

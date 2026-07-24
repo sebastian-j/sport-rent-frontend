@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
+
 import type { SortDirection } from '../../types/search.ts';
 
 type PriceRange = [number, number];

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+
 import Switch from './Switch.tsx';
 
 type ThemeMode = 'light' | 'system' | 'dark';
