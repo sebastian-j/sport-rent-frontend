@@ -1,5 +1,6 @@
 import { Gem, ShoppingBag, User } from 'lucide-react';
-import { type ComponentType, useEffect, useRef, useState } from 'react';
+import { type ComponentType, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import AccountSection from '../../features/profile/AccountSection.tsx';
@@ -8,19 +9,39 @@ import OrdersSection from '../../features/profile/OrdersSection.tsx';
 import ProfileCard from '../../features/profile/ProfileCard.tsx';
 import { scrollElementIntoViewIfBelow } from '../../utils/scrollElementIntoViewIfBelow.ts';
 
-type ProfileSection = 'account' | 'loyalty' | 'orders';
+const PROFILE_SECTIONS = ['settings', 'loyalty', 'orders'] as const;
+
+type ProfileSection = (typeof PROFILE_SECTIONS)[number];
 
 const SECTION_COMPONENTS: Record<ProfileSection, ComponentType> = {
-  account: AccountSection,
+  settings: AccountSection,
   loyalty: LoyaltySection,
   orders: OrdersSection,
 };
 
+const isProfileSection = (value: string | null): value is ProfileSection =>
+  PROFILE_SECTIONS.some((section) => section === value);
+
 export default function ProfilePage() {
-  const [selectedSection, setSelectedSection] = useState<ProfileSection>('account');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionSearchValue = searchParams.get('section');
+  const selectedSection = isProfileSection(sectionSearchValue) ? sectionSearchValue : 'settings';
   const previousSectionRef = useRef(selectedSection);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const SelectedSection = SECTION_COMPONENTS[selectedSection];
+
+  useEffect(() => {
+    if (isProfileSection(sectionSearchValue)) return;
+
+    setSearchParams(
+      (currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        nextParams.set('section', 'settings');
+        return nextParams;
+      },
+      { replace: true }
+    );
+  }, [sectionSearchValue, setSearchParams]);
 
   useEffect(() => {
     if (previousSectionRef.current === selectedSection) return;
@@ -31,6 +52,14 @@ export default function ProfilePage() {
 
     return scrollElementIntoViewIfBelow(sectionContent);
   }, [selectedSection]);
+
+  const selectSection = (section: ProfileSection) => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set('section', section);
+      return nextParams;
+    });
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-[100rem] flex-col">
@@ -46,20 +75,20 @@ export default function ProfilePage() {
           <ProfileCard
             title="Ustawienia konta"
             icon={User}
-            selected={selectedSection === 'account'}
-            onClick={() => setSelectedSection('account')}
+            selected={selectedSection === 'settings'}
+            onClick={() => selectSection('settings')}
           />
           <ProfileCard
             title="Program lojalnościowy"
             icon={Gem}
             selected={selectedSection === 'loyalty'}
-            onClick={() => setSelectedSection('loyalty')}
+            onClick={() => selectSection('loyalty')}
           />
           <ProfileCard
             title="Historia zamówień"
             icon={ShoppingBag}
             selected={selectedSection === 'orders'}
-            onClick={() => setSelectedSection('orders')}
+            onClick={() => selectSection('orders')}
           />
         </nav>
         <ContentPanel

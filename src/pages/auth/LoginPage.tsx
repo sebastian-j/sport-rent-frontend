@@ -36,15 +36,15 @@ export default function LoginPage() {
     try {
       const result = await login(formData);
 
-      if (result.error) {
-        if (result.response.status === 401) {
+      if (result.error || !result.data) {
+        if (result.response?.status === 401) {
           setHasInvalidCredentials(true);
           setLoginError('Nieprawidłowy adres e-mail lub hasło');
           return;
         }
 
         setHasInvalidCredentials(false);
-        setLoginError(`Logowanie nie powiodło się (HTTP ${result.response.status})`);
+        setLoginError(`Logowanie nie powiodło się (HTTP ${result.response?.status ?? 'błąd'})`);
         return;
       }
 
