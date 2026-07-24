@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+
+import { getLoyalty } from '../../api/loyalty.ts';
 import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
@@ -15,7 +17,6 @@ import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsP
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
 import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
-import { getLoyalty } from '../../api/loyalty.ts';
 
 const PROFILE_RECIPIENT_DETAILS: UserDetails = {
   firstName: 'Jan',

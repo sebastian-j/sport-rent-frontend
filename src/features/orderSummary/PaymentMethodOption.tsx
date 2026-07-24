@@ -1,6 +1,7 @@
+import { motion, useReducedMotion } from 'motion/react';
+
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { PaymentMethod, PaymentMethodId } from './paymentMethods.ts';
-import { motion, useReducedMotion } from 'motion/react';
 
 type PaymentMethodOptionProps = {
   method: PaymentMethod;

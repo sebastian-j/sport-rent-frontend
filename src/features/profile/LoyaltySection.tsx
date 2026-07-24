@@ -1,8 +1,8 @@
-import PointsCard from './loyalty/PointsCard.tsx';
-
-import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts';
 import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useState } from 'react';
+
+import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts';
+import PointsCard from './loyalty/PointsCard.tsx';
 
 const LOADING_CARD_IDS = ['loading-card-1', 'loading-card-2', 'loading-card-3'];
 const PLACEHOLDER_REVEAL_DURATION_SECONDS = 0.24;
