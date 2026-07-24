@@ -5,6 +5,8 @@ type PaymentMethodsPanelProps = {
   selectedMethodId?: PaymentMethodId;
   pointsRequired: number;
   userPoints: number;
+  isUserPointsLoading: boolean;
+  hasUserPointsLoadError: boolean;
   onMethodChange: (methodId: PaymentMethodId) => void;
 };
 
@@ -12,6 +14,8 @@ export default function PaymentMethodsPanel({
   selectedMethodId,
   pointsRequired,
   userPoints,
+  isUserPointsLoading,
+  hasUserPointsLoadError,
   onMethodChange,
 }: PaymentMethodsPanelProps) {
   return (
@@ -27,6 +31,8 @@ export default function PaymentMethodsPanel({
           isSelected={selectedMethodId === method.id}
           pointsRequired={pointsRequired}
           userPoints={userPoints}
+          isUserPointsLoading={isUserPointsLoading}
+          hasUserPointsLoadError={hasUserPointsLoadError}
           onChange={onMethodChange}
         />
       ))}

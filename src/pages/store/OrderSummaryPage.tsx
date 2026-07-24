@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { getLoyalty } from '../../api/loyalty.ts';
 import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
@@ -16,8 +17,6 @@ import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsP
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
 import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
-
-const USER_LOYALTY_POINTS = 16_000;
 
 const PROFILE_RECIPIENT_DETAILS: UserDetails = {
   firstName: 'Jan',
@@ -99,11 +98,47 @@ export default function OrderSummaryPage() {
   )?.price;
   const discount = cartPrice * discountRate;
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
+  const [points, setPoints] = useState(0);
+  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   const handleRemovePromoCode = () => {
     removePromoCode();
     if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadPoints() {
+      try {
+        const { data, error } = await getLoyalty();
+
+        if (!active) return;
+
+        if (error) {
+          console.error(error);
+          setHasPointsLoadError(true);
+          return;
+        }
+
+        setPoints(data.balance);
+      } catch (error) {
+        if (!active) return;
+
+        console.error(error);
+        setHasPointsLoadError(true);
+      } finally {
+        if (active) setIsPointsLoading(false);
+      }
+    }
+
+    void loadPoints();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
@@ -120,7 +155,9 @@ export default function OrderSummaryPage() {
             <PaymentMethodsPanel
               selectedMethodId={selectedPaymentMethodId}
               pointsRequired={pointsRequired}
-              userPoints={USER_LOYALTY_POINTS}
+              userPoints={points}
+              isUserPointsLoading={isPointsLoading}
+              hasUserPointsLoadError={hasPointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>
