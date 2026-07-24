@@ -57,16 +57,16 @@ const CATEGORY_CARDS = {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => new Set());
+  const [favoritesSlugs, setFavoritesSlugs] = useState<Set<string>>(() => new Set());
 
-  const toggleFavorite = (productId: number) => {
-    setFavoriteIds((previous) => {
+  const toggleFavorite = (productSlug: string) => {
+    setFavoritesSlugs((previous) => {
       const next = new Set(previous);
 
-      if (next.has(productId)) {
-        next.delete(productId);
+      if (next.has(productSlug)) {
+        next.delete(productSlug);
       } else {
-        next.add(productId);
+        next.add(productSlug);
       }
 
       return next;
@@ -101,14 +101,14 @@ export default function HomePage() {
       <ProductCardGrid className="my-4">
         {PRODUCTS.map((product) => (
           <ProductCard
-            key={product.id}
+            key={product.slug}
             name={product.name}
             price={product.price}
             image={product.images[0]}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
-            isFavorite={favoriteIds.has(product.id)}
-            onFavoriteToggle={() => toggleFavorite(product.id)}
+            isFavorite={favoritesSlugs.has(product.slug)}
+            onFavoriteToggle={() => toggleFavorite(product.slug)}
           />
         ))}
       </ProductCardGrid>
