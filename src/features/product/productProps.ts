@@ -7,5 +7,5 @@ export type ProductProps = {
   images: string[];
   alt: string;
   category: string;
-  sizes?: { size: string; description?: string }[];
+  sizes?: { size: string; description?: string | null; available?: boolean }[];
 };
