@@ -8,6 +8,10 @@ export const PRODUCT_CARD_WIDTH = 256;
 
 const PRODUCT_IMAGE_SIZE = { width: PRODUCT_CARD_WIDTH, height: 224 } as const;
 const PRODUCT_CARD_CONTENT_HEIGHT = 120;
+const FAVORITE_BUTTON_VARIANTS = {
+  favorite: { scale: [0.85, 1] },
+  notFavorite: { scale: [0.85, 1] },
+};
 
 type ProductCardProps = {
   name: string;
@@ -18,7 +22,9 @@ type ProductCardProps = {
   isFavorite?: boolean;
   onFavoriteToggle?: () => void;
   isFavoriteUpdating?: boolean;
+  showFavoriteUpdatingOverlay?: boolean;
   hasFavoriteError?: boolean;
+  favoriteErrorTarget?: 'card' | 'button';
 };
 
 export default function ProductCard({
@@ -30,18 +36,22 @@ export default function ProductCard({
   isFavorite,
   onFavoriteToggle,
   isFavoriteUpdating = false,
+  showFavoriteUpdatingOverlay = true,
   hasFavoriteError = false,
+  favoriteErrorTarget = 'card',
 }: ProductCardProps) {
   const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt();
+  const hasCardFavoriteError = hasFavoriteError && favoriteErrorTarget === 'card';
+  const hasButtonFavoriteError = hasFavoriteError && favoriteErrorTarget === 'button';
 
   return (
     <motion.div
       onPointerMove={handlePointerMove}
       onPointerLeave={resetTilt}
       whileHover={hoverAnimation}
-      animate={hasFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
+      animate={hasCardFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
       transition={
-        hasFavoriteError
+        hasCardFavoriteError
           ? { duration: 0.4, ease: 'easeInOut' }
           : { type: 'spring', stiffness: 280, damping: 24 }
       }
@@ -50,39 +60,88 @@ export default function ProductCard({
         maxWidth: PRODUCT_CARD_WIDTH,
         ...cardStyle,
       }}
-      aria-busy={isFavoriteUpdating}
+      aria-busy={showFavoriteUpdatingOverlay && isFavoriteUpdating}
       className={`relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] bg-app-surfaceSoft ring-2 transition-[filter,border-color,box-shadow] duration-300 ease-linear hover:z-10 ${
-        hasFavoriteError
+        hasCardFavoriteError
           ? 'border-app-danger ring-app-danger'
           : 'border-app-borderSoft ring-transparent'
-      } ${isFavoriteUpdating ? 'grayscale' : ''}`}
+      } ${showFavoriteUpdatingOverlay && isFavoriteUpdating ? 'grayscale' : ''}`}
     >
       <button
         type="button"
         onClick={onClick}
-        disabled={isFavoriteUpdating}
+        disabled={showFavoriteUpdatingOverlay && isFavoriteUpdating}
         aria-label={`Zobacz szczegóły produktu: ${name}`}
         className="absolute inset-0 z-10 rounded-xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-app-surfaceStrong"
       />
 
-      <motion.button
-        type="button"
-        key={String(isFavorite)}
-        onClick={onFavoriteToggle}
-        disabled={isFavoriteUpdating}
-        aria-label={isFavorite ? `Usuń ${name} z ulubionych` : `Dodaj ${name} do ulubionych`}
-        initial={{ scale: 0.85 }}
-        animate={{ scale: 1.0 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-        className="absolute right-3 top-3 z-20 rounded-full bg-app-surface/90 p-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-surfaceStrong disabled:cursor-wait"
+      <motion.div
+        animate={hasButtonFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
+        transition={
+          hasButtonFavoriteError
+            ? { duration: 0.4, ease: 'easeInOut' }
+            : { type: 'spring', stiffness: 280, damping: 24 }
+        }
+        className={`absolute right-3 top-3 z-20 rounded-full ring-2 transition-[box-shadow] duration-300 ${
+          hasButtonFavoriteError ? 'ring-app-danger' : 'ring-transparent'
+        }`}
       >
-        <Heart
-          className={isFavorite ? 'text-app-danger' : 'text-app-textMuted'}
-          fill={isFavorite ? 'currentColor' : 'none'}
-          strokeWidth={isFavorite ? 0 : 1}
-        />
-      </motion.button>
+        <motion.button
+          type="button"
+          onClick={onFavoriteToggle}
+          disabled={isFavoriteUpdating}
+          aria-busy={isFavoriteUpdating}
+          aria-label={isFavorite ? `Usuń ${name} z ulubionych` : `Dodaj ${name} do ulubionych`}
+          initial={false}
+          variants={FAVORITE_BUTTON_VARIANTS}
+          animate={isFavorite ? 'favorite' : 'notFavorite'}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+          className="rounded-full bg-app-surface/90 p-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-surfaceStrong disabled:cursor-wait"
+        >
+          <span className="relative block size-6">
+            <Heart
+              className="absolute inset-0 size-6 text-app-textMuted"
+              fill="currentColor"
+              strokeWidth={0}
+            />
+
+            <AnimatePresence initial={false}>
+              <motion.span
+                key={String(isFavorite)}
+                initial={{
+                  clipPath: isFavorite ? 'inset(100% 0% 0% 0%)' : 'inset(0% 0% 100% 0%)',
+                }}
+                animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+                transition={{ duration: 0.32, ease: 'easeOut' }}
+                className="absolute inset-0"
+              >
+                <Heart
+                  className={`size-6 ${isFavorite ? 'text-app-danger' : 'text-app-surface'}`}
+                  fill="currentColor"
+                  strokeWidth={0}
+                />
+              </motion.span>
+            </AnimatePresence>
+
+            {!isFavorite && !isFavoriteUpdating && (
+              <Heart
+                className="absolute inset-0 size-6 text-app-textMuted"
+                fill="none"
+                strokeWidth={1}
+              />
+            )}
+
+            {isFavoriteUpdating && (
+              <Heart
+                className="absolute inset-0 size-6 text-app-textMuted"
+                fill="currentColor"
+                strokeWidth={0}
+              />
+            )}
+          </span>
+        </motion.button>
+      </motion.div>
 
       <div
         className="relative w-full shrink-0 overflow-hidden"
@@ -96,7 +155,7 @@ export default function ProductCard({
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1 bg-gradient-to-b from-transparent via-app-surface via-70% to-app-surface" />
         <AnimatePresence>
-          {isFavoriteUpdating && (
+          {showFavoriteUpdatingOverlay && isFavoriteUpdating && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
