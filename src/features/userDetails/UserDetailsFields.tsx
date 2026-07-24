@@ -5,6 +5,7 @@ type UserDetailsFieldsProps = {
   details: UserDetails;
   onDetailsChange: (details: UserDetails) => void;
   showLabels?: boolean;
+  optionalFields?: readonly (keyof UserDetails)[];
   className?: string;
 };
 
@@ -32,7 +33,6 @@ const USER_DETAILS_FIELDS: UserDetailsField[] = [
     name: 'addressLine2',
     label: 'Druga linia adresu (opcjonalnie)',
     placeholder: 'Adres - druga linia (opcjonalne)',
-    fullWidth: true,
   },
   { name: 'postalCode', label: 'Kod pocztowy', placeholder: 'Kod pocztowy', required: true },
 ];
@@ -41,6 +41,7 @@ export default function UserDetailsFields({
   details,
   onDetailsChange,
   showLabels = false,
+  optionalFields = [],
   className = '',
 }: UserDetailsFieldsProps) {
   const updateField = (name: keyof UserDetails, value: string) => {
@@ -52,6 +53,7 @@ export default function UserDetailsFields({
       className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 ${className}`}
     >
       {USER_DETAILS_FIELDS.map(({ name, label, placeholder, required, fullWidth }) => {
+        const isRequired = required && !optionalFields.includes(name);
         const input = (
           <FormInput
             type="text"
@@ -59,7 +61,7 @@ export default function UserDetailsFields({
             value={details[name]}
             onChange={(event) => updateField(name, event.currentTarget.value)}
             placeholder={showLabels ? undefined : placeholder}
-            required={required}
+            required={isRequired}
           />
         );
 
@@ -71,6 +73,7 @@ export default function UserDetailsFields({
             }`}
           >
             {label}
+            {isRequired ? ' *' : ''}
             {input}
           </label>
         ) : (
