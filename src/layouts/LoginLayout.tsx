@@ -1,8 +1,20 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
 
 import LogoHeader from '../assets/logo_header.png';
 import Footer from '../components/Footer';
+import { useAuth } from '../features/auth/authContext.ts';
+
 export default function LoginLayout() {
+  const { status } = useAuth();
+
+  if (status === 'loading') {
+    return <p role="status">Sprawdzanie sesji…</p>;
+  }
+
+  if (status === 'authenticated') {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-app-surface text-app-text">
       <header className="px-4 py-3 sm:px-6 sm:py-4 md:px-8">
