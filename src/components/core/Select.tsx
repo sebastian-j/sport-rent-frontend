@@ -1,31 +1,31 @@
 import { twMerge } from 'tailwind-merge';
 
-export type SelectOption = {
-  value: string;
+export type SelectOption<Value extends string = string> = {
+  value: Value;
   label: string;
 };
 
-type SelectProps = {
-  value: string;
-  options: readonly SelectOption[];
-  onChange: (value: string) => void;
+type SelectProps<Value extends string> = {
+  value: Value;
+  options: readonly SelectOption<Value>[];
+  onChange: (value: Value) => void;
   ariaLabel: string;
   placeholder?: string;
   className?: string;
 };
 
-export default function Select({
+export default function Select<Value extends string>({
   value,
   options,
   onChange,
   ariaLabel,
   placeholder,
   className,
-}: SelectProps) {
+}: SelectProps<Value>) {
   return (
     <select
       value={value}
-      onChange={(event) => onChange(event.currentTarget.value)}
+      onChange={(event) => onChange(event.currentTarget.value as Value)}
       aria-label={ariaLabel}
       className={twMerge(
         'h-12 w-20 rounded-xl bg-app-surface px-2 text-center text-2xl text-app-text outline-none',

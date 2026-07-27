@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { getCategoriesCount, getProducts } from '../../api/product.ts';
+import { getCategoriesCount, getProducts, type GetProductsQuery } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
@@ -20,10 +20,12 @@ import type { SortDirection } from '../../types/search.ts';
 const PAGE_SIZE = 10;
 const MIN_PRICE = 0;
 const MAX_PRICE = 200;
-const SORT_OPTIONS: readonly SelectOption[] = [
+type ProductSortField = NonNullable<GetProductsQuery['sort']>;
+
+const SORT_OPTIONS = [
   { value: 'name', label: 'Nazwa' },
   { value: 'price', label: 'Cena' },
-];
+] as const satisfies readonly SelectOption[];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
 
 type MobilePanel = 'filters' | 'sorting' | null;
@@ -31,9 +33,9 @@ type MobilePanel = 'filters' | 'sorting' | null;
 type SearchControlsPanelProps = {
   mobilePanel: MobilePanel;
   onOpenMobilePanel: (panel: Exclude<MobilePanel, null>) => void;
-  sortField: string;
+  sortField: ProductSortField;
   sortDirection: SortDirection;
-  onSortFieldChange: (field: string) => void;
+  onSortFieldChange: (field: ProductSortField) => void;
   onSortDirectionChange: (direction: SortDirection) => void;
   pageNumber: number;
   totalPages: number;
@@ -180,13 +182,11 @@ export default function SearchPage() {
 
     void getProducts({
       q: searchQuery || null,
-      filter: {
-        sort: sortField,
-        order: sortDirection,
-        minPrice: appliedMinPrice,
-        maxPrice: appliedMaxPrice,
-        category: selectedCategoryNames,
-      },
+      sort: sortField,
+      order: sortDirection,
+      minPrice: appliedMinPrice,
+      maxPrice: appliedMaxPrice,
+      category: selectedCategoryNames,
       page: pageNumber,
       pageSize: PAGE_SIZE,
     })
