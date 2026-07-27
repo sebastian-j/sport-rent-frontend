@@ -64,43 +64,14 @@ export default function HomePage() {
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const [products, setProducts] = useState<ProductProps[]>([]);
-  const calculateItemsPerRow = () => {
-    const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
-    const availableWidth = containerWidth - 32;
-    return Math.max(1, Math.floor((availableWidth + 16) / 272)) + 1;
-  };
 
-  const calculateInitialRows = () => {
-    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-    const observerMargin = 800;
-    const rowHeight = 360;
-    const gridOffsetTop = 500;
-    const neededRows = Math.ceil((viewportHeight + observerMargin - gridOffsetTop) / rowHeight);
-    return Math.max(2, neededRows);
-  };
-
-  const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerRow(calculateItemsPerRow());
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const limit = 10;
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const itemsPerRowRef = useRef(itemsPerRow);
-  itemsPerRowRef.current = itemsPerRow;
-
-  const productsLengthRef = useRef(products.length);
-  productsLengthRef.current = products.length;
+  const pageRef = useRef(1);
 
   useEffect(() => {
     let active = true;
@@ -111,12 +82,8 @@ export default function HomePage() {
         await new Promise((resolve) => setTimeout(resolve, 300));
         if (!active) return; // Prevent double fetch in React Strict Mode
 
-        const limit = itemsPerRowRef.current;
-
-        if (productsLengthRef.current === 0) {
-          const initialRows = calculateInitialRows();
-          const initialLimit = initialRows * limit;
-
+        if (pageRef.current === 1) {
+          const initialLimit = 30;
           const res = await getProducts(1, initialLimit);
           if (!active) return;
 
@@ -143,12 +110,12 @@ export default function HomePage() {
           }
 
           setProducts(uniqueProducts);
+          pageRef.current = 4;
           if (data.length < initialLimit) {
             setHasMore(false);
           }
         } else {
-          const actualPageToFetch = Math.floor(productsLengthRef.current / limit) + 1;
-          const res = await getProducts(actualPageToFetch, limit);
+          const res = await getProducts(pageRef.current, limit);
           if (!active) return;
 
           const data = res.data || [];
@@ -168,6 +135,7 @@ export default function HomePage() {
             return [...prev, ...newProducts.filter((p) => !existingSlugs.has(p.slug))];
           });
 
+          pageRef.current += 1;
           if (data.length < limit) {
             setHasMore(false);
           }
@@ -194,7 +162,7 @@ export default function HomePage() {
       ([entry]) => {
         setIsIntersecting(entry.isIntersecting);
       },
-      { rootMargin: '0px 0px 800px 0px' }
+      { rootMargin: '0px 0px 3000px 0px' }
     );
 
     if (observerNodeRef.current) {
