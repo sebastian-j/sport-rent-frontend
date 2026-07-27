@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { getLoyalty } from '../../api/loyalty.ts';
 import { getProducts } from '../../api/product.ts';
@@ -6,6 +6,7 @@ import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
 import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
+import InvoiceDetailsPanel from '../../features/orderSummary/InvoiceDetailsPanel.tsx';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
 import {
   PAYMENT_METHODS,
@@ -16,11 +17,24 @@ import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
-import type { UserDetails } from '../../features/userDetails/userDetailsTypes.ts';
+import type {
+  InvoiceDetails,
+  RecipientDetails,
+} from '../../features/userDetails/userDetailsTypes.ts';
 
-const PROFILE_RECIPIENT_DETAILS: UserDetails = {
+const HEADER_OFFSET_PX = 64;
+const PANEL_VIEWPORT_GAP_PX = 16;
+const DESKTOP_BREAKPOINT_PX = 768;
+
+const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
   firstName: 'Jan',
   lastName: 'Kowalski',
+};
+
+const INITIAL_INVOICE_DETAILS: InvoiceDetails = {
+  ...PROFILE_RECIPIENT_DETAILS,
+  company: 'Polar Sport',
+  nip: '123456789',
   country: 'Polska',
   city: 'Kraków',
   addressLine1: 'ul. Kałuży 1',
@@ -37,9 +51,32 @@ const getDateAfterToday = (dayOffset: number) => {
 };
 
 export default function OrderSummaryPage() {
-  const [recipientDetails, setRecipientDetails] = useState<UserDetails>(PROFILE_RECIPIENT_DETAILS);
+  const summaryPanelRef = useRef<HTMLDivElement>(null);
+  const [recipientDetails, setRecipientDetails] =
+    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
+  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetails>(INITIAL_INVOICE_DETAILS);
+  const [wantsInvoice, setWantsInvoice] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
+  const {
+    promoCode,
+    appliedPromoCode,
+    discountRate,
+    promoCodeError,
+    isPromoCodeValidating,
+    applyPromoCode,
+    changePromoCode,
+    removePromoCode,
+  } = usePromo();
+  const cartPrice = getOrderInformation(summaryProducts).totalValue;
+  const paymentPrice = PAYMENT_METHODS.find(
+    (method) => method.id === selectedPaymentMethodId
+  )?.price;
+  const discount = cartPrice * discountRate;
+  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
+  const [points, setPoints] = useState(0);
+  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [isPointsLoading, setIsPointsLoading] = useState(true);
 
   useEffect(() => {
     getProducts().then(({ data }) => {
@@ -82,25 +119,32 @@ export default function OrderSummaryPage() {
     });
   }, []);
 
-  const {
-    promoCode,
-    appliedPromoCode,
-    discountRate,
-    promoCodeError,
-    isPromoCodeValidating,
-    applyPromoCode,
-    changePromoCode,
-    removePromoCode,
-  } = usePromo();
-  const cartPrice = getOrderInformation(summaryProducts).totalValue;
-  const paymentPrice = PAYMENT_METHODS.find(
-    (method) => method.id === selectedPaymentMethodId
-  )?.price;
-  const discount = cartPrice * discountRate;
-  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
-  const [points, setPoints] = useState(0);
-  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
-  const [isPointsLoading, setIsPointsLoading] = useState(true);
+  useLayoutEffect(() => {
+    const summaryPanel = summaryPanelRef.current;
+    if (!summaryPanel) return;
+
+    const updateStickyPosition = () => {
+      if (window.innerWidth < DESKTOP_BREAKPOINT_PX) {
+        summaryPanel.style.top = '';
+        return;
+      }
+
+      const bottomAlignedTop =
+        window.innerHeight - summaryPanel.offsetHeight - PANEL_VIEWPORT_GAP_PX;
+      summaryPanel.style.top = `${Math.min(HEADER_OFFSET_PX, bottomAlignedTop)}px`;
+    };
+
+    const resizeObserver = new ResizeObserver(updateStickyPosition);
+    resizeObserver.observe(summaryPanel);
+    window.addEventListener('resize', updateStickyPosition);
+    updateStickyPosition();
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateStickyPosition);
+      summaryPanel.style.top = '';
+    };
+  }, []);
 
   const handleRemovePromoCode = () => {
     removePromoCode();
@@ -151,6 +195,15 @@ export default function OrderSummaryPage() {
             />
           </ContentPanel>
 
+          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+            <InvoiceDetailsPanel
+              enabled={wantsInvoice}
+              details={invoiceDetails}
+              onEnabledChange={setWantsInvoice}
+              onDetailsChange={setInvoiceDetails}
+            />
+          </ContentPanel>
+
           <ContentPanel className="w-full px-3 py-4 sm:py-6 md:py-8">
             <PaymentMethodsPanel
               selectedMethodId={selectedPaymentMethodId}
@@ -163,7 +216,10 @@ export default function OrderSummaryPage() {
           </ContentPanel>
         </div>
 
-        <ContentPanel className="w-full max-w-[48rem] gap-6 justify-self-center p-4 sm:p-6 md:max-w-[24rem] md:justify-self-end md:p-8">
+        <ContentPanel
+          ref={summaryPanelRef}
+          className="w-full max-w-[48rem] gap-6 justify-self-center p-4 sm:p-6 md:sticky md:h-fit md:max-w-[24rem] md:justify-self-end md:self-start md:p-8"
+        >
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
