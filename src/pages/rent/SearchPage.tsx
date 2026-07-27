@@ -3,8 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { getCategoriesCount } from '../../api/product.ts';
-import bikeImage from '../../assets/bike.png';
+import { getCategoriesCount, getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
@@ -24,37 +23,36 @@ const SORT_OPTIONS: readonly SelectOption[] = [
   { value: 'price', label: 'Cena' },
 ];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
-const MOCK_PRODUCTS: ProductProps[] = [
-  {
-    id: 1,
-    name: 'Rower gravelowy Kross Esker 5.0',
-    description:
-      'Wszechstronny rower gravelowy sprawdzający się zarówno na asfaltowych trasach, jak i leśnych drogach.',
-    price: 89,
-    slug: 'rower-gravelowy-kross-esker-5-0',
-    images: [bikeImage],
-    alt: 'Rower gravelowy Kross Esker 5.0',
-    category: 'Rowery gravelowe',
-    sizes: [{ size: 'S' }, { size: 'M' }, { size: 'L' }, { size: 'XL' }],
-  },
-  {
-    id: 2,
-    name: 'Rower gravelowy Kross Esker 6.0',
-    description:
-      '**Najważniejsze cechy roweru:**\n- lekka aluminiowa rama\n- **karbonowy widelec** pochłaniający drgania\n- szeroki zakres przełożeń\n- mocne hamulce tarczowe\n\nLekki i **wygodny rower gravelowy** na dłuższe wyprawy, wyposażony w osprzęt dostosowany do asfaltu, szutrów oraz wymagających leśnych dróg. Model sprawdzi się zarówno podczas codziennych treningów, jak i kilkudniowych wycieczek z dodatkowym bagażem.',
-    price: 99,
-    slug: 'rower-gravelowy-kross-esker-6-0',
-    images: [bikeImage],
-    alt: 'Rower gravelowy Kross Esker 6.0',
-    category: 'Rowery gravelowe',
-    sizes: [{ size: 'S' }, { size: 'M' }, { size: 'L' }],
-  },
-];
+
+const toProductProps = (product: {
+  id: number;
+  name: string;
+  description?: string | null;
+  price?: number | null;
+  slug: string;
+  images?: string[] | null;
+  alt?: string | null;
+  category?: string | null;
+  sizes?: { size: string; description?: string | null }[] | null;
+}): ProductProps => ({
+  id: product.id,
+  name: product.name,
+  description: product.description ?? '',
+  price: product.price ?? 0,
+  slug: product.slug,
+  images: product.images ?? [],
+  alt: product.alt ?? product.name,
+  category: product.category ?? '',
+  sizes: product.sizes ?? [],
+});
 
 export default function SearchPage() {
   const navigate = useNavigate();
   const [totalPages, setTotalPages] = useState(1);
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
+  const [searchResults, setSearchResults] = useState<ProductProps[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [hasSearchError, setHasSearchError] = useState(false);
   const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
 
   const categorySlugs = useMemo(
@@ -66,7 +64,7 @@ export default function SearchPage() {
   );
 
   const {
-    query,
+    query: searchQuery,
     pageNumber,
     sortField,
     sortDirection,
@@ -88,17 +86,85 @@ export default function SearchPage() {
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
   const [mobilePanel, setMobilePanel] = useState<'filters' | 'sorting' | null>(null);
+  const selectedCategoryKey = selectedCategorySlugs.join(',');
+  const selectedCategoryNames = useMemo(() => {
+    const selectedSlugs = selectedCategoryKey ? selectedCategoryKey.split(',') : [];
+
+    return selectedSlugs.flatMap((selectedSlug) => {
+      const category = categoryFacets.categories.find(({ slug }) => slug === selectedSlug);
+      return category ? [category.name] : [];
+    });
+  }, [categoryFacets, selectedCategoryKey]);
+
+  useEffect(() => {
+    let ignoreResponse = false;
+
+    setIsSearchLoading(true);
+    setHasSearchError(false);
+
+    void getProducts({
+      q: searchQuery || null,
+      filter: {
+        sort: sortField,
+        order: sortDirection,
+        minPrice: appliedMinPrice,
+        maxPrice: appliedMaxPrice,
+        category: selectedCategoryNames,
+      },
+      page: pageNumber,
+      pageSize: PAGE_SIZE,
+    })
+      .then(({ data, error }) => {
+        if (ignoreResponse) return;
+
+        if (error || !data) {
+          setSearchResults([]);
+          setHasSearchError(true);
+          return;
+        }
+
+        setSearchResults(data.map(toProductProps));
+      })
+      .catch(() => {
+        if (!ignoreResponse) {
+          setSearchResults([]);
+          setHasSearchError(true);
+        }
+      })
+      .finally(() => {
+        if (!ignoreResponse) setIsSearchLoading(false);
+      });
+
+    return () => {
+      ignoreResponse = true;
+    };
+  }, [
+    appliedMaxPrice,
+    appliedMinPrice,
+    pageNumber,
+    searchQuery,
+    selectedCategoryNames,
+    sortDirection,
+    sortField,
+  ]);
 
   const filter = useMemo(() => {
     const f: any = {};
-    if (query) f.query = query;
+    if (searchQuery) f.query = searchQuery;
     if (appliedMinPrice > MIN_PRICE) f.minPrice = appliedMinPrice;
     if (appliedMaxPrice < MAX_PRICE) f.maxPrice = appliedMaxPrice;
     if (selectedCategorySlugs.length > 0) f.category = selectedCategorySlugs;
     if (sortField) f.sort = sortField;
     if (sortDirection) f.order = sortDirection;
     return f;
-  }, [query, appliedMinPrice, appliedMaxPrice, selectedCategorySlugs, sortField, sortDirection]);
+  }, [
+    searchQuery,
+    appliedMinPrice,
+    appliedMaxPrice,
+    selectedCategorySlugs,
+    sortField,
+    sortDirection,
+  ]);
 
   useEffect(() => {
     let active = true;
@@ -237,8 +303,26 @@ export default function SearchPage() {
           </div>
         </ContentPanel>
 
-        <div className="mt-4 flex w-full flex-col gap-4">
-          {MOCK_PRODUCTS.map((product) => (
+        <div
+          className="mt-4 flex w-full flex-col gap-4"
+          aria-busy={isSearchLoading}
+          aria-live="polite"
+        >
+          {isSearchLoading && searchResults.length === 0 && (
+            <p className="py-12 text-center text-app-textMuted">Ładowanie produktów...</p>
+          )}
+
+          {!isSearchLoading && hasSearchError && (
+            <p className="py-12 text-center text-app-danger">Nie udało się pobrać produktów.</p>
+          )}
+
+          {!isSearchLoading && !hasSearchError && searchResults.length === 0 && (
+            <p className="py-12 text-center text-app-textMuted">
+              Brak produktów spełniających wybrane kryteria.
+            </p>
+          )}
+
+          {searchResults.map((product) => (
             <SearchProductCard
               key={product.id}
               product={product}

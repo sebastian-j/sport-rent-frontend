@@ -23,7 +23,7 @@ export default function SearchProductCard({
   const plainDescription = markdownToPlainText(product.description);
 
   return (
-    <article className="relative flex w-full transform-gpu cursor-pointer select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
+    <article className="relative flex w-full transform-gpu cursor-pointer select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none md:h-48">
       <button
         type="button"
         onClick={onClick}
