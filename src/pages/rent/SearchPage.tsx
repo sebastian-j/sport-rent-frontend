@@ -1,7 +1,7 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getCategoriesCount, getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
@@ -15,6 +15,7 @@ import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
+import type { SortDirection } from '../../types/search.ts';
 
 const PAGE_SIZE = 10;
 const MIN_PRICE = 0;
@@ -24,6 +25,74 @@ const SORT_OPTIONS: readonly SelectOption[] = [
   { value: 'price', label: 'Cena' },
 ];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
+
+type MobilePanel = 'filters' | 'sorting' | null;
+
+type SearchControlsPanelProps = {
+  mobilePanel: MobilePanel;
+  onOpenMobilePanel: (panel: Exclude<MobilePanel, null>) => void;
+  sortField: string;
+  sortDirection: SortDirection;
+  onSortFieldChange: (field: string) => void;
+  onSortDirectionChange: (direction: SortDirection) => void;
+  pageNumber: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
+
+function SearchControlsPanel({
+  mobilePanel,
+  onOpenMobilePanel,
+  sortField,
+  sortDirection,
+  onSortFieldChange,
+  onSortDirectionChange,
+  pageNumber,
+  totalPages,
+  onPageChange,
+}: SearchControlsPanelProps) {
+  return (
+    <ContentPanel className="h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 p-2">
+      <div className="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onOpenMobilePanel('filters')}
+          aria-label="Otwórz filtry"
+          aria-expanded={mobilePanel === 'filters'}
+          aria-controls="mobile-search-panel"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted lg:hidden"
+        >
+          <Funnel size={20} aria-hidden="true" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onOpenMobilePanel('sorting')}
+          aria-label="Otwórz sortowanie"
+          aria-expanded={mobilePanel === 'sorting'}
+          aria-controls="mobile-search-panel"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted md:hidden"
+        >
+          <ArrowUpDown size={20} aria-hidden="true" />
+        </button>
+
+        <div className="hidden md:block">
+          <SortToggles
+            value={sortField}
+            options={SORT_OPTIONS}
+            direction={sortDirection}
+            onValueChange={onSortFieldChange}
+            onDirectionChange={onSortDirectionChange}
+          />
+        </div>
+      </div>
+
+      <div className="shrink-0">
+        <PageSelector pageNumber={pageNumber} totalPages={totalPages} onPageChange={onPageChange} />
+      </div>
+    </ContentPanel>
+  );
+}
 
 const toProductProps = (product: {
   id: number;
@@ -48,6 +117,7 @@ const toProductProps = (product: {
 });
 
 export default function SearchPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [totalPages, setTotalPages] = useState(1);
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
@@ -87,7 +157,7 @@ export default function SearchPage() {
   });
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
-  const [mobilePanel, setMobilePanel] = useState<'filters' | 'sorting' | null>(null);
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
   const selectedCategoryKey = selectedCategorySlugs.join(',');
   const selectedCategoryNames = useMemo(() => {
     const selectedSlugs = selectedCategoryKey ? selectedCategoryKey.split(',') : [];
@@ -97,6 +167,10 @@ export default function SearchPage() {
       return category ? [category.name] : [];
     });
   }, [categoryFacets, selectedCategoryKey]);
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.key]);
 
   useEffect(() => {
     let ignoreResponse = false;
@@ -243,7 +317,7 @@ export default function SearchPage() {
   }, []);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 sm:p-6 md:p-8 lg:gap-8">
+    <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 [overflow-anchor:none] sm:p-6 md:p-8 lg:gap-8">
       <ContentPanel className="sticky top-20 hidden h-fit max-h-[calc(100vh-5rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
         <DualRangeSlider
           label="Cena"
@@ -260,54 +334,22 @@ export default function SearchPage() {
           onSelectedCategorySlugsChange={setSelectedCategorySlugs}
         />
       </ContentPanel>
-      <div className="flex min-w-0 flex-1 flex-col">
-        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2 md:top-20">
-          <div className="flex min-w-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setMobilePanel('filters')}
-              aria-label="Otwórz filtry"
-              aria-expanded={mobilePanel === 'filters'}
-              aria-controls="mobile-search-panel"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted lg:hidden"
-            >
-              <Funnel size={20} aria-hidden="true" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMobilePanel('sorting')}
-              aria-label="Otwórz sortowanie"
-              aria-expanded={mobilePanel === 'sorting'}
-              aria-controls="mobile-search-panel"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surfaceStrong text-app-textInverted md:hidden"
-            >
-              <ArrowUpDown size={20} aria-hidden="true" />
-            </button>
-
-            <div className="hidden md:block">
-              <SortToggles
-                value={sortField}
-                options={SORT_OPTIONS}
-                direction={sortDirection}
-                onValueChange={setSortField}
-                onDirectionChange={setSortDirection}
-              />
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <PageSelector
-              pageNumber={pageNumber}
-              totalPages={totalPages}
-              onPageChange={setPageNumber}
-            />
-          </div>
-        </ContentPanel>
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <SearchControlsPanel
+          mobilePanel={mobilePanel}
+          onOpenMobilePanel={setMobilePanel}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          onSortFieldChange={setSortField}
+          onSortDirectionChange={setSortDirection}
+          pageNumber={pageNumber}
+          totalPages={totalPages}
+          onPageChange={setPageNumber}
+        />
 
         <motion.div
           layout={isSearchLoading ? false : 'size'}
-          className="mt-4 flex w-full flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           aria-busy={isSearchLoading}
           aria-live="polite"
           style={{ transformOrigin: 'top' }}
@@ -394,6 +436,20 @@ export default function SearchPage() {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {!isSearchLoading && searchResults.length >= 5 && (
+          <SearchControlsPanel
+            mobilePanel={mobilePanel}
+            onOpenMobilePanel={setMobilePanel}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSortFieldChange={setSortField}
+            onSortDirectionChange={setSortDirection}
+            pageNumber={pageNumber}
+            totalPages={totalPages}
+            onPageChange={setPageNumber}
+          />
+        )}
       </div>
 
       <AnimatePresence>
