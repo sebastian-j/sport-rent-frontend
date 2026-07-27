@@ -23,7 +23,7 @@ export default function SearchProductCard({
   const plainDescription = markdownToPlainText(product.description);
 
   return (
-    <article className="relative flex w-full transform-gpu cursor-pointer select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none md:h-48">
+    <article className="relative flex h-80 w-full transform-gpu cursor-pointer select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none md:h-48">
       <button
         type="button"
         onClick={onClick}
@@ -38,7 +38,7 @@ export default function SearchProductCard({
         variant="transparent"
       />
 
-      <div className="relative w-32 shrink-0 overflow-hidden sm:w-52 md:w-60">
+      <div className="relative w-[clamp(8rem,40%,13rem)] shrink-0 overflow-hidden md:w-60">
         <img
           src={product.images[0] ?? ''}
           alt={product.alt}
@@ -49,7 +49,9 @@ export default function SearchProductCard({
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 bg-app-surface p-3 sm:p-4 md:flex-row md:items-stretch md:gap-5">
         <div className="flex min-w-0 flex-1 flex-col">
-          <h2 className="text-lg font-semibold text-app-text sm:text-xl">{product.name}</h2>
+          <h2 className="line-clamp-2 text-lg font-semibold text-app-text sm:text-xl">
+            {product.name}
+          </h2>
           <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-app-textMuted sm:text-base">
             {plainDescription}
           </p>

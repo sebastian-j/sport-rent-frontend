@@ -30,11 +30,11 @@ export default function SearchProductCardPlaceholder() {
   return (
     <article
       aria-hidden="true"
-      className="relative flex w-full select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft md:h-48"
+      className="relative flex h-80 w-full select-none overflow-hidden rounded-xl border border-app-borderSoft bg-app-surfaceSoft md:h-48"
     >
       <PlaceholderBlock
         reducedMotion={prefersReducedMotion}
-        className="w-32 shrink-0 sm:w-52 md:w-60"
+        className="w-[clamp(8rem,40%,13rem)] shrink-0 md:w-60"
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 bg-app-surface p-3 sm:p-4 md:flex-row md:items-stretch md:gap-5">
