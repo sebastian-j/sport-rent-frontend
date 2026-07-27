@@ -1,10 +1,7 @@
 import { api } from './client.ts';
 import type { operations } from './generated/schema.ts';
 
-type QueryParams = operations['get_products_product_get']['parameters']['query'];
-export type ProductQueryParams = NonNullable<QueryParams> & {
-  category?: string[] | null;
-};
+type ProductQueryParams = operations['get_products_product_get']['parameters']['query'];
 
 export const getProducts = (params?: ProductQueryParams) => {
   return api.GET('/product', {
