@@ -1,5 +1,5 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ import type { ProductProps } from '../../features/product/productProps.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
+import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
 
 const PAGE_SIZE = 10;
@@ -51,9 +52,10 @@ export default function SearchPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
   const [searchResults, setSearchResults] = useState<ProductProps[]>([]);
-  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [hasSearchError, setHasSearchError] = useState(false);
   const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
+  const prefersReducedMotion = useReducedMotion();
 
   const categorySlugs = useMemo(
     () =>
@@ -303,48 +305,95 @@ export default function SearchPage() {
           </div>
         </ContentPanel>
 
-        <div
+        <motion.div
+          layout={isSearchLoading ? false : 'size'}
           className="mt-4 flex w-full flex-col gap-4"
           aria-busy={isSearchLoading}
           aria-live="polite"
+          style={{ transformOrigin: 'top' }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0 }
+              : { layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }
+          }
         >
-          {isSearchLoading && searchResults.length === 0 && (
-            <p className="py-12 text-center text-app-textMuted">Ładowanie produktów...</p>
-          )}
+          <AnimatePresence mode="popLayout">
+            {isSearchLoading ? (
+              <motion.div
+                key="loading-products"
+                className="overflow-hidden"
+                initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{
+                  height: { duration: 0.24, ease: 'linear' },
+                  opacity: { duration: 0.14, delay: 0.08, ease: 'easeOut' },
+                }}
+              >
+                <span className="sr-only">Ładowanie produktów...</span>
+                <SearchProductCardPlaceholder />
+              </motion.div>
+            ) : hasSearchError ? (
+              <motion.p
+                key="products-error"
+                role="alert"
+                className="py-12 text-center text-app-danger"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                Nie udało się pobrać produktów.
+              </motion.p>
+            ) : searchResults.length === 0 ? (
+              <motion.p
+                key="empty-products"
+                className="py-12 text-center text-app-textMuted"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                Brak produktów spełniających wybrane kryteria.
+              </motion.p>
+            ) : (
+              <motion.div
+                key="products"
+                className="flex w-full flex-col gap-4"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                {searchResults.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <SearchProductCard
+                      product={product}
+                      onClick={() => navigate(`/product/${product.slug}`)}
+                      onAddToCart={() => undefined}
+                      isFavorite={favoriteProductIds.has(product.id)}
+                      onFavoriteToggle={() =>
+                        setFavoriteProductIds((currentIds) => {
+                          const nextIds = new Set(currentIds);
 
-          {!isSearchLoading && hasSearchError && (
-            <p className="py-12 text-center text-app-danger">Nie udało się pobrać produktów.</p>
-          )}
+                          if (nextIds.has(product.id)) {
+                            nextIds.delete(product.id);
+                          } else {
+                            nextIds.add(product.id);
+                          }
 
-          {!isSearchLoading && !hasSearchError && searchResults.length === 0 && (
-            <p className="py-12 text-center text-app-textMuted">
-              Brak produktów spełniających wybrane kryteria.
-            </p>
-          )}
-
-          {searchResults.map((product) => (
-            <SearchProductCard
-              key={product.id}
-              product={product}
-              onClick={() => navigate(`/product/${product.slug}`)}
-              onAddToCart={() => undefined}
-              isFavorite={favoriteProductIds.has(product.id)}
-              onFavoriteToggle={() =>
-                setFavoriteProductIds((currentIds) => {
-                  const nextIds = new Set(currentIds);
-
-                  if (nextIds.has(product.id)) {
-                    nextIds.delete(product.id);
-                  } else {
-                    nextIds.add(product.id);
-                  }
-
-                  return nextIds;
-                })
-              }
-            />
-          ))}
-        </div>
+                          return nextIds;
+                        })
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       <AnimatePresence>
