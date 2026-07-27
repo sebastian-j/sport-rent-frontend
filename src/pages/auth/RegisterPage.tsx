@@ -155,7 +155,14 @@ export default function RegisterPage() {
             className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
           />
         </form>
+
+        <div className="my-3 w-full text-left sm:w-[90%]">
+          <Link to="/login" className="text-app-textStrong underline">
+            Wróć do logowania
+          </Link>
+        </div>
       </div>
+
       <div className="mt-4 w-full max-w-[800px] text-left">
         <Link to="/privacy-policy" target="_blank" className="text-sm text-app-textMuted underline">
           Polityka prywatności
