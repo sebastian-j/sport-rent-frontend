@@ -2,6 +2,7 @@ const stripInlineMarkdown = (text: string) =>
   text
     .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/<\/?u\b[^>]*>/gi, '')
     .replace(/[*_~`]/g, '')
     .trim();
 
