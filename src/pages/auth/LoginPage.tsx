@@ -1,11 +1,14 @@
 import { type ChangeEvent, type SubmitEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { establishSession } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -48,9 +51,11 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem('accessToken', result.data.access_token);
-      localStorage.setItem('refreshToken', result.data.refresh_token);
-      navigate('/');
+      establishSession(result.data.access_token);
+
+      const destination =
+        (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/';
+      navigate(destination, { replace: true });
     } catch {
       setHasInvalidCredentials(false);
       setLoginError('Nie udało się połączyć z serwerem. Spróbuj ponownie.');
@@ -61,9 +66,6 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     //TODO: Implement Google login logic here
-    localStorage.setItem('accessToken', 'accessTokenValue');
-    localStorage.setItem('refreshToken', 'refreshTokenValue');
-    navigate('/');
   };
 
   return (
