@@ -67,13 +67,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Zaloguj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
+    <div className="flex flex-col items-center bg-app-surface">
+      <h1 className="mb-6 text-3xl font-bold text-app-textStrong sm:mb-8 sm:text-4xl">
+        Zaloguj się
+      </h1>
+      <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
         <form
           onSubmit={handleLogin}
           aria-busy={isLoggingIn}
-          className="flex flex-col gap-4 w-[90%]"
+          className="flex w-full flex-col gap-4 sm:w-[90%]"
         >
           <label htmlFor="email" className="text-app-textStrong">
             Email
@@ -122,13 +124,13 @@ export default function LoginPage() {
           <ButtonCore
             text={isLoggingIn ? 'Logowanie…' : 'Zaloguj się'}
             type="submit"
-            className={`ps-12 pe-12 p-2 text-[0.8vw] my-2 ${
+            className={`my-2 p-2 px-6 text-sm sm:px-12 sm:text-base ${
               isLoggingIn ? 'pointer-events-none cursor-wait opacity-70' : ''
             }`}
           />
         </form>
 
-        <div className="w-[90%] text-left my-3">
+        <div className="my-3 w-full text-left sm:w-[90%]">
           <Link to="/reset-password" className="text-app-textStrong underline">
             Zapomniałeś hasła?
           </Link>
@@ -137,10 +139,10 @@ export default function LoginPage() {
         <ButtonCore
           text="Kontynuuj z Google"
           onClick={handleGoogleLogin}
-          className="ps-12 pe-12 p-2 text-[0.8vw] my-2 w-[90%]"
+          className="my-2 w-full p-2 px-6 text-sm sm:w-[90%] sm:px-12 sm:text-base"
         />
 
-        <div className="w-[90%] text-left my-3">
+        <div className="my-3 w-full text-left sm:w-[90%]">
           <p className="text-app-textMuted">
             Nie masz konta?{' '}
             <Link to="/register" className="text-app-textStrong underline">
@@ -149,8 +151,8 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-      <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textMuted underline">
+      <div className="mt-4 w-full max-w-[800px] text-left">
+        <Link to="/privacy-policy" className="text-sm text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>

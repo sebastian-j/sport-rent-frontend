@@ -48,10 +48,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Zarejestruj się</h1>
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
-        <form className="flex flex-col gap-4 w-[90%]">
+    <div className="flex flex-col items-center bg-app-surface">
+      <h1 className="mb-6 text-3xl font-bold text-app-textStrong sm:mb-8 sm:text-4xl">
+        Zarejestruj się
+      </h1>
+      <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
+        <form className="flex w-full flex-col gap-4 sm:w-[90%]">
           <label htmlFor="email" className="text-app-textStrong">
             Email
           </label>
@@ -134,7 +136,10 @@ export default function RegisterPage() {
             id="postalCode"
             onChange={handleChange}
           />
-          <label htmlFor="consent" className="flex flex-row justify-between text-app-textStrong">
+          <label
+            htmlFor="consent"
+            className="flex flex-row justify-between gap-4 text-app-textStrong"
+          >
             <p>Zgoda na przetwarzanie danych osobowych</p>
             <input
               type="checkbox"
@@ -147,16 +152,12 @@ export default function RegisterPage() {
           <ButtonCore
             text="Zarejestruj się"
             onClick={handleRegister}
-            className="ps-12 pe-12 p-2 text-[0.8vw] my-2"
+            className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
           />
         </form>
       </div>
-      <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link
-          to="/privacy-policy"
-          target="_blank"
-          className="text-[0.7vw] text-app-textMuted underline"
-        >
+      <div className="mt-4 w-full max-w-[800px] text-left">
+        <Link to="/privacy-policy" target="_blank" className="text-sm text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>
