@@ -1,18 +1,13 @@
-import { Heart } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import { useCardTilt } from '../../components/core/useCardTilt.ts';
+import FavoriteButton from './FavoriteButton.tsx';
 
 export const PRODUCT_CARD_WIDTH = 300;
 
 const PRODUCT_IMAGE_SIZE = { width: PRODUCT_CARD_WIDTH, height: 224 } as const;
 const PRODUCT_CARD_CONTENT_HEIGHT = 120;
-const FAVORITE_BUTTON_VARIANTS = {
-  favorite: { scale: [0.85, 1] },
-  notFavorite: { scale: [0.85, 1] },
-};
-
 type ProductCardProps = {
   name: string;
   price: number;
@@ -78,73 +73,13 @@ export default function ProductCard({
       />
 
       {!hideFavoriteButton && (
-        <motion.div
-          animate={hasButtonFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
-          transition={
-            hasButtonFavoriteError
-              ? { duration: 0.4, ease: 'easeInOut' }
-              : { type: 'spring', stiffness: 280, damping: 24 }
-          }
-          className={`absolute right-3 top-3 z-20 rounded-full ring-2 transition-[box-shadow] duration-300 ${
-            hasButtonFavoriteError ? 'ring-app-danger' : 'ring-transparent'
-          }`}
-        >
-          <motion.button
-            type="button"
-            onClick={onFavoriteToggle}
-            disabled={isFavoriteUpdating}
-            aria-busy={isFavoriteUpdating}
-            aria-label={isFavorite ? `Usuń ${name} z ulubionych` : `Dodaj ${name} do ulubionych`}
-            initial={false}
-            variants={FAVORITE_BUTTON_VARIANTS}
-            animate={isFavorite ? 'favorite' : 'notFavorite'}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-            className="rounded-full bg-app-surface/90 p-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-surfaceStrong disabled:cursor-wait"
-          >
-            <span className="relative block size-6">
-              <Heart
-                className="absolute inset-0 size-6 text-app-textMuted"
-                fill="currentColor"
-                strokeWidth={0}
-              />
-
-              <AnimatePresence initial={false}>
-                <motion.span
-                  key={String(isFavorite)}
-                  initial={{
-                    clipPath: isFavorite ? 'inset(100% 0% 0% 0%)' : 'inset(0% 0% 100% 0%)',
-                  }}
-                  animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-                  transition={{ duration: 0.32, ease: 'easeOut' }}
-                  className="absolute inset-0"
-                >
-                  <Heart
-                    className={`size-6 ${isFavorite ? 'text-app-danger' : 'text-app-surface'}`}
-                    fill="currentColor"
-                    strokeWidth={0}
-                  />
-                </motion.span>
-              </AnimatePresence>
-
-              {!isFavorite && !isFavoriteUpdating && (
-                <Heart
-                  className="absolute inset-0 size-6 text-app-textMuted"
-                  fill="none"
-                  strokeWidth={1}
-                />
-              )}
-
-              {isFavoriteUpdating && (
-                <Heart
-                  className="absolute inset-0 size-6 text-app-textMuted"
-                  fill="currentColor"
-                  strokeWidth={0}
-                />
-              )}
-            </span>
-          </motion.button>
-        </motion.div>
+        <FavoriteButton
+          productName={name}
+          isFavorite={isFavorite}
+          onToggle={onFavoriteToggle}
+          isUpdating={isFavoriteUpdating}
+          hasError={hasButtonFavoriteError}
+        />
       )}
 
       <div

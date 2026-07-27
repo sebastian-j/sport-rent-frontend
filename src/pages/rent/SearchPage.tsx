@@ -1,15 +1,19 @@
 import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { getCategoriesCount } from '../../api/product.ts';
+import bikeImage from '../../assets/bike.png';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
+import type { ProductProps } from '../../features/product/productProps.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
+import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
 
 const PAGE_SIZE = 10;
@@ -20,10 +24,38 @@ const SORT_OPTIONS: readonly SelectOption[] = [
   { value: 'price', label: 'Cena' },
 ];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
+const MOCK_PRODUCTS: ProductProps[] = [
+  {
+    id: 1,
+    name: 'Rower gravelowy Kross Esker 5.0',
+    description:
+      'Wszechstronny rower gravelowy sprawdzający się zarówno na asfaltowych trasach, jak i leśnych drogach.',
+    price: 89,
+    slug: 'rower-gravelowy-kross-esker-5-0',
+    images: [bikeImage],
+    alt: 'Rower gravelowy Kross Esker 5.0',
+    category: 'Rowery gravelowe',
+    sizes: [{ size: 'S' }, { size: 'M' }, { size: 'L' }, { size: 'XL' }],
+  },
+  {
+    id: 2,
+    name: 'Rower gravelowy Kross Esker 6.0',
+    description:
+      '**Najważniejsze cechy roweru:**\n- lekka aluminiowa rama\n- **karbonowy widelec** pochłaniający drgania\n- szeroki zakres przełożeń\n- mocne hamulce tarczowe\n\nLekki i **wygodny rower gravelowy** na dłuższe wyprawy, wyposażony w osprzęt dostosowany do asfaltu, szutrów oraz wymagających leśnych dróg. Model sprawdzi się zarówno podczas codziennych treningów, jak i kilkudniowych wycieczek z dodatkowym bagażem.',
+    price: 99,
+    slug: 'rower-gravelowy-kross-esker-6-0',
+    images: [bikeImage],
+    alt: 'Rower gravelowy Kross Esker 6.0',
+    category: 'Rowery gravelowe',
+    sizes: [{ size: 'S' }, { size: 'M' }, { size: 'L' }],
+  },
+];
 
 export default function SearchPage() {
+  const navigate = useNavigate();
   const [totalPages, setTotalPages] = useState(1);
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
+  const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
 
   const categorySlugs = useMemo(
     () =>
@@ -144,7 +176,7 @@ export default function SearchPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 sm:p-6 md:p-8 lg:gap-8">
-      <ContentPanel className="sticky top-32 hidden h-fit max-h-[calc(100vh-8rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
+      <ContentPanel className="sticky top-20 hidden h-fit max-h-[calc(100vh-5rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
         <DualRangeSlider
           label="Cena"
           min={MIN_PRICE}
@@ -161,7 +193,7 @@ export default function SearchPage() {
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col">
-        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2 md:top-24">
+        <ContentPanel className="sticky top-16 z-40 h-fit w-full min-w-0 flex-none flex-row justify-between gap-2 self-start p-2 md:top-20">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
@@ -204,6 +236,31 @@ export default function SearchPage() {
             />
           </div>
         </ContentPanel>
+
+        <div className="mt-4 flex w-full flex-col gap-4">
+          {MOCK_PRODUCTS.map((product) => (
+            <SearchProductCard
+              key={product.id}
+              product={product}
+              onClick={() => navigate(`/product/${product.slug}`)}
+              onAddToCart={() => undefined}
+              isFavorite={favoriteProductIds.has(product.id)}
+              onFavoriteToggle={() =>
+                setFavoriteProductIds((currentIds) => {
+                  const nextIds = new Set(currentIds);
+
+                  if (nextIds.has(product.id)) {
+                    nextIds.delete(product.id);
+                  } else {
+                    nextIds.add(product.id);
+                  }
+
+                  return nextIds;
+                })
+              }
+            />
+          ))}
+        </div>
       </div>
 
       <AnimatePresence>
