@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { ImageOff, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -46,7 +46,7 @@ export default function SearchBar({
 
     const timeout = window.setTimeout(() => {
       void getProducts({
-        q: searchQuery,
+        query: searchQuery,
         page: 1,
         pageSize: SEARCH_RESULTS_LIMIT,
       })
@@ -162,7 +162,8 @@ export default function SearchBar({
           placeholder="Szukaj..."
           aria-label="Wyszukaj produkt po nazwie"
           aria-expanded={isOpen && Boolean(searchQuery)}
-          aria-controls="product-search-results"
+          aria-controls={isOpen ? 'product-search-results' : undefined}
+          role="combobox"
           className="w-full select-none rounded-lg bg-app-surfaceSoft p-2 text-app-text outline-none placeholder:text-app-textMuted"
         />
         {showCloseButton && (
@@ -185,6 +186,7 @@ export default function SearchBar({
           id="product-search-results"
           aria-busy={isLoading}
           aria-live="polite"
+          role="listbox"
           className="absolute left-0 right-0 top-full mt-2 max-h-[70vh] overflow-y-auto rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
         >
           {isLoading ? (
@@ -204,11 +206,21 @@ export default function SearchBar({
                     }}
                     className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-app-surfaceSoft"
                   >
-                    <img
-                      src={product.images[0]}
-                      alt={product.imageAlts?.[0]}
-                      className="h-16 w-20 shrink-0 rounded-md object-contain"
-                    />
+                    {product.images?.[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.imageAlts?.[0]}
+                        className="h-16 w-20 shrink-0 rounded-md object-contain"
+                      />
+                    ) : (
+                      <div
+                        role="img"
+                        aria-label={`Brak zdjęcia produktu ${product.name}`}
+                        className="flex h-16 w-20 shrink-0 items-center justify-center rounded-md bg-app-surfaceSoft text-app-textMuted"
+                      >
+                        <ImageOff aria-hidden="true" />
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold text-app-text">{product.name}</p>
                       <p className="text-sm text-app-textMuted">
