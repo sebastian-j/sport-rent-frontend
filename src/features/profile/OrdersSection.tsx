@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import {
-  getOrderDetails,
-  getUserHistory,
-  type OrderDetailResponse,
-} from "../../api/user.ts";
-import OrderCard from "./orders/OrderCard.tsx";
-import { type Order, type OrderStatus } from "./orders/orderTypes.ts";
+import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
+import OrderCard from './orders/OrderCard.tsx';
+import { type Order, type OrderStatus } from './orders/orderTypes.ts';
 
 function OrderDetailsLoader({ orderId }: { orderId: string }) {
   const [details, setDetails] = useState<OrderDetailResponse | null>(null);
@@ -22,9 +18,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
 
   if (isLoading) {
     return (
-      <div className="mt-4 text-center text-sm text-app-textMuted">
-        Ładowanie szczegółów...
-      </div>
+      <div className="mt-4 text-center text-sm text-app-textMuted">Ładowanie szczegółów...</div>
     );
   }
 
@@ -50,17 +44,13 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
               className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-app-borderSoft bg-app-surfaceSoft object-cover text-center text-[10px] leading-tight text-app-textMuted"
             />
             <div className="flex flex-col">
-              <span className="font-semibold text-app-textStrong">
-                {item.product_name}
-              </span>
+              <span className="font-semibold text-app-textStrong">{item.product_name}</span>
               <span className="text-sm text-app-textMuted">
-                Okres: {new Date(item.start_date).toLocaleDateString()} -{" "}
+                Okres: {new Date(item.start_date).toLocaleDateString()} -{' '}
                 {new Date(item.end_date).toLocaleDateString()}
               </span>
               {item.size && (
-                <span className="text-sm text-app-textMuted">
-                  Rozmiar: {item.size}
-                </span>
+                <span className="text-sm text-app-textMuted">Rozmiar: {item.size}</span>
               )}
             </div>
           </div>
@@ -88,10 +78,10 @@ export default function OrdersSection() {
       if (data) {
         const fetchedOrders: Order[] = data.map((item) => ({
           id: String(item.id),
-          date: new Date(item.created_at).toLocaleDateString("pl-PL", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
+          date: new Date(item.created_at).toLocaleDateString('pl-PL', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
           }),
           price: item.total,
           status: item.status as OrderStatus,
@@ -107,9 +97,7 @@ export default function OrdersSection() {
       <p className="text-center text-3xl md:text-5xl">Historia zamówień</p>
 
       {isLoading ? (
-        <div className="mt-12 text-center text-app-textMuted">
-          Ładowanie historii...
-        </div>
+        <div className="mt-12 text-center text-app-textMuted">Ładowanie historii...</div>
       ) : (
         <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft md:m-12 md:max-w-[calc(100%-6rem)]">
           {orders.map((order) => (
@@ -117,19 +105,13 @@ export default function OrdersSection() {
               key={order.id}
               order={order}
               isExpanded={expandedOrder === order.id}
-              onToggle={() =>
-                setExpandedOrder(expandedOrder === order.id ? null : order.id)
-              }
+              onToggle={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
             >
-              {expandedOrder === order.id && (
-                <OrderDetailsLoader orderId={order.id} />
-              )}
+              {expandedOrder === order.id && <OrderDetailsLoader orderId={order.id} />}
             </OrderCard>
           ))}
           {orders.length === 0 && (
-            <div className="p-8 text-center text-app-textMuted">
-              Brak zamówień
-            </div>
+            <div className="p-8 text-center text-app-textMuted">Brak zamówień</div>
           )}
         </div>
       )}
