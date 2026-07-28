@@ -71,7 +71,7 @@ export default function FavoritesPage() {
         setError('Nie udało się załadować ulubionych produktów.');
         return;
       }
-      
+
       setError(null);
 
       setFavorites(

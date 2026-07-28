@@ -70,7 +70,6 @@ export default function HomePage() {
   const [products, setProducts] = useState<ProductProps[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-
   const [fetchTrigger, setFetchTrigger] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -295,23 +294,23 @@ export default function HomePage() {
 
       {!error && (
         <ProductCardGrid className="my-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.slug}
-            name={product.name}
-            price={product.price}
-            image={product.images[0] ?? ''}
-            alt={product.alt}
-            onClick={() => navigate(`/product/${product.slug}`)}
-            isFavorite={favoritesSlugs.has(product.slug)}
-            isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
-            hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
-            favoriteErrorTarget="button"
-            showFavoriteUpdatingOverlay={false}
-            onFavoriteToggle={() => void toggleFavorite(product.slug)}
-          />
-        ))}
-      </ProductCardGrid>
+          {products.map((product) => (
+            <ProductCard
+              key={product.slug}
+              name={product.name}
+              price={product.price}
+              image={product.images[0] ?? ''}
+              alt={product.alt}
+              onClick={() => navigate(`/product/${product.slug}`)}
+              isFavorite={favoritesSlugs.has(product.slug)}
+              isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+              hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+              favoriteErrorTarget="button"
+              showFavoriteUpdatingOverlay={false}
+              onFavoriteToggle={() => void toggleFavorite(product.slug)}
+            />
+          ))}
+        </ProductCardGrid>
       )}
 
       {hasMore && !error && (
