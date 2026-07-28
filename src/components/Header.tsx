@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { healthCheck } from '../api/health.ts';
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
+import { useAuth } from '../features/auth/authContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
@@ -33,7 +34,8 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
   const categoryBarRef = useRef<HTMLDivElement>(null);
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const navigate = useNavigate();
-  const hasAccessToken = Boolean(localStorage.getItem('accessToken'));
+  const { status: authStatus, logout } = useAuth();
+  const isAuthenticated = authStatus === 'authenticated';
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -97,12 +99,12 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     return () => resizeObserver.disconnect();
   }, [showCategoryBar]);
 
-  const handleAuthAction = () => {
+  const handleAuthAction = async () => {
     setIsMenuOpen(false);
 
-    if (hasAccessToken) {
-      localStorage.removeItem('accessToken');
+    if (isAuthenticated) {
       navigate('/', { replace: true });
+      await logout();
       return;
     }
 
@@ -210,8 +212,8 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
                   onClick={handleAuthAction}
                   className="flex w-full items-center gap-3 whitespace-nowrap rounded-lg p-3 text-left hover:bg-app-surfaceSoft"
                 >
-                  {hasAccessToken ? <LogOut size={20} /> : <LogIn size={20} />}
-                  <span>{hasAccessToken ? 'Wyloguj się' : 'Zaloguj się'}</span>
+                  {isAuthenticated ? <LogOut size={20} /> : <LogIn size={20} />}
+                  <span>{isAuthenticated ? 'Wyloguj się' : 'Zaloguj się'}</span>
                 </button>
                 <ThemeSelector />
               </div>
