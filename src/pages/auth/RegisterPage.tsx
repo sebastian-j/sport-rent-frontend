@@ -310,11 +310,8 @@ export default function RegisterPage() {
             id="postalCode"
             onChange={handleAddressChange}
           />
-          <label
-            htmlFor="consent"
-            className="flex flex-row justify-between gap-4 text-app-textStrong"
-          >
-            <p>Zgoda na przetwarzanie danych osobowych</p>
+          <label htmlFor="consent" className="flex flex-row justify-between text-app-textStrong">
+            <span>Zgoda na przetwarzanie danych osobowych</span>
             <input
               type="checkbox"
               name="consent"
@@ -361,9 +358,13 @@ export default function RegisterPage() {
           </Link>
         </div>
       </div>
-
-      <div className="mt-4 w-full max-w-[800px] text-left">
-        <Link to="/privacy-policy" target="_blank" className="text-sm text-app-textMuted underline">
+      <div className="w-[60vw] max-w-[800px] text-left mt-4">
+        <Link
+          to="/privacy-policy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[0.7vw] text-app-textMuted underline"
+        >
           Polityka prywatności
         </Link>
       </div>
