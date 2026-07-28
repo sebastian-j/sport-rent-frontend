@@ -8,4 +8,5 @@ export type ProductProps = {
   alt: string;
   category: string;
   sizes?: { size: string; description?: string | null; available?: boolean }[];
+  isFavorite?: boolean;
 };

@@ -25,6 +25,7 @@ type ProductCardProps = {
   showFavoriteUpdatingOverlay?: boolean;
   hasFavoriteError?: boolean;
   favoriteErrorTarget?: 'card' | 'button';
+  hideFavoriteButton?: boolean;
 };
 
 export default function ProductCard({
@@ -39,6 +40,7 @@ export default function ProductCard({
   showFavoriteUpdatingOverlay = true,
   hasFavoriteError = false,
   favoriteErrorTarget = 'card',
+  hideFavoriteButton = false,
 }: ProductCardProps) {
   const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt();
   const hasCardFavoriteError = hasFavoriteError && favoriteErrorTarget === 'card';
@@ -75,6 +77,7 @@ export default function ProductCard({
         className="absolute inset-0 z-10 rounded-xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-app-surfaceStrong"
       />
 
+      {!hideFavoriteButton && (
       <motion.div
         animate={hasButtonFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
         transition={
@@ -142,6 +145,7 @@ export default function ProductCard({
           </span>
         </motion.button>
       </motion.div>
+      )}
 
       <div
         className="relative w-full shrink-0 overflow-hidden"

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { addFavorite, removeFavorite } from '../../api/favorites.ts';
+import { addFavorite, getFavorites, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
+import { useAuth } from '../../features/auth/authContext.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
 import przyczepkiImage from '../../assets/categories/przyczepki.png';
@@ -59,17 +60,32 @@ const CATEGORY_CARDS = {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [favoritesSlugs, setFavoritesSlugs] = useState<Set<string>>(() => new Set());
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
+  const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
 
   useEffect(() => {
-    getProducts().then(({ data }) => {
-      if (data) {
+    async function loadData() {
+      const productsPromise = getProducts();
+      const favoritesPromise = authStatus === 'authenticated' ? getFavorites() : null;
+
+      const [productsResult, favoritesResult] = await Promise.all([
+        productsPromise,
+        favoritesPromise,
+      ]);
+
+      const productsData = productsResult.data;
+      const favoritesData = favoritesResult?.data;
+
+      if (productsData) {
+        const favoriteSlugs = favoritesData 
+          ? new Set(favoritesData.map((f) => f.slug)) 
+          : new Set<string>();
+
         setProducts(
-          data.map((product) => ({
+          productsData.map((product) => ({
             id: product.id,
             name: product.name,
             description: product.description ?? '',
@@ -78,16 +94,25 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
+            isFavorite: favoriteSlugs.has(product.slug),
           }))
         );
       }
-    });
-  }, []);
+    }
+
+    if (authStatus !== 'loading') {
+      void loadData();
+    }
+  }, [authStatus]);
 
   const toggleFavorite = async (productSlug: string) => {
     if (pendingFavoriteSlugs.has(productSlug)) return;
 
-    const isFavorite = favoritesSlugs.has(productSlug);
+    const product = products.find((p) => p.slug === productSlug);
+    if (!product) return;
+
+    const isFavorite = product.isFavorite ?? false;
+    
     setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
     setFailedFavoriteSlugs((currentSlugs) => {
       const nextSlugs = new Set(currentSlugs);
@@ -102,17 +127,11 @@ export default function HomePage() {
 
       if (error) throw error;
 
-      setFavoritesSlugs((currentSlugs) => {
-        const nextSlugs = new Set(currentSlugs);
-
-        if (isFavorite) {
-          nextSlugs.delete(productSlug);
-        } else {
-          nextSlugs.add(productSlug);
-        }
-
-        return nextSlugs;
-      });
+      setProducts((currentProducts) =>
+        currentProducts.map((p) =>
+          p.slug === productSlug ? { ...p, isFavorite: !isFavorite } : p
+        )
+      );
     } catch (error) {
       console.error(
         `Błąd ${isFavorite ? 'usuwania produktu z' : 'dodawania produktu do'} ulubionych (${productSlug}):`,
@@ -185,10 +204,11 @@ export default function HomePage() {
             image={product.images[0] ?? ''}
             alt={product.alt}
             onClick={() => navigate(`/product/${product.slug}`)}
-            isFavorite={favoritesSlugs.has(product.slug)}
+            isFavorite={product.isFavorite ?? false}
             isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
             hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
             favoriteErrorTarget="button"
+            hideFavoriteButton={authStatus !== 'authenticated'}
             showFavoriteUpdatingOverlay={false}
             onFavoriteToggle={() => void toggleFavorite(product.slug)}
           />

@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
-import { getProducts } from '../../api/product.ts';
+import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
+  const { status: authStatus } = useAuth();
   const [favorites, setFavorites] = useState<FavoritesResponse[]>([]);
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
@@ -60,34 +61,40 @@ export default function FavoritesPage() {
     const activeErrorTimeouts = errorTimeouts.current;
 
     async function loadFavorites() {
-      const [
-        { data: favoritesData, error: favoritesError },
-        { data: productsData, error: productsError },
-      ] = await Promise.all([getFavorites(), getProducts()]);
+      if (authStatus === 'authenticated') {
+        const { data: favoritesData, error: favoritesError } = await getFavorites();
 
-      if (favoritesError || productsError || !favoritesData || !productsData) {
-        console.error('Błąd pobierania ulubionych produktów:', favoritesError || productsError);
-        return;
-      }
+        if (favoritesError || !favoritesData) {
+          console.error('Błąd pobierania ulubionych produktów:', favoritesError);
+          return;
+        }
 
-      setFavorites(
-        favoritesData.map((item) => {
-          const matchedProduct = productsData.find((product) => product.slug === item.slug);
+        const baseUrl = import.meta.env.VITE_API_URL || '';
 
-          return {
+        setFavorites(
+          favoritesData.map((item) => ({
             ...item,
-            image: matchedProduct?.images?.[0] ?? item.image,
-          };
-        })
-      );
+            image: item.image
+              ? item.image.startsWith('http')
+                ? item.image
+                : `${baseUrl.replace(/\/$/, '')}/${item.image.replace(/^\//, '')}`
+              : '',
+          }))
+        );
+      } else if (authStatus === 'anonymous' || authStatus === 'error') {
+        setFavorites([]);
+      }
     }
-    void loadFavorites();
+
+    if (authStatus !== 'loading') {
+      void loadFavorites();
+    }
 
     return () => {
       activeErrorTimeouts.forEach((timeout) => window.clearTimeout(timeout));
       activeErrorTimeouts.clear();
     };
-  }, []);
+  }, [authStatus]);
 
   return (
     <div className="w-full">
@@ -95,7 +102,7 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      <ProductCardGrid className="mt-4" itemCount={favorites.length}>
+      <ProductCardGrid className="my-4" itemCount={favorites.length}>
         <AnimatePresence initial={false} mode="popLayout">
           {favorites.length === 0 ? (
             <motion.div

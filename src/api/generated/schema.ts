@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register */
+        post: operations["register_auth_register_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -15,6 +32,23 @@ export interface paths {
         put?: never;
         /** Login */
         post: operations["login_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh */
+        post: operations["refresh_auth_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -70,6 +104,59 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Szczegóły koszyka */
+        get: operations["get_cart_cart_get"];
+        put?: never;
+        /** Dodanie produktu do koszyka */
+        post: operations["add_to_cart_cart_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Całkowite usunięcie produktu z koszyka */
+        delete: operations["remove_product_from_cart_cart__product_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/{product_id}/{cart_item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Usunięcie terminu z koszyka */
+        delete: operations["remove_cart_item_date_cart__product_id___cart_item_id__delete"];
+        options?: never;
+        head?: never;
+        /** Zmiana szczegółów terminu w koszyku */
+        patch: operations["update_cart_item_cart__product_id___cart_item_id__patch"];
         trace?: never;
     };
     "/cart/promo-code/validate": {
@@ -298,6 +385,71 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccessTokenResponse */
+        AccessTokenResponse: {
+            /** Access Token */
+            access_token: string;
+            /** Token Type */
+            token_type: string;
+            /** Expires In */
+            expires_in: number;
+        };
+        /** AddToCartRequest */
+        AddToCartRequest: {
+            /** Product Id */
+            product_id: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /**
+             * Quantity
+             * @default 1
+             */
+            quantity: number;
+            /** Size */
+            size?: string | null;
+        };
+        /** CartItemDate */
+        CartItemDate: {
+            /** Id */
+            id: number;
+            /** Quantity */
+            quantity: number;
+            /** Size */
+            size?: string | null;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+        };
+        /** CartItemResponse */
+        CartItemResponse: {
+            /** Product Id */
+            product_id: number;
+            /** Product Name */
+            product_name: string;
+            /** Image */
+            image: string;
+            /** Alt */
+            alt?: string | null;
+            /** Price */
+            price: number;
+            /** Dates */
+            dates: components["schemas"]["CartItemDate"][];
+        };
         /** CategoryResponse */
         CategoryResponse: {
             /** Name */
@@ -346,20 +498,6 @@ export interface components {
             email: string;
             /** Password */
             password: string;
-        };
-        /** LoginResponse */
-        LoginResponse: {
-            /** Access Token */
-            access_token: string;
-            /** Refresh Token */
-            refresh_token: string;
-        };
-        /** LogoutRequest */
-        LogoutRequest: {
-            /** Access Token */
-            access_token: string;
-            /** Refresh Token */
-            refresh_token: string;
         };
         /** LoyaltyHistoryItemResponse */
         LoyaltyHistoryItemResponse: {
@@ -455,6 +593,11 @@ export interface components {
             category?: string | null;
             /** Sizes */
             sizes?: components["schemas"]["ProductSize"][] | null;
+            /**
+             * Isfavorite
+             * @default false
+             */
+            isFavorite: boolean;
         };
         /** ProductSize */
         ProductSize: {
@@ -473,6 +616,44 @@ export interface components {
             /** Discount Rate */
             discount_rate?: number | null;
         };
+        /** RegisterAddressRequest */
+        RegisterAddressRequest: {
+            /** First Line */
+            first_line: string;
+            /** Second Line */
+            second_line?: string | null;
+            /** Postal Code */
+            postal_code: string;
+            /** City */
+            city: string;
+            /** Country */
+            country: string;
+        };
+        /** RegisterRequest */
+        RegisterRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Password */
+            password: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+            address: components["schemas"]["RegisterAddressRequest"];
+        };
+        /** RegisterResponse */
+        RegisterResponse: {
+            /** Id */
+            id: number;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
         /** ResetPasswordRequest */
         ResetPasswordRequest: {
             /**
@@ -480,6 +661,17 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /** UpdateCartItemRequest */
+        UpdateCartItemRequest: {
+            /** Quantity */
+            quantity?: number | null;
+            /** Size */
+            size?: string | null;
+            /** Start Date */
+            start_date?: string | null;
+            /** End Date */
+            end_date?: string | null;
         };
         /** UserHistoryItemResponse */
         UserHistoryItemResponse: {
@@ -540,6 +732,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    register_auth_register_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     login_auth_login_post: {
         parameters: {
             query?: never;
@@ -559,7 +784,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginResponse"];
+                    "application/json": components["schemas"]["AccessTokenResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_auth_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                refresh_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessTokenResponse"];
                 };
             };
             /** @description Validation Error */
@@ -578,22 +834,18 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LogoutRequest"];
+            cookie?: {
+                refresh_token?: string | null;
             };
         };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": unknown;
-                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -647,6 +899,150 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ChangePasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_cart_cart_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartItemResponse"][];
+                };
+            };
+        };
+    };
+    add_to_cart_cart_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddToCartRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_product_from_cart_cart__product_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_cart_item_date_cart__product_id___cart_item_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+                cart_item_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_cart_item_cart__product_id___cart_item_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+                cart_item_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCartItemRequest"];
             };
         };
         responses: {
