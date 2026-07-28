@@ -2,18 +2,17 @@ import { ArrowUpDown, Funnel, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { getProducts } from '../../api/product.ts';
+import { getCategoriesCount } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
-import type { ProductProps } from '../../features/product/productProps.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
 
-const TOTAL_PAGES = 10;
+const PAGE_SIZE = 10;
 const MIN_PRICE = 0;
 const MAX_PRICE = 200;
 const SORT_OPTIONS: readonly SelectOption[] = [
@@ -23,49 +22,8 @@ const SORT_OPTIONS: readonly SelectOption[] = [
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
 
 export default function SearchPage() {
-  const [products, setProducts] = useState<ProductProps[]>([]);
-
-  useEffect(() => {
-    getProducts().then(({ data }) => {
-      if (data) {
-        setProducts(
-          data.map((product) => ({
-            id: product.id,
-            name: product.name,
-            description: product.description ?? '',
-            price: product.price ?? 0,
-            slug: product.slug,
-            images: product.images ?? [],
-            alt: product.alt ?? product.name,
-            category: product.category ?? '',
-          }))
-        );
-      }
-    });
-  }, []);
-
-  const categoryFacets: CategoryFacets = useMemo(() => {
-    const validCategories = Array.from(
-      new Set(products.map((p) => p.category).filter((cat): cat is string => Boolean(cat)))
-    );
-    const productFacets = validCategories.map((category, index) => ({
-      id: index + 1,
-      slug: toCategorySlug(category),
-      name: category,
-      productCount: products.filter((p) => p.category === category).length,
-    }));
-    return {
-      categories: [
-        ...productFacets,
-        {
-          id: productFacets.length + 1,
-          slug: 'sporty-zimowe',
-          name: 'Sporty zimowe',
-          productCount: 0,
-        },
-      ],
-    };
-  }, [products]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
 
   const categorySlugs = useMemo(
     () =>
@@ -76,6 +34,7 @@ export default function SearchPage() {
   );
 
   const {
+    query,
     pageNumber,
     sortField,
     sortDirection,
@@ -87,7 +46,7 @@ export default function SearchPage() {
     setPriceRange: setAppliedPriceRange,
     setSelectedCategorySlugs,
   } = useProductSearchParams({
-    totalPages: TOTAL_PAGES,
+    totalPages,
     minPrice: MIN_PRICE,
     maxPrice: MAX_PRICE,
     sortFields: SORT_FIELDS,
@@ -97,6 +56,44 @@ export default function SearchPage() {
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
   const [mobilePanel, setMobilePanel] = useState<'filters' | 'sorting' | null>(null);
+
+  const filter = useMemo(() => {
+    const f: any = {};
+    if (query) f.query = query;
+    if (appliedMinPrice > MIN_PRICE) f.minPrice = appliedMinPrice;
+    if (appliedMaxPrice < MAX_PRICE) f.maxPrice = appliedMaxPrice;
+    if (selectedCategorySlugs.length > 0) f.category = selectedCategorySlugs;
+    if (sortField) f.sort = sortField;
+    if (sortDirection) f.order = sortDirection;
+    return f;
+  }, [query, appliedMinPrice, appliedMaxPrice, selectedCategorySlugs, sortField, sortDirection]);
+
+  useEffect(() => {
+    let active = true;
+
+    getCategoriesCount(filter).then((countsRes) => {
+      if (!active) return;
+
+      const countsData = countsRes.data;
+      if (countsData) {
+        const categories = countsData[0] as any[];
+        const totalCount = Number(countsData[1]);
+        setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
+        setCategoryFacets({
+          categories: categories.map((c: any, idx: number) => ({
+            id: idx + 1,
+            slug: toCategorySlug(c.name),
+            name: c.name,
+            productCount: c.count,
+          })),
+        });
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [filter]);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>
@@ -202,7 +199,7 @@ export default function SearchPage() {
           <div className="shrink-0">
             <PageSelector
               pageNumber={pageNumber}
-              totalPages={TOTAL_PAGES}
+              totalPages={totalPages}
               onPageChange={setPageNumber}
             />
           </div>

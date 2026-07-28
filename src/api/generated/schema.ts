@@ -192,6 +192,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/product/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Categories Count */
+        get: operations["get_categories_count_product_count_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product/{product_slug}": {
         parameters: {
             query?: never;
@@ -281,6 +298,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CategoryResponse */
+        CategoryResponse: {
+            /** Name */
+            name: string;
+            /** Count */
+            count: number;
+        };
         /** ChangePasswordRequest */
         ChangePasswordRequest: {
             /** Current Password */
@@ -410,28 +434,6 @@ export interface components {
         ProductAvailabilityResponse: {
             /** Available */
             available: boolean;
-        };
-        /** ProductFilter */
-        ProductFilter: {
-            /** Sort */
-            sort?: string | null;
-            /** Order */
-            order?: string | null;
-            /**
-             * Minprice
-             * @default 0
-             */
-            minPrice: number | null;
-            /**
-             * Maxprice
-             * @default 200
-             */
-            maxPrice: number | null;
-            /**
-             * Category
-             * @default []
-             */
-            category: string[] | null;
         };
         /** ProductResponse */
         ProductResponse: {
@@ -840,7 +842,11 @@ export interface operations {
     get_products_product_get: {
         parameters: {
             query?: {
-                filter?: components["schemas"]["ProductFilter"] | null;
+                sort?: string | null;
+                order?: string | null;
+                minPrice?: number | null;
+                maxPrice?: number | null;
+                query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
             };
@@ -848,7 +854,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": string[] | null;
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -857,6 +867,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_categories_count_product_count_get: {
+        parameters: {
+            query?: {
+                sort?: string | null;
+                order?: string | null;
+                minPrice?: number | null;
+                maxPrice?: number | null;
+                query?: string | null;
+                page?: number | null;
+                pageSize?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": string[] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": [
+                        components["schemas"]["CategoryResponse"][],
+                        number
+                    ];
                 };
             };
             /** @description Validation Error */

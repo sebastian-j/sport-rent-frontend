@@ -1,3 +1,5 @@
+import { motion, useReducedMotion } from 'motion/react';
+
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { PaymentMethod, PaymentMethodId } from './paymentMethods.ts';
 
@@ -6,6 +8,8 @@ type PaymentMethodOptionProps = {
   isSelected: boolean;
   pointsRequired: number;
   userPoints: number;
+  isUserPointsLoading: boolean;
+  hasUserPointsLoadError: boolean;
   onChange: (methodId: PaymentMethodId) => void;
 };
 
@@ -14,11 +18,16 @@ export default function PaymentMethodOption({
   isSelected,
   pointsRequired,
   userPoints,
+  isUserPointsLoading,
+  hasUserPointsLoadError,
   onChange,
 }: PaymentMethodOptionProps) {
   const isPointsPayment = method.id === 'points';
   const missingPoints = Math.max(0, pointsRequired - userPoints);
-  const isDisabled = isPointsPayment && missingPoints > 0;
+  const isDisabled =
+    isPointsPayment && (isUserPointsLoading || hasUserPointsLoadError || missingPoints > 0);
+  const hasPointsStatus = isUserPointsLoading || hasUserPointsLoadError || missingPoints > 0;
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <label
@@ -41,15 +50,39 @@ export default function PaymentMethodOption({
 
       {isPointsPayment ? (
         <span className="ml-auto flex shrink-0 items-center gap-2">
-          <span className="flex w-28 flex-col items-end text-right">
+          <span className="flex w-32 flex-col items-end text-right">
             <span className="font-medium text-app-textStrong">
               {pointsRequired.toLocaleString('pl-PL')} pkt
             </span>
-            {missingPoints > 0 && (
-              <span className="text-sm text-app-textMuted">
-                Brakuje {missingPoints.toLocaleString('pl-PL')} pkt
-              </span>
-            )}
+            <motion.span
+              className="block overflow-hidden"
+              initial={false}
+              animate={{ height: hasPointsStatus ? 20 : 0, opacity: hasPointsStatus ? 1 : 0 }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.25, ease: [0.22, 1, 0.36, 1] }
+              }
+            >
+              {isUserPointsLoading ? (
+                <span className="flex h-5 items-center" aria-label="Ładowanie liczby punktów">
+                  <span
+                    aria-hidden="true"
+                    className="h-3 w-20 animate-pulse rounded-full bg-app-borderSoft"
+                  />
+                </span>
+              ) : hasUserPointsLoadError ? (
+                <span role="alert" className="text-sm text-app-danger">
+                  Wystąpił błąd
+                </span>
+              ) : (
+                missingPoints > 0 && (
+                  <span className="text-sm text-app-textMuted">
+                    Brakuje {missingPoints.toLocaleString('pl-PL')} pkt
+                  </span>
+                )
+              )}
+            </motion.span>
           </span>
         </span>
       ) : (

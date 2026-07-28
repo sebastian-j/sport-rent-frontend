@@ -1,15 +1,15 @@
 import { api } from './client.ts';
+import type { operations } from './generated/schema.ts';
 
-export const getProducts = (page?: number, pageSize?: number, signal?: AbortSignal) =>
-  api.GET('/product', {
+type ProductQueryParams = operations['get_products_product_get']['parameters']['query'];
+
+export const getProducts = (params?: ProductQueryParams) => {
+  return api.GET('/product', {
     params: {
-      query: {
-        ...(page !== undefined ? { page } : {}),
-        ...(pageSize !== undefined ? { pageSize } : {}),
-      },
+      query: params,
     },
-    signal,
   });
+};
 
 export const getProductBySlug = (slug: string) =>
   api.GET('/product/{product_slug}', {
@@ -25,3 +25,11 @@ export const getProductAvailability = (slug: string, startDate: string, endDate:
       query: { start_date: startDate, end_date: endDate },
     },
   });
+
+export const getCategoriesCount = (params?: ProductQueryParams) => {
+  return api.GET('/product/count', {
+    params: {
+      query: params,
+    },
+  });
+};
