@@ -3,12 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  getCategoriesCount,
-  getProducts,
-  type GetProductsQuery,
-  type ProductCountQuery,
-} from '../../api/product.ts';
+import { getCategoriesCount, getProducts, type ProductCountQuery } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
@@ -25,12 +20,12 @@ import type { SortDirection } from '../../types/search.ts';
 const PAGE_SIZE = 10;
 const MIN_PRICE = 0;
 const MAX_PRICE = 200;
-type ProductSortField = NonNullable<GetProductsQuery['sort']>;
 
 const SORT_OPTIONS = [
   { value: 'name', label: 'Nazwa' },
   { value: 'price', label: 'Cena' },
 ] as const satisfies readonly SelectOption[];
+type ProductSortField = (typeof SORT_OPTIONS)[number]['value'];
 const SORT_FIELDS = SORT_OPTIONS.map((option) => option.value);
 
 type MobilePanel = 'filters' | 'sorting' | null;
@@ -249,6 +244,8 @@ export default function SearchPage() {
       const countsData = countsRes.data;
       if (countsData) {
         const categories = countsData[0];
+        if (!Array.isArray(categories)) return;
+
         const totalCount = Number(countsData[1]);
         setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
         setCategoryFacets({
