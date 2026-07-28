@@ -20,3 +20,15 @@ export const api = createClient<paths>({
     return searchParams.toString();
   },
 });
+
+api.use({
+  onRequest({ request }) {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      request.headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return request;
+  },
+});
