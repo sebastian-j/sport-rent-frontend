@@ -48,51 +48,49 @@ export default function ResetPasswordPage() {
       </h1>
 
       <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
-        <form onSubmit={handleResetPassword} className="flex w-full flex-col gap-4 sm:w-[90%]">
-          <p className="text-app-textMuted">
-            Podaj adres e-mail przypisany do konta. Wyślemy na niego wiadomość umożliwiającą
-            ustawienie nowego hasła.
+        {hasSentMessage ? (
+          <p role="status" className="w-[90%] text-sm text-app-textMuted">
+            Jeśli konto istnieje, link do ustawienia nowego hasła został wygenerowany.
           </p>
-
-          <label htmlFor="reset-password-email" className="text-app-textStrong">
-            Email
-          </label>
-          <input
-            name="email"
-            id="reset-password-email"
-            type="email"
-            value={email}
-            required
-            autoComplete="email"
-            aria-invalid={sendError !== null}
-            aria-describedby={sendError ? 'reset-password-error' : undefined}
-            className={`rounded-lg border bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border ${
-              sendError ? 'border-app-danger' : 'border-app-borderSoft'
-            }`}
-            onChange={handleEmailChange}
-          />
-
-          {hasSentMessage && (
-            <p role="status" className="text-sm text-app-textMuted">
-              Wiadomość z instrukcją resetowania hasła została wysłana.
+        ) : (
+          <form onSubmit={handleResetPassword} className="flex w-full flex-col gap-4 sm:w-[90%]">
+            <p className="text-app-textMuted">
+              Podaj adres e-mail przypisany do konta. Wyślemy na niego wiadomość umożliwiającą
+              ustawienie nowego hasła.
             </p>
-          )}
 
-          {sendError && (
-            <p id="reset-password-error" role="alert" className="text-sm text-app-danger">
-              {sendError}
-            </p>
-          )}
+            <label htmlFor="reset-password-email" className="text-app-textStrong">
+              Email
+            </label>
+            <input
+              name="email"
+              id="reset-password-email"
+              type="email"
+              value={email}
+              required
+              autoComplete="email"
+              aria-invalid={sendError !== null}
+              aria-describedby={sendError ? 'reset-password-error' : undefined}
+              className={`rounded-lg border bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border ${
+                sendError ? 'border-app-danger' : 'border-app-borderSoft'
+              }`}
+              onChange={handleEmailChange}
+            />
 
-          <ButtonCore
-            text={
-              isSending ? 'Wysyłanie…' : hasSentMessage ? 'Wyślij ponownie' : 'Wyślij wiadomość'
-            }
-            type="submit"
-            disabled={isSending}
-            className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
-          />
-        </form>
+            {sendError && (
+              <p id="reset-password-error" role="alert" className="text-sm text-app-danger">
+                {sendError}
+              </p>
+            )}
+
+            <ButtonCore
+              text={isSending ? 'Wysyłanie…' : 'Wyślij wiadomość'}
+              type="submit"
+              disabled={isSending}
+              className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
+            />
+          </form>
+        )}
 
         <div className="my-3 w-full text-left sm:w-[90%]">
           <Link to="/login" className="text-app-textStrong underline">
