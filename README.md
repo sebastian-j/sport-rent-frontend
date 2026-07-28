@@ -24,6 +24,7 @@ Projekt składa się z dwóch współpracujących aplikacji:
 - logowanie i ochrona stron przeznaczonych dla zalogowanych użytkowników;
 - profil użytkownika z historią zamówień i programem lojalnościowym;
 - obsługa kodów promocyjnych i podsumowanie zamówienia;
+- responsywny interfejs dostosowany do urządzeń mobilnych i komputerów;
 - jasny, ciemny i zgodny z ustawieniami systemu motyw interfejsu;
 - strony informacyjne, FAQ, regulamin i polityka prywatności.
 
@@ -36,9 +37,12 @@ ma jeszcze charakter demonstracyjny.
 | --- | --- |
 | Katalog, wyszukiwanie i szczegóły produktów | Połączone z API |
 | Sprawdzanie dostępności | Połączone z demonstracyjnym endpointem API |
-| Logowanie | Połączone z API, kontrakt tokenów wymaga dalszej synchronizacji |
+| Logowanie i wylogowanie | Połączone z API |
+| Sesja użytkownika | Automatyczne przywracanie i odświeżanie sesji oraz ponawianie żądań po `401` |
 | Rejestracja | Formularz istnieje, wysyłanie danych do API nie jest jeszcze podłączone |
-| Ulubione, historia i punkty lojalnościowe | Połączone z demonstracyjnymi endpointami API |
+| Dane profilu | Pobierane z API; zapis zmian pozostaje po stronie interfejsu |
+| Ulubione i punkty lojalnościowe | Połączone z demonstracyjnymi endpointami API |
+| Historia zamówień | Prezentowana na danych demonstracyjnych |
 | Koszyk | Stan obsługiwany po stronie przeglądarki |
 | Kody promocyjne | Walidowane przez demonstracyjny endpoint API |
 | Składanie zamówień i płatności | Widoki są gotowe, finalizacja nie jest jeszcze podłączona |
@@ -70,6 +74,13 @@ Adres API jest pobierany ze zmiennej środowiskowej `VITE_API_URL`. Żądania s�
 wysyłane z opcją `credentials: include`, dzięki czemu przeglądarka może
 obsługiwać ciasteczka sesyjne backendu.
 
+Stan uwierzytelnienia jest zarządzany przez `AuthProvider`. Token dostępu jest
+przechowywany wyłącznie w pamięci aplikacji i automatycznie dodawany do żądań
+API. Po uruchomieniu frontend próbuje przywrócić sesję za pomocą ciasteczka
+odświeżającego. Wygaśnięcie tokenu dostępu powoduje próbę jego odnowienia
+i ponowienie pierwotnego żądania. Operacje zmieniające stan sesji korzystają
+również z nagłówka CSRF.
+
 ## Wymagania
 
 - Node.js 22;
@@ -89,6 +100,8 @@ Domyślna konfiguracja wskazuje lokalny backend:
 
 ```dotenv
 VITE_API_URL=http://127.0.0.1:8000
+VITE_DEV_HOST=127.0.0.1
+VITE_DEV_PORT=5173
 ```
 
 Uruchom backend zgodnie z instrukcją w jego repozytorium, a następnie uruchom
@@ -98,7 +111,9 @@ frontend:
 pnpm dev
 ```
 
-Aplikacja będzie dostępna pod adresem `http://127.0.0.1:5173`.
+Przy ustawieniach z `.env.example` aplikacja będzie dostępna pod adresem
+`http://127.0.0.1:5173`. Host i port serwera deweloperskiego można zmienić za
+pomocą `VITE_DEV_HOST` i `VITE_DEV_PORT`.
 
 Jeżeli używany jest inny adres frontendu, musi on zostać dodany do listy
 dozwolonych źródeł CORS (`ALLOWED_ORIGINS`) po stronie backendu.
