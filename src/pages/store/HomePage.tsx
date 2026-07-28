@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { addFavorite, getFavorites, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
-import { useAuth } from '../../features/auth/authContext.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
 import przyczepkiImage from '../../assets/categories/przyczepki.png';
@@ -13,6 +12,7 @@ import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -80,8 +80,8 @@ export default function HomePage() {
       const favoritesData = favoritesResult?.data;
 
       if (productsData) {
-        const favoriteSlugs = favoritesData 
-          ? new Set(favoritesData.map((f) => f.slug)) 
+        const favoriteSlugs = favoritesData
+          ? new Set(favoritesData.map((f) => f.slug))
           : new Set<string>();
 
         setProducts(
@@ -112,7 +112,7 @@ export default function HomePage() {
     if (!product) return;
 
     const isFavorite = product.isFavorite ?? false;
-    
+
     setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
     setFailedFavoriteSlugs((currentSlugs) => {
       const nextSlugs = new Set(currentSlugs);
@@ -128,9 +128,7 @@ export default function HomePage() {
       if (error) throw error;
 
       setProducts((currentProducts) =>
-        currentProducts.map((p) =>
-          p.slug === productSlug ? { ...p, isFavorite: !isFavorite } : p
-        )
+        currentProducts.map((p) => (p.slug === productSlug ? { ...p, isFavorite: !isFavorite } : p))
       );
     } catch (error) {
       console.error(
