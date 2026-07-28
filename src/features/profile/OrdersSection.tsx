@@ -1,8 +1,81 @@
 import { useEffect, useState } from "react";
 
-import { getUserHistory } from "../../api/user.ts";
+import {
+  getOrderDetails,
+  getUserHistory,
+  type OrderDetailResponse,
+} from "../../api/user.ts";
 import OrderCard from "./orders/OrderCard.tsx";
 import { type Order, type OrderStatus } from "./orders/orderTypes.ts";
+
+function OrderDetailsLoader({ orderId }: { orderId: string }) {
+  const [details, setDetails] = useState<OrderDetailResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getOrderDetails(Number(orderId)).then(({ data }) => {
+      if (data) setDetails(data);
+      setIsLoading(false);
+    });
+  }, [orderId]);
+
+  if (isLoading) {
+    return (
+      <div className="mt-4 text-center text-sm text-app-textMuted">
+        Ładowanie szczegółów...
+      </div>
+    );
+  }
+
+  if (!details) {
+    return (
+      <div className="mt-4 text-center text-sm text-app-danger">
+        Nie udało się wczytać szczegółów.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 flex flex-col gap-3 border-t border-app-borderSoft pt-4">
+      {details.items.map((item, index) => (
+        <div
+          key={index}
+          className="flex flex-col gap-2 rounded-lg bg-app-surface p-3 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-center gap-4">
+            <img
+              src={`data:image/jpeg;base64,${item.image}`}
+              alt={item.product_name}
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-app-borderSoft bg-app-surfaceSoft object-cover text-center text-[10px] leading-tight text-app-textMuted"
+            />
+            <div className="flex flex-col">
+              <span className="font-semibold text-app-textStrong">
+                {item.product_name}
+              </span>
+              <span className="text-sm text-app-textMuted">
+                Okres: {new Date(item.start_date).toLocaleDateString()} -{" "}
+                {new Date(item.end_date).toLocaleDateString()}
+              </span>
+              {item.size && (
+                <span className="text-sm text-app-textMuted">
+                  Rozmiar: {item.size}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="text-right text-app-textStrong">
+            {item.quantity} szt. x {item.unit_price} zł
+          </div>
+        </div>
+      ))}
+      <div className="mt-2 flex justify-between px-2 text-lg font-bold text-app-textStrong">
+        <span>Suma zamówienia:</span>
+        <span>{details.total.toFixed(2)} zł</span>
+      </div>
+    </div>
+  );
+}
 
 export default function OrdersSection() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
@@ -48,9 +121,9 @@ export default function OrdersSection() {
                 setExpandedOrder(expandedOrder === order.id ? null : order.id)
               }
             >
-              <div className="mt-4 text-app-textMuted">
-                Szczegóły zamówienia
-              </div>
+              {expandedOrder === order.id && (
+                <OrderDetailsLoader orderId={order.id} />
+              )}
             </OrderCard>
           ))}
           {orders.length === 0 && (

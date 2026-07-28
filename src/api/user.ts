@@ -1,4 +1,7 @@
 import { api } from "./client.ts";
+import type { components } from "./generated/schema.ts";
+
+export type OrderDetailResponse = components["schemas"]["OrderDetailResponse"];
 
 export const getUser = () => api.GET("/user");
 
