@@ -84,7 +84,7 @@ export default function HomePage() {
 
         if (pageRef.current === 1) {
           const initialLimit = 30;
-          const res = await getProducts(1, initialLimit);
+          const res = await getProducts({ page: 1, pageSize: initialLimit });
           if (!active) return;
 
           const data = res.data || [];
@@ -115,7 +115,7 @@ export default function HomePage() {
             setHasMore(false);
           }
         } else {
-          const res = await getProducts(pageRef.current, limit);
+          const res = await getProducts({ page: pageRef.current, pageSize: limit });
           if (!active) return;
 
           const data = res.data || [];
