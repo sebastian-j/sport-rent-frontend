@@ -22,7 +22,7 @@ export default function SearchBar({
   showCloseButton = false,
 }: SearchBarProps) {
   const location = useLocation();
-  const queryFromUrl = new URLSearchParams(location.search).get('q') ?? '';
+  const queryFromUrl = new URLSearchParams(location.search).get('query') ?? '';
   const [searchValue, setSearchValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState<ProductProps[]>([]);
@@ -127,7 +127,7 @@ export default function SearchBar({
 
     navigate(
       `${RENT_ROUTES.search}?${new URLSearchParams({
-        q: query,
+        query,
         page: '1',
         sort: 'name',
         order: 'asc',

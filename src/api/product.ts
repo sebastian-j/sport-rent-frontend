@@ -2,7 +2,7 @@ import { api } from './client.ts';
 import type { operations, paths } from './generated/schema.ts';
 
 export type GetProductsQuery = NonNullable<paths['/product']['get']['parameters']['query']>;
-type ProductCountQuery =
+export type ProductCountQuery =
   operations['get_categories_count_product_count_get']['parameters']['query'];
 
 export const getProducts = (query: GetProductsQuery = {}) =>

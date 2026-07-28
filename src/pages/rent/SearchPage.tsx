@@ -3,7 +3,12 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { getCategoriesCount, getProducts, type GetProductsQuery } from '../../api/product.ts';
+import {
+  getCategoriesCount,
+  getProducts,
+  type GetProductsQuery,
+  type ProductCountQuery,
+} from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
@@ -162,7 +167,9 @@ export default function SearchPage() {
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
   const selectedCategoryKey = selectedCategorySlugs.join(',');
   const selectedCategoryNames = useMemo(() => {
-    const selectedSlugs = selectedCategoryKey ? selectedCategoryKey.split(',') : [];
+    if (!selectedCategoryKey) return undefined;
+
+    const selectedSlugs = selectedCategoryKey.split(',');
 
     return selectedSlugs.flatMap((selectedSlug) => {
       const category = categoryFacets.categories.find(({ slug }) => slug === selectedSlug);
@@ -181,7 +188,7 @@ export default function SearchPage() {
     setHasSearchError(false);
 
     void getProducts({
-      q: searchQuery || null,
+      query: searchQuery || null,
       sort: sortField,
       order: sortDirection,
       minPrice: appliedMinPrice,
@@ -224,41 +231,32 @@ export default function SearchPage() {
     sortField,
   ]);
 
-  const filter = useMemo(() => {
-    const f: any = {};
-    if (searchQuery) f.query = searchQuery;
-    if (appliedMinPrice > MIN_PRICE) f.minPrice = appliedMinPrice;
-    if (appliedMaxPrice < MAX_PRICE) f.maxPrice = appliedMaxPrice;
-    if (selectedCategorySlugs.length > 0) f.category = selectedCategorySlugs;
-    if (sortField) f.sort = sortField;
-    if (sortDirection) f.order = sortDirection;
-    return f;
-  }, [
-    searchQuery,
-    appliedMinPrice,
-    appliedMaxPrice,
-    selectedCategorySlugs,
-    sortField,
-    sortDirection,
-  ]);
+  const countQuery = useMemo<ProductCountQuery>(
+    () => ({
+      query: searchQuery || null,
+      minPrice: appliedMinPrice,
+      maxPrice: appliedMaxPrice,
+    }),
+    [appliedMaxPrice, appliedMinPrice, searchQuery]
+  );
 
   useEffect(() => {
     let active = true;
 
-    getCategoriesCount(filter).then((countsRes) => {
+    getCategoriesCount(countQuery).then((countsRes) => {
       if (!active) return;
 
       const countsData = countsRes.data;
       if (countsData) {
-        const categories = countsData[0] as any[];
+        const categories = countsData[0];
         const totalCount = Number(countsData[1]);
         setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
         setCategoryFacets({
-          categories: categories.map((c: any, idx: number) => ({
-            id: idx + 1,
-            slug: toCategorySlug(c.name),
-            name: c.name,
-            productCount: c.count,
+          categories: categories.map((category, index) => ({
+            id: index + 1,
+            slug: toCategorySlug(category.name),
+            name: category.name,
+            productCount: category.count,
           })),
         });
       }
@@ -267,7 +265,7 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [filter]);
+  }, [countQuery]);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>
