@@ -110,7 +110,7 @@ export default function HomePage() {
           }
 
           setProducts(uniqueProducts);
-          pageRef.current = initialLimit/limit + 1;
+          pageRef.current = initialLimit / limit + 1;
           if (data.length < initialLimit) {
             setHasMore(false);
           }
