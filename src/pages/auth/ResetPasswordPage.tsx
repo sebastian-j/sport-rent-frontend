@@ -42,11 +42,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Zresetuj hasło</h1>
+    <div className="flex flex-col items-center bg-app-surface">
+      <h1 className="mb-6 text-center text-3xl font-bold text-app-textStrong sm:mb-8 sm:text-4xl">
+        Zresetuj hasło
+      </h1>
 
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
-        <form onSubmit={handleResetPassword} className="flex w-[90%] flex-col gap-4">
+      <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
+        <form onSubmit={handleResetPassword} className="flex w-full flex-col gap-4 sm:w-[90%]">
           <p className="text-app-textMuted">
             Podaj adres e-mail przypisany do konta. Wyślemy na niego wiadomość umożliwiającą
             ustawienie nowego hasła.
@@ -88,19 +90,19 @@ export default function ResetPasswordPage() {
             }
             type="submit"
             disabled={isSending}
-            className="my-2 p-2 ps-12 pe-12 text-[0.8vw]"
+            className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
           />
         </form>
 
-        <div className="my-3 w-[90%] text-left">
+        <div className="my-3 w-full text-left sm:w-[90%]">
           <Link to="/login" className="text-app-textStrong underline">
             Wróć do logowania
           </Link>
         </div>
       </div>
 
-      <div className="mt-4 w-[60vw] max-w-[800px] text-left">
-        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textMuted underline">
+      <div className="mt-4 w-full max-w-[800px] text-left">
+        <Link to="/privacy-policy" className="text-sm text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>

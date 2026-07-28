@@ -1,5 +1,6 @@
 import createClient from 'openapi-fetch';
 
+import { authMiddleware } from './authSession.ts';
 import type { paths } from './generated/schema.ts';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -21,14 +22,4 @@ export const api = createClient<paths>({
   },
 });
 
-api.use({
-  onRequest({ request }) {
-    const token = localStorage.getItem('accessToken');
-
-    if (token) {
-      request.headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    return request;
-  },
-});
+api.use(authMiddleware);
