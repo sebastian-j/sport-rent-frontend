@@ -83,7 +83,7 @@ export default function HomePage() {
         if (!active) return; // Prevent double fetch in React Strict Mode
 
         if (pageRef.current === 1) {
-          const initialLimit = 30;
+          const initialLimit = 40;
           const res = await getProducts({ page: 1, pageSize: initialLimit });
           if (!active) return;
 
