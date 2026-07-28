@@ -16,6 +16,10 @@ import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
 
+const LIMIT = 10;
+const INITIAL_MULTIPLIER = 4;
+const INITIAL_LIMIT = INITIAL_MULTIPLIER * LIMIT;
+
 const CATEGORY_CARDS = {
   trailers: {
     title: 'Przyczepki rowerowe THULA',
@@ -64,8 +68,8 @@ export default function HomePage() {
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const limit = 10;
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -79,12 +83,12 @@ export default function HomePage() {
 
     const fetchPage = async () => {
       try {
+        setError(null);
         await new Promise((resolve) => setTimeout(resolve, 300));
         if (!active) return; // Prevent double fetch in React Strict Mode
 
         if (pageRef.current === 1) {
-          const initialLimit = 40;
-          const res = await getProducts({ page: 1, pageSize: initialLimit });
+          const res = await getProducts({ page: 1, pageSize: INITIAL_LIMIT });
           if (!active) return;
 
           const data = res.data || [];
@@ -110,12 +114,12 @@ export default function HomePage() {
           }
 
           setProducts(uniqueProducts);
-          pageRef.current = initialLimit / limit + 1;
-          if (data.length < initialLimit) {
+          pageRef.current = INITIAL_LIMIT / LIMIT + 1;
+          if (data.length < INITIAL_LIMIT) {
             setHasMore(false);
           }
         } else {
-          const res = await getProducts({ page: pageRef.current, pageSize: limit });
+          const res = await getProducts({ page: pageRef.current, pageSize: LIMIT });
           if (!active) return;
 
           const data = res.data || [];
@@ -136,12 +140,13 @@ export default function HomePage() {
           });
 
           pageRef.current += 1;
-          if (data.length < limit) {
+          if (data.length < LIMIT) {
             setHasMore(false);
           }
         }
-      } catch (error) {
-        console.error('Błąd pobierania produktów:', error);
+      } catch (err) {
+        console.error('Błąd pobierania produktów:', err);
+        setError('Nie udało się załadować produktów.');
       } finally {
         if (active) setIsLoading(false);
       }
@@ -272,7 +277,24 @@ export default function HomePage() {
       </div>
 
       <CategoryBar />
-      <ProductCardGrid className="my-4">
+
+      {error && (
+        <div className="flex w-full flex-col items-center justify-center p-8 text-center text-red-500">
+          <p className="mb-4 text-lg">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setFetchTrigger((prev) => prev + 1);
+            }}
+            className="rounded-full bg-red-100 px-6 py-2 font-medium text-red-600 transition-colors hover:bg-red-200"
+          >
+            Spróbuj ponownie
+          </button>
+        </div>
+      )}
+
+      {!error && (
+        <ProductCardGrid className="my-4">
         {products.map((product) => (
           <ProductCard
             key={product.slug}
@@ -290,8 +312,9 @@ export default function HomePage() {
           />
         ))}
       </ProductCardGrid>
+      )}
 
-      {hasMore && (
+      {hasMore && !error && (
         <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
           {isLoading && (
             <div className="size-8 animate-spin rounded-full border-4 border-app-border border-t-app-textStrong" />
