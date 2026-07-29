@@ -15,6 +15,7 @@ export default function FavoritesPage() {
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   const handleRemoveFavorite = async (slug: string) => {
     if (pendingFavoriteSlugs.has(slug)) return;
@@ -102,7 +103,7 @@ export default function FavoritesPage() {
       activeErrorTimeouts.forEach((timeout) => window.clearTimeout(timeout));
       activeErrorTimeouts.clear();
     };
-  }, [authStatus]);
+  }, [authStatus, fetchTrigger]);
 
   return (
     <div className="w-full">
@@ -110,12 +111,23 @@ export default function FavoritesPage() {
         <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
       </div>
 
-      <ProductCardGrid className="my-4" itemCount={favorites.length}>
-        {error ? (
-          <div className="col-span-full w-full py-20 text-center text-red-500">
-            <p className="text-xl">{error}</p>
-          </div>
-        ) : (
+      {error && (
+        <div className="flex w-full flex-col items-center justify-center p-8 text-center text-red-500">
+          <p className="mb-4 text-lg">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setFetchTrigger((prev) => prev + 1);
+            }}
+            className="rounded-full bg-red-100 px-6 py-2 font-medium text-red-600 transition-colors hover:bg-red-200"
+          >
+            Spróbuj ponownie
+          </button>
+        </div>
+      )}
+
+      {!error && (
+        <ProductCardGrid className="my-4" itemCount={favorites.length}>
           <AnimatePresence initial={false} mode="popLayout">
             {favorites.length === 0 ? (
               <motion.div
@@ -155,8 +167,8 @@ export default function FavoritesPage() {
               ))
             )}
           </AnimatePresence>
-        )}
-      </ProductCardGrid>
+        </ProductCardGrid>
+      )}
     </div>
   );
 }
