@@ -2,9 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
-import { ThemeProvider } from './components/core/ThemeSelector.tsx';
-import { AuthProvider } from './features/auth/AuthContext.tsx';
-import { CartStatusProvider } from './features/cart/CartStatusContext.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
 import Layout from './layouts/Layout';
@@ -25,51 +22,48 @@ import HomePage from './pages/store/HomePage.tsx';
 import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
 import ProductPage from './pages/store/ProductPage.tsx';
 import SearchPage from './pages/store/SearchPage.tsx';
+import { AppProviders } from './providers/AppProviders.tsx';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <CartStatusProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/favorites" element={<FavoritesPage />} />
-                </Route>
-                <Route path="/product/:slug" element={<ProductPage />} />
-              </Route>
-              <Route element={<Layout showCategoryBar={false} />}>
-                <Route path="/search" element={<SearchPage />} />
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/summary" element={<OrderSummaryPage />} />
-                </Route>
-              </Route>
-              <Route element={<LoginLayout />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/forgot-password" element={<ResetPasswordPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-              </Route>
-              <Route element={<DocumentLayout />}>
-                <Route path="/tos" element={<TosPage />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              </Route>
-              <Route element={<InfoLayout />}>
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/points" element={<PointsPage />} />
-                <Route path="/faq" element={<FaqPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </CartStatusProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <AppProviders>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Route>
+            <Route path="/product/:slug" element={<ProductPage />} />
+          </Route>
+          <Route element={<Layout showCategoryBar={false} />}>
+            <Route path="/search" element={<SearchPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/summary" element={<OrderSummaryPage />} />
+            </Route>
+          </Route>
+          <Route element={<LoginLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ResetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+          </Route>
+          <Route element={<DocumentLayout />}>
+            <Route path="/tos" element={<TosPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          </Route>
+          <Route element={<InfoLayout />}>
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/points" element={<PointsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppProviders>
   );
 }
 
