@@ -6,7 +6,7 @@ import { BOOT_FITTING_ROUTES, RENT_ROUTES, SERVICE_ROUTES } from '../routes.ts';
 
 const SUBSITES = [
   { label: 'RENT', path: RENT_ROUTES.home },
-  { label: 'SERWIS', path: SERVICE_ROUTES.home },
+  { label: 'SERVICE', path: SERVICE_ROUTES.home },
   { label: 'BOOT-FITTING', path: BOOT_FITTING_ROUTES.home },
 ] as const;
 

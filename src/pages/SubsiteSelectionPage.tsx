@@ -19,7 +19,7 @@ const SUBSITE_CARDS: SubsiteCard[] = [
     icon: Bike,
   },
   {
-    title: 'SERWIS',
+    title: 'SERVICE',
     description: 'Skorzystaj z profesjonalnego serwisu i zadbaj o swój sprzęt.',
     path: SERVICE_ROUTES.home,
     icon: Wrench,
