@@ -10,6 +10,7 @@ import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 export default function FavoritesPage() {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState<FavoritesResponse[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
@@ -67,8 +68,11 @@ export default function FavoritesPage() {
 
       if (favoritesError || productsError || !favoritesData || !productsData) {
         console.error('Błąd pobierania ulubionych produktów:', favoritesError || productsError);
+        setError('Nie udało się załadować ulubionych produktów.');
         return;
       }
+
+      setError(null);
 
       setFavorites(
         favoritesData.map((item) => {
@@ -97,7 +101,29 @@ export default function FavoritesPage() {
 
       <ProductCardGrid className="mt-4" itemCount={favorites.length}>
         <AnimatePresence initial={false} mode="popLayout">
-          {favorites.length === 0 ? (
+          {error ? (
+            <motion.div
+              key="error-favorites"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full flex w-full flex-col items-center justify-center py-20 text-center text-red-500"
+            >
+              <p className="mb-4 text-xl">{error}</p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  setFavorites([]);
+                  // Trigger reload by remounting or just calling loadFavorites again.
+                  // Since loadFavorites is inside useEffect, we can't easily call it directly here.
+                  // Let's just reload the page for simplicity in this case, or just not have a button.
+                  window.location.reload();
+                }}
+                className="rounded-full bg-red-100 px-6 py-2 font-medium text-red-600 transition-colors hover:bg-red-200"
+              >
+                Spróbuj ponownie
+              </button>
+            </motion.div>
+          ) : favorites.length === 0 ? (
             <motion.div
               key="empty-favorites"
               initial={{ opacity: 0 }}
