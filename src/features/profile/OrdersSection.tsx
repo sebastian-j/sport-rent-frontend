@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
+import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
 import { type Order, type OrderStatus } from './orders/orderTypes.ts';
 
@@ -53,7 +54,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
 
         return (
           <div
-            key={index}
+            key={`${item.product_id}-${index}`}
             className="flex flex-col gap-2 rounded-lg bg-app-surface p-3 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-4">
@@ -72,14 +73,14 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
                   <span className="text-xs text-app-textMuted">Rozmiar: {item.size}</span>
                 )}
                 <span className="text-xs text-app-textMuted">
-                  Stawka: {dailyPrice.toFixed(2)} zł / dzień
+                  Stawka: {formatPrice(dailyPrice)} / dzień
                 </span>
               </div>
             </div>
             <div className="flex flex-col items-end justify-center text-right">
               <span className="text-xs text-app-textMuted">{item.quantity} szt.</span>
               <span className="text-base font-bold text-app-textStrong">
-                {totalItemPrice.toFixed(2)} zł
+                {formatPrice(totalItemPrice)}
               </span>
             </div>
           </div>
@@ -87,7 +88,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
       })}
       <div className="mt-2 flex justify-between px-2 text-lg font-bold text-app-textStrong">
         <span>Suma zamówienia:</span>
-        <span>{details.total.toFixed(2)} zł</span>
+        <span>{formatPrice(details.total)}</span>
       </div>
     </div>
   );
@@ -143,7 +144,9 @@ export default function OrdersSection() {
               key={order.id}
               order={order}
               isExpanded={expandedOrder === order.id}
-              onToggle={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+              onToggle={() =>
+                setExpandedOrder((current) => (current === order.id ? null : order.id))
+              }
             >
               {expandedOrder === order.id && <OrderDetailsLoader orderId={order.id} />}
             </OrderCard>
