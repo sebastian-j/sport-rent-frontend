@@ -1,22 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getRandomCategory } from '../../api/category.ts';
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
+import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
 import przyczepkiImage from '../../assets/categories/przyczepki.png';
 import roweryImage from '../../assets/categories/rowery.png';
-import panoramicImage from '../../assets/panoramic_small.png';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
-import PanoramicImage from '../../components/PanoramicImage.tsx';
+import PanoramicImage, { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
+
+type PanoramicCategory = components['schemas']['RandomCategoryResponse'];
+type PanoramicStatus = 'loading' | 'ready' | 'hidden';
 
 const LIMIT = 10;
 const INITIAL_MULTIPLIER = 4;
@@ -70,6 +75,8 @@ export default function HomePage() {
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
+  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
   const [error, setError] = useState<string | null>(null);
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
@@ -77,6 +84,45 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const pageRef = useRef(1);
+
+  useEffect(() => {
+    let active = true;
+    let categoryImage: HTMLImageElement | null = null;
+
+    const loadPanoramicCategory = async () => {
+      try {
+        const { data, error } = await getRandomCategory();
+
+        if (error) throw error;
+        if (!data) throw new Error('Brak danych losowej kategorii');
+        if (!active) return;
+
+        categoryImage = new Image();
+        categoryImage.onload = () => {
+          if (!active) return;
+
+          setPanoramicCategory(data);
+          setPanoramicStatus('ready');
+        };
+        categoryImage.onerror = () => {
+          if (active) setPanoramicStatus('hidden');
+        };
+        categoryImage.src = data.image;
+      } catch (error) {
+        if (active) setPanoramicStatus('hidden');
+      }
+    };
+
+    void loadPanoramicCategory();
+
+    return () => {
+      active = false;
+      if (categoryImage) {
+        categoryImage.onload = null;
+        categoryImage.onerror = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -148,7 +194,6 @@ export default function HomePage() {
           }
         }
       } catch (err) {
-        console.error('Błąd pobierania produktów:', err);
         setError('Nie udało się załadować produktów.');
       } finally {
         if (active) setIsLoading(false);
@@ -253,9 +298,21 @@ export default function HomePage() {
 
   return (
     <div>
-      <div className="w-full">
-        <PanoramicImage image={panoramicImage} title="Deski SUP" />
-      </div>
+      {panoramicStatus !== 'hidden' && (
+        <div className="w-full">
+          {panoramicStatus === 'loading' ? (
+            <PanoramicImagePlaceholder />
+          ) : (
+            panoramicCategory && (
+              <PanoramicImage
+                image={panoramicCategory.image}
+                title={panoramicCategory.name}
+                onButtonClick={() => navigate(getCategorySearchPath(panoramicCategory.slug))}
+              />
+            )
+          )}
+        </div>
+      )}
 
       <CategoryCardSlider>
         {Object.values(CATEGORY_CARDS).map((card) => (
