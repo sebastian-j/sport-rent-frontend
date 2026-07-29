@@ -13,6 +13,7 @@ import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -64,10 +65,10 @@ const CATEGORY_CARDS = {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [favoritesSlugs, setFavoritesSlugs] = useState<Set<string>>(() => new Set());
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
+  const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -102,6 +103,7 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
+            isFavorite: product.isFavorite,
           }));
 
           const uniqueProducts: typeof combined = [];
@@ -132,6 +134,7 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
+            isFavorite: product.isFavorite ?? false,
           }));
 
           setProducts((prev) => {
@@ -188,7 +191,11 @@ export default function HomePage() {
   const toggleFavorite = async (productSlug: string) => {
     if (pendingFavoriteSlugs.has(productSlug)) return;
 
-    const isFavorite = favoritesSlugs.has(productSlug);
+    const product = products.find((p) => p.slug === productSlug);
+    if (!product) return;
+
+    const isFavorite = product.isFavorite ?? false;
+
     setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
     setFailedFavoriteSlugs((currentSlugs) => {
       const nextSlugs = new Set(currentSlugs);
@@ -203,17 +210,9 @@ export default function HomePage() {
 
       if (error) throw error;
 
-      setFavoritesSlugs((currentSlugs) => {
-        const nextSlugs = new Set(currentSlugs);
-
-        if (isFavorite) {
-          nextSlugs.delete(productSlug);
-        } else {
-          nextSlugs.add(productSlug);
-        }
-
-        return nextSlugs;
-      });
+      setProducts((currentProducts) =>
+        currentProducts.map((p) => (p.slug === productSlug ? { ...p, isFavorite: !isFavorite } : p))
+      );
     } catch (error) {
       console.error(
         `Błąd ${isFavorite ? 'usuwania produktu z' : 'dodawania produktu do'} ulubionych (${productSlug}):`,
@@ -303,10 +302,11 @@ export default function HomePage() {
               image={product.images[0] ?? ''}
               alt={product.alt}
               onClick={() => navigate(`/product/${product.slug}`)}
-              isFavorite={favoritesSlugs.has(product.slug)}
+              isFavorite={product.isFavorite ?? false}
               isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
               hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
               favoriteErrorTarget="button"
+              hideFavoriteButton={authStatus !== 'authenticated'}
               showFavoriteUpdatingOverlay={false}
               onFavoriteToggle={() => void toggleFavorite(product.slug)}
             />
