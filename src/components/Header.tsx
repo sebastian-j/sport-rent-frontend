@@ -10,6 +10,7 @@ import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
+import SubsiteSelector from './SubsiteSelector.tsx';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -130,27 +131,30 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
-      <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-4 sm:px-6 md:px-12 lg:grid-cols-3">
-        <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
-          <span
-            role="img"
-            aria-label="Logo Polar Sport Rent"
-            className="block h-10 w-[67px] bg-app-text sm:hidden"
-            style={{
-              WebkitMask: `url(${headerLogoSmall}) center / contain no-repeat`,
-              mask: `url(${headerLogoSmall}) center / contain no-repeat`,
-            }}
-          />
-          <span
-            role="img"
-            aria-label="Logo Polar Sport Rent"
-            className="hidden h-[41px] w-64 bg-app-text sm:block"
-            style={{
-              WebkitMask: `url(${headerLogo}) center / contain no-repeat`,
-              mask: `url(${headerLogo}) center / contain no-repeat`,
-            }}
-          />
-        </Link>
+      <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-3 sm:px-6 md:px-12 lg:grid-cols-3">
+        <div className="flex min-w-0 items-center gap-1 justify-self-start">
+          <Link to="/" className="inline-flex w-fit shrink-0 items-center">
+            <span
+              role="img"
+              aria-label="Logo Polar Sport Rent"
+              className="block h-10 w-[67px] bg-app-text sm:hidden"
+              style={{
+                WebkitMask: `url(${headerLogoSmall}) left center / contain no-repeat`,
+                mask: `url(${headerLogoSmall}) left center / contain no-repeat`,
+              }}
+            />
+            <span
+              role="img"
+              aria-label="Logo Polar Sport"
+              className="hidden h-[41px] w-[205px] bg-app-text sm:block"
+              style={{
+                WebkitMask: `url(${headerLogo}) left center / contain no-repeat`,
+                mask: `url(${headerLogo}) left center / contain no-repeat`,
+              }}
+            />
+          </Link>
+          <SubsiteSelector />
+        </div>
         <div className="hidden min-w-0 lg:block">
           <SearchBar />
         </div>
@@ -162,7 +166,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
         )}
 
         <div
-          className={`${isMobileSearchOpen ? 'hidden' : 'flex'} justify-self-end gap-4 text-app-text lg:flex`}
+          className={`${isMobileSearchOpen ? 'hidden' : 'flex'} justify-self-end gap-3 text-app-text sm:gap-4 lg:flex`}
         >
           <button
             type="button"
