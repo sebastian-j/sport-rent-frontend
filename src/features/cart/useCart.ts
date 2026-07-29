@@ -9,7 +9,6 @@ import {
   type UpdateCartItemRequest,
 } from '../../api/cart.ts';
 import { formatLocalDate } from '../../utils/localDate.ts';
-import { notifyCartChanged } from './cartEvents.ts';
 import { mapCartDate, mapCartProduct } from './cartMappers.ts';
 import {
   appendCartDate,
@@ -18,12 +17,14 @@ import {
   removeCartProduct,
   updateCartDate,
 } from './cartState.ts';
+import { useCartStatus } from './cartStatusContext.ts';
 import type { CartProduct, DateField } from './cartTypes.ts';
 import { isPersistedRentalDate, isRentalDateValid, type RentalDate } from './rentalDate.ts';
 
 type CartLoadStatus = 'loading' | 'ready' | 'error';
 
 export function useCart() {
+  const { refreshCartStatus } = useCartStatus();
   const [products, setProductsState] = useState<CartProduct[]>([]);
   const [status, setStatus] = useState<CartLoadStatus>('loading');
   const [error, setError] = useState<string | null>(null);
@@ -270,13 +271,13 @@ export function useCart() {
           const result = await deleteCartItem(dateId);
           if (result.error) throw new Error('Deleting a cart item failed');
           removeLocally();
-          notifyCartChanged();
+          void refreshCartStatus();
         } catch {
           await recoverFromSaveError();
         }
       });
     },
-    [recoverFromSaveError, setProducts, withPending]
+    [recoverFromSaveError, refreshCartStatus, setProducts, withPending]
   );
 
   const addRentalDate = useCallback(
@@ -303,13 +304,13 @@ export function useCart() {
           const result = await deleteCartProduct(productId);
           if (result.error) throw new Error('Deleting a cart product failed');
           setProducts((previous) => removeCartProduct(previous, productId));
-          notifyCartChanged();
+          void refreshCartStatus();
         } catch {
           await recoverFromSaveError();
         }
       });
     },
-    [recoverFromSaveError, setProducts, withPending]
+    [recoverFromSaveError, refreshCartStatus, setProducts, withPending]
   );
 
   return {

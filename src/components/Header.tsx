@@ -2,12 +2,11 @@ import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from '
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { getCartStatus } from '../api/cart.ts';
 import { healthCheck } from '../api/health.ts';
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
 import { useAuth } from '../features/auth/authContext.ts';
-import { CART_CHANGED_EVENT } from '../features/cart/cartEvents.ts';
+import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
@@ -31,44 +30,14 @@ type HeaderProps = {
 export default function Header({ showCategoryBar = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [hasCartItems, setHasCartItems] = useState(false);
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(CATEGORIES.length);
   const menuRef = useRef<HTMLDivElement>(null);
   const categoryBarRef = useRef<HTMLDivElement>(null);
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const navigate = useNavigate();
   const { status: authStatus, logout } = useAuth();
+  const { hasItems: hasCartItems } = useCartStatus();
   const isAuthenticated = authStatus === 'authenticated';
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setHasCartItems(false);
-      return;
-    }
-
-    let isCurrent = true;
-    let latestRequestId = 0;
-
-    const refreshCartIndicator = () => {
-      const requestId = ++latestRequestId;
-      void getCartStatus()
-        .then((result) => {
-          if (!isCurrent || requestId !== latestRequestId) return;
-          setHasCartItems(!result.error && Boolean(result.data?.has_items));
-        })
-        .catch(() => {
-          if (isCurrent && requestId === latestRequestId) setHasCartItems(false);
-        });
-    };
-
-    refreshCartIndicator();
-    window.addEventListener(CART_CHANGED_EVENT, refreshCartIndicator);
-
-    return () => {
-      isCurrent = false;
-      window.removeEventListener(CART_CHANGED_EVENT, refreshCartIndicator);
-    };
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!isMenuOpen) return;
