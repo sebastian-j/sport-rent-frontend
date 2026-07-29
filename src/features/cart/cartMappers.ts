@@ -20,13 +20,10 @@ export function mapCartProduct(product: CartItemResponse): CartProduct {
   return {
     id: product.product_id,
     name: product.product_name,
-    description: '',
     price: product.price,
-    slug: '',
-    images: product.image ? [product.image] : [],
+    image: product.image,
     alt: product.alt ?? product.product_name,
-    category: '',
-    sizes: product.sizes,
+    sizes: product.sizes.map(({ size }) => size),
     dates: product.dates.map(mapCartDate),
   };
 }

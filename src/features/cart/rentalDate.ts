@@ -1,10 +1,12 @@
+import type { components } from '../../api/generated/schema.ts';
+
 export const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-export type RentalDate = {
-  id: number;
+type CartItemDateResponse = components['schemas']['CartItemDate'];
+
+export type RentalDate = Omit<CartItemDateResponse, 'size' | 'start_date' | 'end_date'> & {
   uiKey: string;
-  quantity: number;
-  size: string | null;
+  size: Exclude<CartItemDateResponse['size'], undefined>;
   start_date: Date | null;
   end_date: Date | null;
 };

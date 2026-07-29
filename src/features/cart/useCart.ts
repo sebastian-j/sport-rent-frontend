@@ -186,7 +186,7 @@ export function useCart() {
         !product ||
         isPersistedRentalDate(date) ||
         creatingDrafts.current.has(date.id) ||
-        !isRentalDateValid(date, Boolean(product.sizes?.length))
+        !isRentalDateValid(date, product.sizes.length > 0)
       ) {
         return;
       }
@@ -225,7 +225,7 @@ export function useCart() {
                 ...product,
                 dates: product.dates.map((date) => {
                   if (date.id !== dateId) return date;
-                  requiresSize = Boolean(product.sizes?.length);
+                  requiresSize = product.sizes.length > 0;
                   changedDate = { ...date, ...changes };
                   return changedDate;
                 }),

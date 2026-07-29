@@ -7,14 +7,14 @@ type SummaryProductProps = {
 };
 
 export default function SummaryProduct({ product }: SummaryProductProps) {
-  const requiresSize = Boolean(product.sizes?.length);
+  const requiresSize = product.sizes.length > 0;
   const selectedDates = product.dates.filter((date) => isRentalDateValid(date, requiresSize));
 
   return (
     <article className="flex w-full flex-col gap-4">
       <div className="flex items-start gap-4">
         <img
-          src={product.images[0]}
+          src={product.image}
           alt={product.alt}
           className="h-20 w-20 shrink-0 rounded-lg object-cover"
         />

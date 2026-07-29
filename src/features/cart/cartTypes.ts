@@ -1,9 +1,14 @@
-import type { ProductProps } from '../product/productProps.ts';
+import type { components } from '../../api/generated/schema.ts';
 import type { RentalDate } from './rentalDate.ts';
 
-type Product = ProductProps;
+type CartProductResponse = components['schemas']['CartItemResponse'];
+type CartProductSizeResponse = CartProductResponse['sizes'][number];
 
-export type CartProduct = Product & {
+export type CartProduct = Pick<CartProductResponse, 'price' | 'image'> & {
+  id: CartProductResponse['product_id'];
+  name: CartProductResponse['product_name'];
+  alt: NonNullable<CartProductResponse['alt']>;
+  sizes: CartProductSizeResponse['size'][];
   dates: RentalDate[];
 };
 

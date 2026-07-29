@@ -4,13 +4,12 @@ import { forwardRef } from 'react';
 
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import Select from '../../components/core/Select.tsx';
-import type { ProductProps } from '../product/productProps.ts';
 import { isRentalDateValid, type RentalDate } from './rentalDate.ts';
 
 type ProductRentalDateProps = {
   date: RentalDate;
   productName: string;
-  productSizes?: ProductProps['sizes'];
+  productSizes: string[];
   onQuantityChange: (quantity: number) => void;
   onSizeChange: (size: string) => void;
   onStartDateChange: (date: Date | null) => void;
@@ -38,7 +37,7 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
     },
     ref
   ) {
-    const requiresSize = Boolean(productSizes?.length);
+    const requiresSize = productSizes.length > 0;
 
     return (
       <motion.div
@@ -108,15 +107,15 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
             }`}
           />
 
-          {productSizes && productSizes.length > 0 && (
+          {productSizes.length > 0 && (
             <Select
               value={date.size ?? ''}
               onChange={onSizeChange}
               ariaLabel={`Rozmiar: ${productName}`}
               placeholder="--"
-              options={productSizes.map((sizeOption) => ({
-                value: sizeOption.size,
-                label: sizeOption.size,
+              options={productSizes.map((size) => ({
+                value: size,
+                label: size,
               }))}
               className="w-full md:w-24 lg:w-20"
             />

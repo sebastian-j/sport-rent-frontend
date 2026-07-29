@@ -14,7 +14,7 @@ import {
 export function getProductInformation(product: CartProduct): ProductInformation {
   const rentalDays = new Set<number>();
   let totalCost = 0;
-  const requiresSize = Boolean(product.sizes?.length);
+  const requiresSize = product.sizes.length > 0;
   const completeDates = product.dates.filter((date) => isRentalDateValid(date, requiresSize));
 
   for (const date of completeDates) {
@@ -60,7 +60,7 @@ export function findFirstInvalidRentalDate(products: CartProduct[]): InvalidRent
     )
     .find(({ productId, date }) => {
       const product = products.find((item) => item.id === productId);
-      const requiresSize = Boolean(product?.sizes?.length);
+      const requiresSize = Boolean(product?.sizes.length);
 
       return !isRentalDateValid(date, requiresSize);
     });
