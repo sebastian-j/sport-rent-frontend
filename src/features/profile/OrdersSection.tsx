@@ -1,28 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
-import OrderCard from './orders/OrderCard.tsx';
-import { type Order, type OrderStatus } from './orders/orderTypes.ts';
+import {
+  getOrderDetails,
+  getUserHistory,
+  type OrderDetailResponse,
+} from "../../api/user.ts";
+import OrderCard from "./orders/OrderCard.tsx";
+import { type Order, type OrderStatus } from "./orders/orderTypes.ts";
 
 function OrderDetailsLoader({ orderId }: { orderId: string }) {
   const [details, setDetails] = useState<OrderDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    getOrderDetails(Number(orderId)).then(({ data }) => {
-      if (data) setDetails(data);
-      setIsLoading(false);
-    });
+    setHasLoadError(false);
+    getOrderDetails(Number(orderId))
+      .then(({ data, error }) => {
+        if (error) {
+          setHasLoadError(true);
+        } else if (data) {
+          setDetails(data);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setHasLoadError(true);
+        setIsLoading(false);
+      });
   }, [orderId]);
 
   if (isLoading) {
     return (
-      <div className="mt-4 text-center text-sm text-app-textMuted">Ładowanie szczegółów...</div>
+      <div className="mt-4 text-center text-sm text-app-textMuted">
+        Ładowanie szczegółów...
+      </div>
     );
   }
 
-  if (!details) {
+  if (hasLoadError || !details) {
     return (
       <div className="mt-4 text-center text-sm text-app-danger">
         Nie udało się wczytać szczegółów.
@@ -32,33 +49,55 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
 
   return (
     <div className="mt-4 flex flex-col gap-3 border-t border-app-borderSoft pt-4">
-      {details.items.map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-col gap-2 rounded-lg bg-app-surface p-3 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div className="flex items-center gap-4">
-            <img
-              src={`data:image/jpeg;base64,${item.image}`}
-              alt={item.product_name}
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-app-borderSoft bg-app-surfaceSoft object-cover text-center text-[10px] leading-tight text-app-textMuted"
-            />
-            <div className="flex flex-col">
-              <span className="font-semibold text-app-textStrong">{item.product_name}</span>
-              <span className="text-sm text-app-textMuted">
-                Okres: {new Date(item.start_date).toLocaleDateString()} -{' '}
-                {new Date(item.end_date).toLocaleDateString()}
+      {details.items.map((item, index) => {
+        const startDate = new Date(item.start_date);
+        const endDate = new Date(item.end_date);
+        const diffTime = endDate.getTime() - startDate.getTime();
+        const days = Math.max(1, Math.round(diffTime / (1000 * 3600 * 24)));
+        const dailyPrice = item.unit_price / days;
+        const totalItemPrice = item.quantity * item.unit_price;
+
+        return (
+          <div
+            key={index}
+            className="flex flex-col gap-2 rounded-lg bg-app-surface p-3 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex items-center gap-4">
+              <img
+                src={item.image || undefined}
+                alt={item.product_name}
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-app-borderSoft bg-app-surfaceSoft object-cover text-center text-[10px] leading-tight text-app-textMuted"
+              />
+              <div className="flex flex-col gap-0.5">
+                <span className="font-semibold text-app-textStrong">
+                  {item.product_name}
+                </span>
+                <span className="text-xs text-app-textMuted">
+                  Okres: {startDate.toLocaleDateString()} -{" "}
+                  {endDate.toLocaleDateString()} ({days}{" "}
+                  {days === 1 ? "dzień" : "dni"})
+                </span>
+                {item.size && (
+                  <span className="text-xs text-app-textMuted">
+                    Rozmiar: {item.size}
+                  </span>
+                )}
+                <span className="text-xs text-app-textMuted">
+                  Stawka: {dailyPrice.toFixed(2)} zł / dzień
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col items-end justify-center text-right">
+              <span className="text-xs text-app-textMuted">
+                {item.quantity} szt.
               </span>
-              {item.size && (
-                <span className="text-sm text-app-textMuted">Rozmiar: {item.size}</span>
-              )}
+              <span className="text-base font-bold text-app-textStrong">
+                {totalItemPrice.toFixed(2)} zł
+              </span>
             </div>
           </div>
-          <div className="text-right text-app-textStrong">
-            {item.quantity} szt. x {item.unit_price} zł
-          </div>
-        </div>
-      ))}
+        );
+      })}
       <div className="mt-2 flex justify-between px-2 text-lg font-bold text-app-textStrong">
         <span>Suma zamówienia:</span>
         <span>{details.total.toFixed(2)} zł</span>
@@ -72,24 +111,32 @@ export default function OrdersSection() {
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   useEffect(() => {
-    getUserHistory().then(({ data }) => {
-      if (data) {
-        const fetchedOrders: Order[] = data.map((item) => ({
-          id: String(item.id),
-          date: new Date(item.created_at).toLocaleDateString('pl-PL', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          }),
-          price: item.total,
-          status: item.status as OrderStatus,
-        }));
-        setOrders(fetchedOrders);
-      }
-      setIsLoading(false);
-    });
+    getUserHistory()
+      .then(({ data, error }) => {
+        if (error) {
+          setHasLoadError(true);
+        } else if (data) {
+          const fetchedOrders: Order[] = data.map((item) => ({
+            id: String(item.id),
+            date: new Date(item.created_at).toLocaleDateString("pl-PL", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }),
+            price: item.total,
+            status: item.status as OrderStatus,
+          }));
+          setOrders(fetchedOrders.reverse());
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setHasLoadError(true);
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -97,7 +144,13 @@ export default function OrdersSection() {
       <p className="text-center text-3xl md:text-5xl">Historia zamówień</p>
 
       {isLoading ? (
-        <div className="mt-12 text-center text-app-textMuted">Ładowanie historii...</div>
+        <div className="mt-12 text-center text-app-textMuted">
+          Ładowanie historii...
+        </div>
+      ) : hasLoadError ? (
+        <div className="mt-12 text-center text-app-danger">
+          Wystąpił błąd podczas ładowania historii.
+        </div>
       ) : (
         <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft md:m-12 md:max-w-[calc(100%-6rem)]">
           {orders.map((order) => (
@@ -105,13 +158,19 @@ export default function OrdersSection() {
               key={order.id}
               order={order}
               isExpanded={expandedOrder === order.id}
-              onToggle={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+              onToggle={() =>
+                setExpandedOrder(expandedOrder === order.id ? null : order.id)
+              }
             >
-              {expandedOrder === order.id && <OrderDetailsLoader orderId={order.id} />}
+              {expandedOrder === order.id && (
+                <OrderDetailsLoader orderId={order.id} />
+              )}
             </OrderCard>
           ))}
           {orders.length === 0 && (
-            <div className="p-8 text-center text-app-textMuted">Brak zamówień</div>
+            <div className="p-8 text-center text-app-textMuted">
+              Brak zamówień
+            </div>
           )}
         </div>
       )}
