@@ -1,5 +1,5 @@
 import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { healthCheck } from '../api/health.ts';
@@ -41,6 +41,9 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
   const { status: authStatus, logout } = useAuth();
   const { hasItems: hasCartItems } = useCartStatus();
   const isAuthenticated = authStatus === 'authenticated';
+  const sectionHomeRoute = getSectionHomeRoute(location.pathname);
+  const isSectionHomePage =
+    location.pathname === sectionHomeRoute || location.pathname === `${sectionHomeRoute}/`;
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -131,12 +134,25 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     }
   };
 
+  const handleLogoClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!isSectionHomePage) return;
+
+    event.preventDefault();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    });
+  };
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-3 sm:px-6 md:px-12 lg:grid-cols-3">
         <div className="flex min-w-0 items-center gap-1 justify-self-start">
           <Link
-            to={getSectionHomeRoute(location.pathname)}
+            to={sectionHomeRoute}
+            onClick={handleLogoClick}
             className="inline-flex w-fit shrink-0 items-center"
           >
             <span
