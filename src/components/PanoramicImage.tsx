@@ -27,7 +27,7 @@ export default function PanoramicImage({ image, title, onButtonClick }: Panorami
         className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:brightness-[0.85]"
         style={{ backgroundImage: `url(${image})` }}
       />
-      <p className="relative z-10 break-words px-4 text-center text-[7vh] font-bold text-app-textInverted">
+      <p className="relative z-10 break-words px-4 text-center text-[7vh] font-bold text-app-textInverted drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
         {title}
       </p>
       <div className="relative z-10">
