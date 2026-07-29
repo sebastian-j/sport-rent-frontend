@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 
-type PageState = 'validating' | 'ready' | 'invalid' | 'success';
+type PageState = 'validating' | 'ready' | 'invalid' | 'validation-error' | 'success';
 
 function tokenFromLocation() {
   return new URLSearchParams(window.location.hash.slice(1)).get('token') ?? '';
@@ -16,6 +16,7 @@ export default function ConfirmPasswordResetPage() {
   const [password, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
   const [pageState, setPageState] = useState<PageState>('validating');
+  const [validationAttempt, setValidationAttempt] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,15 +38,20 @@ export default function ConfirmPasswordResetPage() {
 
         if (!isActive) return;
 
-        if (result.error || !result.data) {
+        if (result.response.status === 400) {
           setPageState('invalid');
+          return;
+        }
+
+        if (result.error || !result.data) {
+          setPageState('validation-error');
           return;
         }
 
         setEmail(result.data.email);
         setPageState('ready');
       } catch {
-        if (isActive) setPageState('invalid');
+        if (isActive) setPageState('validation-error');
       }
     };
 
@@ -54,7 +60,7 @@ export default function ConfirmPasswordResetPage() {
     return () => {
       isActive = false;
     };
-  }, [token]);
+  }, [token, validationAttempt]);
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,11 +69,6 @@ export default function ConfirmPasswordResetPage() {
 
     if (password !== repeatedPassword) {
       setSubmitError('Podane hasła nie są identyczne.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setSubmitError('Hasło musi mieć co najmniej 8 znaków.');
       return;
     }
 
@@ -114,6 +115,22 @@ export default function ConfirmPasswordResetPage() {
             <Link to="/reset-password" className="text-app-textStrong underline">
               Wygeneruj nowy link
             </Link>
+          </div>
+        )}
+
+        {pageState === 'validation-error' && (
+          <div className="flex w-[90%] flex-col gap-4">
+            <p role="alert" className="text-sm text-app-danger">
+              Nie udało się sprawdzić linku. Sprawdź połączenie z internetem i spróbuj ponownie.
+            </p>
+            <ButtonCore
+              text="Spróbuj ponownie"
+              onClick={() => {
+                setPageState('validating');
+                setValidationAttempt((attempt) => attempt + 1);
+              }}
+              className="w-fit px-4 py-2"
+            />
           </div>
         )}
 
