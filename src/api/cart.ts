@@ -7,6 +7,8 @@ export type UpdateCartItemRequest = components['schemas']['UpdateCartItemRequest
 
 export const getCart = () => api.GET('/cart');
 
+export const getCartStatus = () => api.GET('/cart/status');
+
 export const addCartItem = (body: AddToCartRequest) => api.POST('/cart/items', { body });
 
 export const updateCartItem = (itemId: number, body: UpdateCartItemRequest) =>

@@ -9,6 +9,7 @@ import {
   type UpdateCartItemRequest,
 } from '../../api/cart.ts';
 import { formatLocalDate } from '../../utils/localDate.ts';
+import { notifyCartChanged } from './cartEvents.ts';
 import { mapCartDate, mapCartProduct } from './cartMappers.ts';
 import type { CartProduct, DateField } from './cartTypes.ts';
 import { isPersistedRentalDate, isRentalDateValid, type RentalDate } from './rentalDate.ts';
@@ -288,6 +289,7 @@ export function useCart() {
           const result = await deleteCartItem(dateId);
           if (result.error) throw new Error('Deleting a cart item failed');
           removeLocally();
+          notifyCartChanged();
         } catch {
           await recoverFromSaveError();
         }
@@ -330,6 +332,7 @@ export function useCart() {
           const result = await deleteCartProduct(productId);
           if (result.error) throw new Error('Deleting a cart product failed');
           setProducts((previous) => previous.filter((product) => product.id !== productId));
+          notifyCartChanged();
         } catch {
           await recoverFromSaveError();
         }

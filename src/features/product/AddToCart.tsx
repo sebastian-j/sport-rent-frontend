@@ -6,6 +6,7 @@ import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { formatLocalDate } from '../../utils/localDate.ts';
 import { useAuth } from '../auth/authContext.ts';
+import { notifyCartChanged } from '../cart/cartEvents.ts';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
@@ -74,6 +75,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
         setHasError(true);
         return;
       }
+      notifyCartChanged();
       setMessage(
         `Dodano ${quantity} szt. produktu „${product.name}” do koszyka na okres ${startDate.toLocaleDateString('pl')}–${endDate.toLocaleDateString('pl')}.`
       );

@@ -123,6 +123,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Informacja, czy koszyk zawiera produkty */
+        get: operations["get_cart_status_cart_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cart/items": {
         parameters: {
             query?: never;
@@ -474,6 +491,11 @@ export interface components {
             size: string;
             /** Description */
             description?: string | null;
+        };
+        /** CartStatusResponse */
+        CartStatusResponse: {
+            /** Has Items */
+            has_items: boolean;
         };
         /** CategoryResponse */
         CategoryResponse: {
@@ -961,6 +983,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CartItemResponse"][];
+                };
+            };
+        };
+    };
+    get_cart_status_cart_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartStatusResponse"];
                 };
             };
         };
