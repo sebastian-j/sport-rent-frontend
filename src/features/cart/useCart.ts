@@ -11,6 +11,13 @@ import {
 import { formatLocalDate } from '../../utils/localDate.ts';
 import { notifyCartChanged } from './cartEvents.ts';
 import { mapCartDate, mapCartProduct } from './cartMappers.ts';
+import {
+  appendCartDate,
+  reconcileCartDate,
+  removeCartDate,
+  removeCartProduct,
+  updateCartDate,
+} from './cartState.ts';
 import type { CartProduct, DateField } from './cartTypes.ts';
 import { isPersistedRentalDate, isRentalDateValid, type RentalDate } from './rentalDate.ts';
 
@@ -103,51 +110,9 @@ export function useCart() {
 
   const reconcileSavedDate = useCallback(
     (sourceId: number, savedDate: RentalDate) => {
-      let mergedWithExistingDate = false;
-
-      setProducts((previous) =>
-        previous.map((product) => {
-          if (!product.dates.some((date) => date.id === sourceId)) return product;
-
-          const hasMergeTarget = product.dates.some(
-            (date) => date.id === savedDate.id && date.id !== sourceId
-          );
-          if (!hasMergeTarget) {
-            const sourceDate = product.dates.find((date) => date.id === sourceId);
-            const persistedDate = {
-              ...savedDate,
-              uiKey: sourceDate?.uiKey ?? savedDate.uiKey,
-            };
-            return {
-              ...product,
-              dates: product.dates.map((date) => (date.id === sourceId ? persistedDate : date)),
-            };
-          }
-
-          mergedWithExistingDate = true;
-          const mergeTarget = product.dates.find(
-            (date) => date.id === savedDate.id && date.id !== sourceId
-          );
-          const mergedDate = {
-            ...savedDate,
-            uiKey: mergeTarget?.uiKey ?? savedDate.uiKey,
-          };
-          let emittedMergeTarget = false;
-          return {
-            ...product,
-            dates: product.dates.flatMap((date) => {
-              if (date.id === sourceId) return [];
-              if (date.id !== savedDate.id) return [date];
-              if (emittedMergeTarget) return [];
-
-              emittedMergeTarget = true;
-              return [mergedDate];
-            }),
-          };
-        })
-      );
-
-      if (mergedWithExistingDate) showMergeAnimation(savedDate.id);
+      const result = reconcileCartDate(productsRef.current, sourceId, savedDate);
+      setProducts(result.products);
+      if (result.merged) showMergeAnimation(savedDate.id);
     },
     [setProducts, showMergeAnimation]
   );
@@ -216,36 +181,21 @@ export function useCart() {
 
   const changeDate = useCallback(
     (productId: number, dateId: number, changes: Partial<RentalDate>) => {
-      let changedDate: RentalDate | undefined;
-      let requiresSize = false;
-      setProducts((previous) =>
-        previous.map((product) =>
-          product.id === productId
-            ? {
-                ...product,
-                dates: product.dates.map((date) => {
-                  if (date.id !== dateId) return date;
-                  requiresSize = product.sizes.length > 0;
-                  changedDate = { ...date, ...changes };
-                  return changedDate;
-                }),
-              }
-            : product
-        )
-      );
-      if (!changedDate) return;
+      const result = updateCartDate(productsRef.current, productId, dateId, changes);
+      setProducts(result.products);
+      if (!result.date) return;
 
-      if (isPersistedRentalDate(changedDate)) {
-        if (!isRentalDateValid(changedDate, requiresSize)) return;
+      if (isPersistedRentalDate(result.date)) {
+        if (!isRentalDateValid(result.date, result.requiresSize)) return;
 
         queuePatch(dateId, {
-          quantity: changedDate.quantity,
-          size: changedDate.size,
-          start_date: formatLocalDate(changedDate.start_date),
-          end_date: formatLocalDate(changedDate.end_date),
+          quantity: result.date.quantity,
+          size: result.date.size,
+          start_date: formatLocalDate(result.date.start_date),
+          end_date: formatLocalDate(result.date.end_date),
         });
       } else {
-        createDraftIfComplete(productId, changedDate);
+        createDraftIfComplete(productId, result.date);
       }
     },
     [createDraftIfComplete, queuePatch, setProducts]
@@ -272,13 +222,7 @@ export function useCart() {
       if (!date || creatingDrafts.current.has(dateId)) return;
 
       const removeLocally = () =>
-        setProducts((previous) =>
-          previous.flatMap((product) => {
-            if (product.id !== productId) return [product];
-            const dates = product.dates.filter((item) => item.id !== dateId);
-            return dates.length ? [{ ...product, dates }] : [];
-          })
-        );
+        setProducts((previous) => removeCartDate(previous, productId, dateId));
 
       if (!isPersistedRentalDate(date)) {
         removeLocally();
@@ -302,24 +246,14 @@ export function useCart() {
     (productId: number) => {
       const id = nextDraftId.current--;
       setProducts((previous) =>
-        previous.map((product) =>
-          product.id === productId
-            ? {
-                ...product,
-                dates: [
-                  ...product.dates,
-                  {
-                    id,
-                    uiKey: `draft-${Math.abs(id)}`,
-                    quantity: 1,
-                    size: null,
-                    start_date: null,
-                    end_date: null,
-                  },
-                ],
-              }
-            : product
-        )
+        appendCartDate(previous, productId, {
+          id,
+          uiKey: `draft-${Math.abs(id)}`,
+          quantity: 1,
+          size: null,
+          start_date: null,
+          end_date: null,
+        })
       );
     },
     [setProducts]
@@ -331,7 +265,7 @@ export function useCart() {
         try {
           const result = await deleteCartProduct(productId);
           if (result.error) throw new Error('Deleting a cart product failed');
-          setProducts((previous) => previous.filter((product) => product.id !== productId));
+          setProducts((previous) => removeCartProduct(previous, productId));
           notifyCartChanged();
         } catch {
           await recoverFromSaveError();
