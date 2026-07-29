@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
@@ -24,6 +24,7 @@ import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
 import ProductPage from './pages/store/ProductPage.tsx';
 import SearchPage from './pages/store/SearchPage.tsx';
 import { AppProviders } from './providers/AppProviders.tsx';
+import { RENT_ROUTES } from './routes.ts';
 
 function App() {
   return (
@@ -31,21 +32,26 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/" element={<Navigate to={RENT_ROUTES.home} replace /> } />
+          <Route path={RENT_ROUTES.home}>
+            <Route element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/favorites" element={<FavoritesPage />} />
+              </Route>
+              <Route path="/product/:slug" element={<ProductPage />} />
             </Route>
-            <Route path="/product/:slug" element={<ProductPage />} />
-          </Route>
-          <Route element={<Layout showCategoryBar={false} />}>
-            <Route path="/search" element={<SearchPage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/summary" element={<OrderSummaryPage />} />
+            <Route element={<Layout showCategoryBar={false} />}>
+              <Route path="/search" element={<SearchPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/summary" element={<OrderSummaryPage />} />
+              </Route>
             </Route>
           </Route>
+          <Route path="/service" element={<Layout showCategoryBar={false} /> } />
+          <Route path="/boot-fitting" element={<Layout showCategoryBar={false} /> } />
           <Route element={<LoginLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

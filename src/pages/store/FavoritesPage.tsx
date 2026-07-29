@@ -6,6 +6,7 @@ import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
+import { RENT_ROUTES } from '../../routes.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
@@ -169,6 +170,47 @@ export default function FavoritesPage() {
           </AnimatePresence>
         </ProductCardGrid>
       )}
+      <ProductCardGrid className="mt-4" itemCount={favorites.length}>
+        <AnimatePresence initial={false} mode="popLayout">
+          {favorites.length === 0 ? (
+            <motion.div
+              key="empty-favorites"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full w-full py-20 text-center text-app-textMuted"
+            >
+              <p className="text-xl">Brak ulubionych produktów.</p>
+            </motion.div>
+          ) : (
+            favorites.map((product) => (
+              <motion.div
+                key={product.slug}
+                layout
+                style={{ width: '100%' }}
+                exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
+                transition={{
+                  layout: { duration: 0.35, ease: 'easeInOut' },
+                  duration: 0.28,
+                  times: [0, 0.4, 1],
+                  ease: 'easeOut',
+                }}
+              >
+                <ProductCard
+                  name={product.name}
+                  price={product.price}
+                  image={product.image}
+                  alt={product.alt}
+                  isFavorite={true}
+                  isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+                  hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                  onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
+                  onClick={() => navigate(RENT_ROUTES.product(product.slug))}
+                />
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </ProductCardGrid>
     </div>
   );
 }

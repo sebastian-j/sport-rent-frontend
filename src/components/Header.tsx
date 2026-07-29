@@ -8,6 +8,7 @@ import headerLogoSmall from '../assets/logo_header_small.png';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
+import { RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
 import SubsiteSelector from './SubsiteSelector.tsx';
@@ -106,7 +107,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     setIsMenuOpen(false);
 
     if (isAuthenticated) {
-      navigate('/', { replace: true });
+      navigate(RENT_ROUTES.home, { replace: true });
       await logout();
       return;
     }
@@ -133,7 +134,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-3 sm:px-6 md:px-12 lg:grid-cols-3">
         <div className="flex min-w-0 items-center gap-1 justify-self-start">
-          <Link to="/" className="inline-flex w-fit shrink-0 items-center">
+          <Link to={RENT_ROUTES.home} className="inline-flex w-fit shrink-0 items-center">
             <span
               role="img"
               aria-label="Logo Polar Sport Rent"
@@ -179,11 +180,11 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
           >
             <Search />
           </button>
-          <Link to="/favorites">
+          <Link to={RENT_ROUTES.favorites}>
             <Heart className="cursor-pointer" />
           </Link>
           <Link
-            to="/cart"
+            to={RENT_ROUTES.cart}
             className="relative"
             aria-label={hasCartItems ? 'Koszyk zawiera produkty' : 'Koszyk'}
           >
@@ -192,7 +193,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
               <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-app-danger ring-2 ring-app-surface" />
             )}
           </Link>
-          <Link to="/profile">
+          <Link to={RENT_ROUTES.profile}>
             <User className="cursor-pointer" />
           </Link>
           <div ref={menuRef} className="relative">
