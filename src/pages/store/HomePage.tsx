@@ -11,11 +11,11 @@ import panoramicImage from '../../assets/panoramic_small.png';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
+import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
-import ActivityIndicator from "../../components/core/ActivityIndicator.tsx";
 
 const LIMIT = 10;
 const INITIAL_MULTIPLIER = 4;
@@ -316,9 +316,7 @@ export default function HomePage() {
 
       {hasMore && !error && (
         <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
-          {isLoading && (
-            <ActivityIndicator size={44} />
-          )}
+          {isLoading && <ActivityIndicator size={44} />}
         </div>
       )}
     </div>
