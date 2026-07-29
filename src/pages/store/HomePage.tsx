@@ -109,7 +109,6 @@ export default function HomePage() {
         };
         categoryImage.src = data.image;
       } catch (error) {
-        console.error('Błąd pobierania losowej kategorii:', error);
         if (active) setPanoramicStatus('hidden');
       }
     };
@@ -195,7 +194,6 @@ export default function HomePage() {
           }
         }
       } catch (err) {
-        console.error('Błąd pobierania produktów:', err);
         setError('Nie udało się załadować produktów.');
       } finally {
         if (active) setIsLoading(false);
