@@ -15,6 +15,7 @@ import PanoramicImage from '../../components/PanoramicImage.tsx';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import ActivityIndicator from "../../components/core/ActivityIndicator.tsx";
 
 const LIMIT = 10;
 const INITIAL_MULTIPLIER = 4;
@@ -316,7 +317,7 @@ export default function HomePage() {
       {hasMore && !error && (
         <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
           {isLoading && (
-            <div className="size-8 animate-spin rounded-full border-4 border-app-border border-t-app-textStrong" />
+            <ActivityIndicator size={44} />
           )}
         </div>
       )}
