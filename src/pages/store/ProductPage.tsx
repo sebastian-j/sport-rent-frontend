@@ -8,20 +8,24 @@ import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
 
 export default function ProductPage() {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<ProductProps | null>(null);
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       setIsLoading(true);
+      setError(null);
 
       if (slug) {
         try {
-          const { data, error } = await getProductBySlug(slug);
-          if (error || !data) {
+          const { data, error: apiError } = await getProductBySlug(slug);
+          if (apiError || !data) {
             setProduct(null);
+            if (apiError) {
+              setError('Nie udało się załadować produktu.');
+            }
           } else {
             setProduct({
               id: data.id,
@@ -39,9 +43,10 @@ export default function ProductPage() {
                 })) ?? [],
             });
           }
-        } catch (error) {
-          console.error(error);
+        } catch (err) {
+          console.error(err);
           setProduct(null);
+          setError('Nie udało się załadować produktu. Spróbuj ponownie później.');
         } finally {
           setIsLoading(false);
         }
@@ -57,6 +62,23 @@ export default function ProductPage() {
   if (isLoading) {
     return (
       <div className="text-center text-5xl text-app-text mt-[10vh]">Ładowanie produktu...</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center justify-center px-4 py-20 text-center text-red-500">
+        <p className="mb-4 text-2xl font-semibold">{error}</p>
+        <button
+          onClick={() => {
+            // Trigger a re-render by doing window.location.reload() or we could add a retry mechanism
+            window.location.reload();
+          }}
+          className="rounded-full bg-red-100 px-6 py-2 font-medium text-red-600 transition-colors hover:bg-red-200"
+        >
+          Spróbuj ponownie
+        </button>
+      </div>
     );
   }
 

@@ -11,11 +11,16 @@ import panoramicImage from '../../assets/panoramic_small.png';
 import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
+import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import PanoramicImage from '../../components/PanoramicImage.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+
+const LIMIT = 10;
+const INITIAL_MULTIPLIER = 4;
+const INITIAL_LIMIT = INITIAL_MULTIPLIER * LIMIT;
 
 const CATEGORY_CARDS = {
   trailers: {
@@ -67,38 +72,120 @@ export default function HomePage() {
   const [products, setProducts] = useState<ProductProps[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadData() {
-      setError(null);
-      try {
-        const productsResult = await getProducts();
-        const productsData = productsResult.data;
+  const [fetchTrigger, setFetchTrigger] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-        if (productsData) {
-          setProducts(
-            productsData.map((product) => ({
-              id: product.id,
-              name: product.name,
-              description: product.description ?? '',
-              price: product.price ?? 0,
-              slug: product.slug,
-              images: product.images ?? [],
-              alt: product.alt ?? product.name,
-              category: product.category ?? '',
+  const pageRef = useRef(1);
+
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+
+    const fetchPage = async () => {
+      try {
+        setError(null);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        if (!active) return; // Prevent double fetch in React Strict Mode
+
+        if (pageRef.current === 1) {
+          const res = await getProducts({ page: 1, pageSize: INITIAL_LIMIT });
+          if (!active) return;
+
+          const data = res.data || [];
+
+          const combined = data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
+          }));
+
+          const uniqueProducts: typeof combined = [];
+          const seen = new Set<string>();
+          for (const p of combined) {
+            if (!seen.has(p.slug)) {
+              seen.add(p.slug);
+              uniqueProducts.push(p);
+            }
+          }
+
+          setProducts(uniqueProducts);
+          pageRef.current = INITIAL_LIMIT / LIMIT + 1;
+          if (data.length < INITIAL_LIMIT) {
+            setHasMore(false);
+          }
+        } else {
+          const res = await getProducts({ page: pageRef.current, pageSize: LIMIT });
+          if (!active) return;
+
+          const data = res.data || [];
+          const newProducts = data.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description ?? '',
+            price: product.price ?? 0,
+            slug: product.slug,
+            images: product.images ?? [],
+            alt: product.alt ?? product.name,
+            category: product.category ?? '',
               isFavorite: product.isFavorite,
-            }))
-          );
+          }));
+
+          setProducts((prev) => {
+            const existingSlugs = new Set(prev.map((p) => p.slug));
+            return [...prev, ...newProducts.filter((p) => !existingSlugs.has(p.slug))];
+          });
+
+          pageRef.current += 1;
+          if (data.length < LIMIT) {
+            setHasMore(false);
+          }
         }
       } catch (err) {
-        console.error('Błąd podczas ładowania produktów:', err);
-        setError('Wystąpił błąd podczas ładowania produktów. Spróbuj odświeżyć stronę.');
+        console.error('Błąd pobierania produktów:', err);
+        setError('Nie udało się załadować produktów.');
+      } finally {
+        if (active) setIsLoading(false);
       }
+    };
+
+    void fetchPage();
+
+    return () => {
+      active = false;
+    };
+  }, [fetchTrigger]); // Only triggers on mount and when fetchTrigger changes!
+
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const observerNodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { rootMargin: '0px 0px 3000px 0px' }
+    );
+
+    if (observerNodeRef.current) {
+      observer.observe(observerNodeRef.current);
     }
 
-    if (authStatus !== 'loading') {
-      void loadData();
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isIntersecting && !isLoading && hasMore) {
+      setFetchTrigger((prev) => prev + 1);
     }
-  }, [authStatus]);
+  }, [isIntersecting, isLoading, hasMore]);
 
   const toggleFavorite = async (productSlug: string) => {
     if (pendingFavoriteSlugs.has(productSlug)) return;
@@ -188,11 +275,23 @@ export default function HomePage() {
       </div>
 
       <CategoryBar />
-      {error ? (
-        <div className="my-8 w-full text-center text-red-500">
-          <p className="text-xl">{error}</p>
+
+      {error && (
+        <div className="flex w-full flex-col items-center justify-center p-8 text-center text-red-500">
+          <p className="mb-4 text-lg">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setFetchTrigger((prev) => prev + 1);
+            }}
+            className="rounded-full bg-red-100 px-6 py-2 font-medium text-red-600 transition-colors hover:bg-red-200"
+          >
+            Spróbuj ponownie
+          </button>
         </div>
-      ) : (
+      )}
+
+      {!error && (
         <ProductCardGrid className="my-4">
           {products.map((product) => (
             <ProductCard
@@ -212,6 +311,12 @@ export default function HomePage() {
             />
           ))}
         </ProductCardGrid>
+      )}
+
+      {hasMore && !error && (
+        <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
+          {isLoading && <ActivityIndicator size={44} />}
+        </div>
       )}
     </div>
   );
