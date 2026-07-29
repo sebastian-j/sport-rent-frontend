@@ -1,11 +1,13 @@
-import { Check, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { BOOT_FITTING_ROUTES, RENT_ROUTES, SERVICE_ROUTES } from '../routes.ts';
+
 const SUBSITES = [
-  { label: 'RENT', path: '/rent' },
-  { label: 'SERWIS', path: '/service' },
-  { label: 'BOOT-FITTING', path: '/boot-fitting' },
+  { label: 'RENT', path: RENT_ROUTES.home },
+  { label: 'SERWIS', path: SERVICE_ROUTES.home },
+  { label: 'BOOT-FITTING', path: BOOT_FITTING_ROUTES.home },
 ] as const;
 
 type Subsite = (typeof SUBSITES)[number];
@@ -69,30 +71,23 @@ export default function SubsiteSelector() {
           aria-label="Wybierz część serwisu"
           className="absolute left-0 top-full z-50 mt-2 min-w-44 overflow-hidden rounded-lg border border-app-border/20 bg-app-surfaceElevated py-1 shadow-lg"
         >
-          {SUBSITES.map((subsite: Subsite) => {
-            const isSelected = subsite.path === selectedSubsite.path;
-
-            return (
+          {SUBSITES.filter((subsite) => subsite.path !== selectedSubsite.path).map(
+            (subsite: Subsite) => (
               <button
                 key={subsite.path}
                 type="button"
                 role="option"
-                aria-selected={isSelected}
+                aria-selected={false}
                 onClick={() => {
                   setIsOpen(false);
                   navigate(subsite.path);
                 }}
-                className={`flex w-full items-center justify-between gap-4 px-4 py-2.5 text-left text-sm font-black tracking-[0.07em] transition-colors ${
-                  isSelected
-                    ? 'bg-app-surfaceSoft text-app-textStrong'
-                    : 'text-app-text hover:bg-app-surfaceSoft'
-                }`}
+                className="flex w-full items-center px-4 py-2.5 text-left text-sm font-black tracking-[0.07em] text-app-text transition-colors hover:bg-app-surfaceSoft"
               >
                 <span>{subsite.label}</span>
-                {isSelected && <Check aria-hidden="true" size={16} strokeWidth={2} />}
               </button>
-            );
-          })}
+            )
+          )}
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SocialIcon } from 'react-social-icons/component';
 import 'react-social-icons/facebook';
 import 'react-social-icons/instagram';
@@ -8,6 +8,7 @@ import 'react-social-icons/tiktok';
 import 'react-social-icons/twitter';
 
 import footerLogo from '../assets/logo_footer.svg';
+import { getSectionHomeRoute } from '../routes.ts';
 
 type FooterSectionProps = {
   children: ReactNode;
@@ -90,11 +91,15 @@ function FooterSection({ children, id, title }: FooterSectionProps) {
 }
 
 export default function Footer() {
+  const location = useLocation();
+
   return (
     <footer className="bg-black px-5 py-10 text-app-textInverted sm:px-8 md:px-12 md:py-14 lg:px-20">
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-0 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-x-16">
         <div className="mb-8 flex max-w-xl justify-self-center flex-col items-center gap-5 text-center lg:mb-0">
-          <img className="h-auto w-64 max-w-full" src={footerLogo} alt="Logo Polar Sport Rent" />
+          <Link to={getSectionHomeRoute(location.pathname)}>
+            <img className="h-auto w-64 max-w-full" src={footerLogo} alt="Logo Polar Sport Rent" />
+          </Link>
           <p className="text-base leading-relaxed text-app-textInvertedMuted lg:text-lg">
             Polar Sport Rent - wypożyczalnia sprzętu outdoorowego dla aktywnych. W naszej ofercie
             znajdziesz wszystko, czego potrzebujesz do przygód w terenie: rowery gravelowe, deski

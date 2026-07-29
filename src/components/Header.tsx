@@ -1,6 +1,6 @@
 import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { healthCheck } from '../api/health.ts';
 import headerLogo from '../assets/logo_header.png';
@@ -8,7 +8,7 @@ import headerLogoSmall from '../assets/logo_header_small.png';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
-import { RENT_ROUTES } from '../routes.ts';
+import { getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
 import SubsiteSelector from './SubsiteSelector.tsx';
@@ -36,6 +36,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const categoryBarRef = useRef<HTMLDivElement>(null);
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const location = useLocation();
   const navigate = useNavigate();
   const { status: authStatus, logout } = useAuth();
   const { hasItems: hasCartItems } = useCartStatus();
@@ -134,7 +135,10 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
       <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-3 sm:px-6 md:px-12 lg:grid-cols-3">
         <div className="flex min-w-0 items-center gap-1 justify-self-start">
-          <Link to={RENT_ROUTES.home} className="inline-flex w-fit shrink-0 items-center">
+          <Link
+            to={getSectionHomeRoute(location.pathname)}
+            className="inline-flex w-fit shrink-0 items-center"
+          >
             <span
               role="img"
               aria-label="Logo Polar Sport Rent"

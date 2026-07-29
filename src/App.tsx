@@ -2,6 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
+import { ThemeProvider } from './components/core/ThemeSelector.tsx';
+import { AuthProvider } from './features/auth/AuthContext.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
 import Layout from './layouts/Layout';
@@ -23,8 +25,10 @@ import HomePage from './pages/store/HomePage.tsx';
 import OrderSummaryPage from './pages/store/OrderSummaryPage.tsx';
 import ProductPage from './pages/store/ProductPage.tsx';
 import SearchPage from './pages/store/SearchPage.tsx';
+import SubsiteSelectionPage from './pages/SubsiteSelectionPage.tsx';
+import { BOOT_FITTING_ROUTES, RENT_ROUTES, ROOT_ROUTE, SERVICE_ROUTES } from './routes.ts';
 import { AppProviders } from './providers/AppProviders.tsx';
-import { RENT_ROUTES } from './routes.ts';
+
 
 function App() {
   return (
@@ -32,26 +36,26 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Navigate to={RENT_ROUTES.home} replace /> } />
+          <Route path={ROOT_ROUTE} element={<SubsiteSelectionPage />} />
           <Route path={RENT_ROUTES.home}>
             <Route element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="favorites" element={<FavoritesPage />} />
               </Route>
-              <Route path="/product/:slug" element={<ProductPage />} />
+              <Route path="product/:slug" element={<ProductPage />} />
             </Route>
             <Route element={<Layout showCategoryBar={false} />}>
-              <Route path="/search" element={<SearchPage />} />
+              <Route path="search" element={<SearchPage />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/summary" element={<OrderSummaryPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="cart" element={<CartPage />} />
+                <Route path="summary" element={<OrderSummaryPage />} />
               </Route>
             </Route>
           </Route>
-          <Route path="/service" element={<Layout showCategoryBar={false} /> } />
-          <Route path="/boot-fitting" element={<Layout showCategoryBar={false} /> } />
+          <Route path={SERVICE_ROUTES.home} element={<Layout showCategoryBar={false} />} />
+          <Route path={BOOT_FITTING_ROUTES.home} element={<Layout showCategoryBar={false} />} />
           <Route element={<LoginLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
