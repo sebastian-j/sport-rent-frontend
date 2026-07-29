@@ -1,9 +1,7 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import ScrollToTop from './components/core/ScrollToTop.tsx';
-import { ThemeProvider } from './components/core/ThemeSelector.tsx';
-import { AuthProvider } from './features/auth/AuthContext.tsx';
 import DocumentLayout from './layouts/DocumentLayout.tsx';
 import InfoLayout from './layouts/InfoLayout.tsx';
 import Layout from './layouts/Layout';
@@ -13,12 +11,14 @@ import ConfirmPasswordResetPage from './pages/auth/ConfirmPasswordResetPage.tsx'
 import LoginPage from './pages/auth/LoginPage.tsx';
 import RegisterPage from './pages/auth/RegisterPage.tsx';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
+import BootFittingHomePage from './pages/bootFitting/BootFittingHomePage.tsx';
 import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
 import TosPage from './pages/document/TosPage.tsx';
 import AboutPage from './pages/info/AboutPage.tsx';
 import ContactPage from './pages/info/ContactPage.tsx';
 import FaqPage from './pages/info/FaqPage.tsx';
 import PointsPage from './pages/info/PointsPage.tsx';
+import ServiceHomePage from './pages/service/ServiceHomePage.tsx';
 import CartPage from './pages/store/CartPage.tsx';
 import FavoritesPage from './pages/store/FavoritesPage.tsx';
 import HomePage from './pages/store/HomePage.tsx';
@@ -54,8 +54,6 @@ function App() {
               </Route>
             </Route>
           </Route>
-          <Route path={SERVICE_ROUTES.home} element={<Layout showCategoryBar={false} />} />
-          <Route path={BOOT_FITTING_ROUTES.home} element={<Layout showCategoryBar={false} />} />
           <Route element={<LoginLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -67,6 +65,8 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           </Route>
           <Route element={<InfoLayout />}>
+            <Route path={BOOT_FITTING_ROUTES.home} element={<BootFittingHomePage />} />
+            <Route path={SERVICE_ROUTES.home} element={<ServiceHomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/points" element={<PointsPage />} />
