@@ -610,6 +610,11 @@ export interface components {
             category?: string | null;
             /** Sizes */
             sizes?: components["schemas"]["ProductSize"][] | null;
+            /**
+             * Isfavorite
+             * @default false
+             */
+            isFavorite: boolean;
         };
         /** ProductSize */
         ProductSize: {
@@ -1321,7 +1326,7 @@ export interface operations {
                 order?: string | null;
                 minPrice?: number | null;
                 maxPrice?: number | null;
-                category?: string[];
+                category?: string[] | null;
                 query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
