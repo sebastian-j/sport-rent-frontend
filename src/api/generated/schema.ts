@@ -176,6 +176,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/categories/random": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Random Category */
+        get: operations["get_random_category_categories_random_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/favorites": {
         parameters: {
             query?: never;
@@ -610,6 +627,15 @@ export interface components {
         PromoCodeValidationResponse: {
             /** Discount Rate */
             discount_rate?: number | null;
+        };
+        /** RandomCategoryResponse */
+        RandomCategoryResponse: {
+            /** Name */
+            name: string;
+            /** Image */
+            image: string;
+            /** Slug */
+            slug: string;
         };
         /** RegisterAddressRequest */
         RegisterAddressRequest: {
@@ -1092,6 +1118,26 @@ export interface operations {
             };
         };
     };
+    get_random_category_categories_random_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RandomCategoryResponse"];
+                };
+            };
+        };
+    };
     get_favorites_favorites_get: {
         parameters: {
             query?: never;
@@ -1237,6 +1283,7 @@ export interface operations {
                 order?: string | null;
                 minPrice?: number | null;
                 maxPrice?: number | null;
+                category?: string[];
                 query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
@@ -1245,11 +1292,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": string[] | null;
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -1278,6 +1321,7 @@ export interface operations {
                 order?: string | null;
                 minPrice?: number | null;
                 maxPrice?: number | null;
+                category?: string[];
                 query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
@@ -1286,11 +1330,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": string[] | null;
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
