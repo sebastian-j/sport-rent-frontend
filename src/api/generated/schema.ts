@@ -1283,6 +1283,7 @@ export interface operations {
                 order?: string | null;
                 minPrice?: number | null;
                 maxPrice?: number | null;
+                category?: string[] | null;
                 query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
@@ -1291,11 +1292,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": string[] | null;
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

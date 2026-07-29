@@ -14,6 +14,7 @@ export default function FavoritesPage() {
   const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
+  const [error, setError] = useState<string | null>(null);
 
   const handleRemoveFavorite = async (slug: string) => {
     if (pendingFavoriteSlugs.has(slug)) return;
@@ -61,28 +62,35 @@ export default function FavoritesPage() {
     const activeErrorTimeouts = errorTimeouts.current;
 
     async function loadFavorites() {
-      if (authStatus === 'authenticated') {
-        const { data: favoritesData, error: favoritesError } = await getFavorites();
+      setError(null);
+      try {
+        if (authStatus === 'authenticated') {
+          const { data: favoritesData, error: favoritesError } = await getFavorites();
 
-        if (favoritesError || !favoritesData) {
-          console.error('Błąd pobierania ulubionych produktów:', favoritesError);
-          return;
+          if (favoritesError || !favoritesData) {
+            console.error('Błąd pobierania ulubionych produktów:', favoritesError);
+            setError('Nie udało się załadować ulubionych produktów. Spróbuj ponownie później.');
+            return;
+          }
+
+          const baseUrl = import.meta.env.VITE_API_URL || '';
+
+          setFavorites(
+            favoritesData.map((item) => ({
+              ...item,
+              image: item.image
+                ? item.image.startsWith('http')
+                  ? item.image
+                  : `${baseUrl.replace(/\/$/, '')}/${item.image.replace(/^\//, '')}`
+                : '',
+            }))
+          );
+        } else if (authStatus === 'anonymous' || authStatus === 'error') {
+          setFavorites([]);
         }
-
-        const baseUrl = import.meta.env.VITE_API_URL || '';
-
-        setFavorites(
-          favoritesData.map((item) => ({
-            ...item,
-            image: item.image
-              ? item.image.startsWith('http')
-                ? item.image
-                : `${baseUrl.replace(/\/$/, '')}/${item.image.replace(/^\//, '')}`
-              : '',
-          }))
-        );
-      } else if (authStatus === 'anonymous' || authStatus === 'error') {
-        setFavorites([]);
+      } catch (err) {
+        console.error('Błąd podczas ładowania ulubionych produktów:', err);
+        setError('Wystąpił błąd serwera. Spróbuj odświeżyć stronę.');
       }
     }
 
@@ -103,45 +111,51 @@ export default function FavoritesPage() {
       </div>
 
       <ProductCardGrid className="my-4" itemCount={favorites.length}>
-        <AnimatePresence initial={false} mode="popLayout">
-          {favorites.length === 0 ? (
-            <motion.div
-              key="empty-favorites"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="col-span-full w-full py-20 text-center text-app-textMuted"
-            >
-              <p className="text-xl">Brak ulubionych produktów.</p>
-            </motion.div>
-          ) : (
-            favorites.map((product) => (
+        {error ? (
+          <div className="col-span-full w-full py-20 text-center text-red-500">
+            <p className="text-xl">{error}</p>
+          </div>
+        ) : (
+          <AnimatePresence initial={false} mode="popLayout">
+            {favorites.length === 0 ? (
               <motion.div
-                key={product.slug}
-                layout
-                style={{ width: '100%' }}
-                exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
-                transition={{
-                  layout: { duration: 0.35, ease: 'easeInOut' },
-                  duration: 0.28,
-                  times: [0, 0.4, 1],
-                  ease: 'easeOut',
-                }}
+                key="empty-favorites"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full w-full py-20 text-center text-app-textMuted"
               >
-                <ProductCard
-                  name={product.name}
-                  price={product.price}
-                  image={product.image}
-                  alt={product.alt}
-                  isFavorite={true}
-                  isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
-                  hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
-                  onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
-                  onClick={() => navigate(`/product/${product.slug}`)}
-                />
+                <p className="text-xl">Brak ulubionych produktów.</p>
               </motion.div>
-            ))
-          )}
-        </AnimatePresence>
+            ) : (
+              favorites.map((product) => (
+                <motion.div
+                  key={product.slug}
+                  layout
+                  style={{ width: '100%' }}
+                  exit={{ scale: [1, 1.08, 0.75], opacity: [1, 1, 0] }}
+                  transition={{
+                    layout: { duration: 0.35, ease: 'easeInOut' },
+                    duration: 0.28,
+                    times: [0, 0.4, 1],
+                    ease: 'easeOut',
+                  }}
+                >
+                  <ProductCard
+                    name={product.name}
+                    price={product.price}
+                    image={product.image}
+                    alt={product.alt}
+                    isFavorite={true}
+                    isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+                    hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                    onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
+                    onClick={() => navigate(`/product/${product.slug}`)}
+                  />
+                </motion.div>
+              ))
+            )}
+          </AnimatePresence>
+        )}
       </ProductCardGrid>
     </div>
   );

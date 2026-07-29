@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { addFavorite, getFavorites, removeFavorite } from '../../api/favorites.ts';
+import { addFavorite, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.png';
 import namiotyImage from '../../assets/categories/namioty.png';
@@ -65,38 +65,33 @@ export default function HomePage() {
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
-      const productsPromise = getProducts();
-      const favoritesPromise = authStatus === 'authenticated' ? getFavorites() : null;
+      setError(null);
+      try {
+        const productsResult = await getProducts();
+        const productsData = productsResult.data;
 
-      const [productsResult, favoritesResult] = await Promise.all([
-        productsPromise,
-        favoritesPromise,
-      ]);
-
-      const productsData = productsResult.data;
-      const favoritesData = favoritesResult?.data;
-
-      if (productsData) {
-        const favoriteSlugs = favoritesData
-          ? new Set(favoritesData.map((f) => f.slug))
-          : new Set<string>();
-
-        setProducts(
-          productsData.map((product) => ({
-            id: product.id,
-            name: product.name,
-            description: product.description ?? '',
-            price: product.price ?? 0,
-            slug: product.slug,
-            images: product.images ?? [],
-            alt: product.alt ?? product.name,
-            category: product.category ?? '',
-            isFavorite: favoriteSlugs.has(product.slug),
-          }))
-        );
+        if (productsData) {
+          setProducts(
+            productsData.map((product) => ({
+              id: product.id,
+              name: product.name,
+              description: product.description ?? '',
+              price: product.price ?? 0,
+              slug: product.slug,
+              images: product.images ?? [],
+              alt: product.alt ?? product.name,
+              category: product.category ?? '',
+              isFavorite: product.isFavorite,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Błąd podczas ładowania produktów:', err);
+        setError('Wystąpił błąd podczas ładowania produktów. Spróbuj odświeżyć stronę.');
       }
     }
 
@@ -193,25 +188,31 @@ export default function HomePage() {
       </div>
 
       <CategoryBar />
-      <ProductCardGrid className="my-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.slug}
-            name={product.name}
-            price={product.price}
-            image={product.images[0] ?? ''}
-            alt={product.alt}
-            onClick={() => navigate(`/product/${product.slug}`)}
-            isFavorite={product.isFavorite ?? false}
-            isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
-            hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
-            favoriteErrorTarget="button"
-            hideFavoriteButton={authStatus !== 'authenticated'}
-            showFavoriteUpdatingOverlay={false}
-            onFavoriteToggle={() => void toggleFavorite(product.slug)}
-          />
-        ))}
-      </ProductCardGrid>
+      {error ? (
+        <div className="my-8 w-full text-center text-red-500">
+          <p className="text-xl">{error}</p>
+        </div>
+      ) : (
+        <ProductCardGrid className="my-4">
+          {products.map((product) => (
+            <ProductCard
+              key={product.slug}
+              name={product.name}
+              price={product.price}
+              image={product.images[0] ?? ''}
+              alt={product.alt}
+              onClick={() => navigate(`/product/${product.slug}`)}
+              isFavorite={product.isFavorite ?? false}
+              isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+              hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+              favoriteErrorTarget="button"
+              hideFavoriteButton={authStatus !== 'authenticated'}
+              showFavoriteUpdatingOverlay={false}
+              onFavoriteToggle={() => void toggleFavorite(product.slug)}
+            />
+          ))}
+        </ProductCardGrid>
+      )}
     </div>
   );
 }
