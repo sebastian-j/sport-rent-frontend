@@ -103,6 +103,7 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
+            isFavorite: product.isFavorite,
           }));
 
           const uniqueProducts: typeof combined = [];
@@ -133,7 +134,7 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
-              isFavorite: product.isFavorite,
+            isFavorite: product.isFavorite ?? false
           }));
 
           setProducts((prev) => {
