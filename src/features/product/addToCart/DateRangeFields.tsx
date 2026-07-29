@@ -30,7 +30,7 @@ export default function DateRangeFields({
       <DatePickerElem
         selected={endDate}
         onChange={(date) => date && onEndDateChange(date)}
-        minDate={startDate}
+        minDate={new Date()}
         wrapperClassName="w-full min-w-0"
         className={DATE_INPUT_CLASSES}
       />

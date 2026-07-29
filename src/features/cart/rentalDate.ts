@@ -2,11 +2,16 @@ export const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 export type RentalDate = {
   id: number;
+  uiKey: string;
   quantity: number;
   size: string | null;
   start_date: Date | null;
   end_date: Date | null;
 };
+
+export function isPersistedRentalDate(date: RentalDate) {
+  return date.id > 0;
+}
 
 export function toDayTimestamp(date: Date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());

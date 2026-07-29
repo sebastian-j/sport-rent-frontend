@@ -1,9 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { getCart } from '../../api/cart.ts';
 import { getLoyalty } from '../../api/loyalty.ts';
-import { getProducts } from '../../api/product.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
+import { mapCartProduct } from '../../features/cart/cartMappers.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
 import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
 import InvoiceDetailsPanel from '../../features/orderSummary/InvoiceDetailsPanel.tsx';
@@ -42,15 +44,8 @@ const INITIAL_INVOICE_DETAILS: InvoiceDetails = {
   postalCode: '30-111',
 };
 
-const getDateAfterToday = (dayOffset: number) => {
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
-  date.setDate(date.getDate() + dayOffset);
-
-  return date;
-};
-
 export default function OrderSummaryPage() {
+  const navigate = useNavigate();
   const summaryPanelRef = useRef<HTMLDivElement>(null);
   const [recipientDetails, setRecipientDetails] =
     useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
@@ -58,6 +53,8 @@ export default function OrderSummaryPage() {
   const [wantsInvoice, setWantsInvoice] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
+  const [isCartLoading, setIsCartLoading] = useState(true);
+  const [cartLoadError, setCartLoadError] = useState<string | null>(null);
   const {
     promoCode,
     appliedPromoCode,
@@ -78,46 +75,32 @@ export default function OrderSummaryPage() {
   const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
   const [isPointsLoading, setIsPointsLoading] = useState(true);
 
-  useEffect(() => {
-    getProducts().then(({ data }) => {
-      if (data) {
-        const filtered = data
-          .filter((product) => product.id === 1 || product.id === 4)
-          .map((product: any, index) => ({
-            id: product.id,
-            name: product.name,
-            description: product.description ?? '',
-            price: product.price ?? 0,
-            slug: product.slug,
-            images: product.images ?? [],
-            alt: product.alt ?? product.name,
-            category: product.category ?? '',
-            sizes: product.sizes ?? [],
-            dates: [
-              {
-                id: index + 1,
-                quantity: index === 0 ? 5 : 2,
-                size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-                start_date: getDateAfterToday(3 + index * 5),
-                end_date: getDateAfterToday(4 + index * 7),
-              },
-              ...(index === 0
-                ? [
-                    {
-                      id: 2,
-                      quantity: 1,
-                      size: product.sizes?.[1]?.size ?? product.sizes?.[0]?.size ?? null,
-                      start_date: getDateAfterToday(10),
-                      end_date: getDateAfterToday(12),
-                    },
-                  ]
-                : []),
-            ],
-          }));
-        setSummaryProducts(filtered);
+  const loadSummaryCart = useCallback(async () => {
+    setIsCartLoading(true);
+    setCartLoadError(null);
+    try {
+      const result = await getCart();
+      if (result.error || !result.data) {
+        throw new Error('Nie udało się pobrać koszyka.');
       }
-    });
-  }, []);
+      const cart = result.data.map(mapCartProduct);
+      if (cart.length === 0) {
+        navigate('/cart', { replace: true });
+        return;
+      }
+      setSummaryProducts(cart);
+    } catch (error) {
+      setCartLoadError(
+        error instanceof Error ? error.message : 'Nie udało się pobrać podsumowania koszyka.'
+      );
+    } finally {
+      setIsCartLoading(false);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    void loadSummaryCart();
+  }, [loadSummaryCart]);
 
   useLayoutEffect(() => {
     const summaryPanel = summaryPanelRef.current;
@@ -223,9 +206,24 @@ export default function OrderSummaryPage() {
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
-            {summaryProducts.map((product) => (
-              <SummaryProduct key={product.id} product={product} />
-            ))}
+            {isCartLoading && <p role="status">Ładowanie koszyka…</p>}
+            {cartLoadError && (
+              <div role="alert" className="flex flex-col gap-3 text-app-danger">
+                <p>{cartLoadError}</p>
+                <button
+                  type="button"
+                  onClick={() => void loadSummaryCart()}
+                  className="rounded-lg bg-app-accent px-4 py-2 text-app-textInverted"
+                >
+                  Spróbuj ponownie
+                </button>
+              </div>
+            )}
+            {!isCartLoading &&
+              !cartLoadError &&
+              summaryProducts.map((product) => (
+                <SummaryProduct key={product.id} product={product} />
+              ))}
           </div>
 
           <PromoCodePanel
@@ -242,7 +240,7 @@ export default function OrderSummaryPage() {
             cartPrice={cartPrice}
             paymentPrice={paymentPrice}
             discount={discount}
-            canBuy={selectedPaymentMethodId !== undefined}
+            canBuy={selectedPaymentMethodId !== undefined && !isCartLoading && !cartLoadError}
           />
         </ContentPanel>
       </div>

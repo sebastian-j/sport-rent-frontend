@@ -24,7 +24,7 @@ export default function SummaryProduct({ product }: SummaryProductProps) {
       <div className="flex flex-col gap-2">
         {selectedDates.map((date) => (
           <SummaryProductDate
-            key={date.id}
+            key={date.uiKey}
             quantity={date.quantity}
             size={date.size}
             startDate={date.start_date}

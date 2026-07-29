@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { Ref } from 'react';
 
 import { formatPrice } from '../../utils/formatPrice.ts';
@@ -15,6 +15,8 @@ type CartProductCardProps = {
   onRemoveDate: (dateId: number) => void;
   onAddDate: () => void;
   onRemoveProduct: () => void;
+  actionsDisabled?: boolean;
+  mergeTargetId?: number | null;
   getRentalDateRef?: (dateId: number) => Ref<HTMLDivElement>;
 };
 
@@ -27,6 +29,8 @@ export default function CartProductCard({
   onRemoveDate,
   onAddDate,
   onRemoveProduct,
+  actionsDisabled = false,
+  mergeTargetId = null,
   getRentalDateRef,
 }: CartProductCardProps) {
   return (
@@ -43,30 +47,36 @@ export default function CartProductCard({
         {product.name}
       </p>
 
-      <div className="flex h-fit self-start flex-col gap-3 overflow-hidden rounded-xl bg-app-cartCardInner/80 p-2 sm:p-4 md:col-span-2 md:row-start-4 md:gap-2 lg:col-span-1 lg:col-start-2 lg:row-start-2">
-        {product.dates.map((date) => (
-          <ProductRentalDate
-            key={date.id}
-            date={date}
-            productName={product.name}
-            productSizes={product.sizes}
-            containerRef={getRentalDateRef?.(date.id)}
-            onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
-            onSizeChange={(size) => onSizeChange(date.id, size)}
-            onStartDateChange={(value) => onDateChange(date.id, 'start_date', value)}
-            onEndDateChange={(value) => onDateChange(date.id, 'end_date', value)}
-            onRemove={() => onRemoveDate(date.id)}
-          />
-        ))}
+      <div className="flex h-fit self-start flex-col overflow-hidden rounded-xl bg-app-cartCardInner/80 p-2 sm:p-4 md:col-span-2 md:row-start-4 lg:col-span-1 lg:col-start-2 lg:row-start-2">
+        <AnimatePresence initial={false}>
+          {product.dates.map((date, index) => (
+            <ProductRentalDate
+              key={date.uiKey}
+              ref={getRentalDateRef?.(date.id)}
+              date={date}
+              productName={product.name}
+              productSizes={product.sizes}
+              onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
+              onSizeChange={(size) => onSizeChange(date.id, size)}
+              onStartDateChange={(value) => onDateChange(date.id, 'start_date', value)}
+              onEndDateChange={(value) => onDateChange(date.id, 'end_date', value)}
+              onRemove={() => onRemoveDate(date.id)}
+              removeDisabled={actionsDisabled}
+              isMergeTarget={date.id === mergeTargetId}
+              isLast={index === product.dates.length - 1}
+            />
+          ))}
+        </AnimatePresence>
       </div>
 
       <motion.button
         type="button"
         onClick={onAddDate}
+        disabled={actionsDisabled}
         whileHover={{ scale: 1.005 }}
         whileTap={{ scale: 0.995 }}
         transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-        className="flex h-10 items-center justify-center rounded-lg bg-app-cartCardInner/80 md:col-span-2 md:row-start-5 lg:col-span-1 lg:col-start-2 lg:row-start-3"
+        className="flex h-10 items-center justify-center rounded-lg bg-app-cartCardInner/80 disabled:cursor-wait disabled:opacity-60 md:col-span-2 md:row-start-5 lg:col-span-1 lg:col-start-2 lg:row-start-3"
         aria-label="Dodaj kolejny termin"
       >
         <Plus size={28} />
@@ -83,8 +93,9 @@ export default function CartProductCard({
         <button
           type="button"
           onClick={onRemoveProduct}
+          disabled={actionsDisabled}
           aria-label={`Usuń ${product.name} z koszyka`}
-          className="rounded-lg p-2 transition-colors hover:bg-app-cartCardInner/70 md:absolute md:right-[1vw] md:top-[1vw]"
+          className="rounded-lg p-2 transition-colors hover:bg-app-cartCardInner/70 disabled:cursor-wait disabled:opacity-60 md:absolute md:right-[1vw] md:top-[1vw]"
         >
           <Trash2 />
         </button>
