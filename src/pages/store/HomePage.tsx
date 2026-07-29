@@ -134,7 +134,7 @@ export default function HomePage() {
             images: product.images ?? [],
             alt: product.alt ?? product.name,
             category: product.category ?? '',
-            isFavorite: product.isFavorite ?? false
+            isFavorite: product.isFavorite ?? false,
           }));
 
           setProducts((prev) => {
