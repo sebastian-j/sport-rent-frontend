@@ -125,7 +125,6 @@ export default function HomePage() {
     };
   }, []);
 
-
   useEffect(() => {
     let active = true;
     setIsLoading(true);

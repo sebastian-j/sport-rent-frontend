@@ -1288,7 +1288,6 @@ export interface operations {
                 order?: string | null;
                 minPrice?: number | null;
                 maxPrice?: number | null;
-                category?: string[];
                 query?: string | null;
                 page?: number | null;
                 pageSize?: number | null;
@@ -1297,7 +1296,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": string[] | null;
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
