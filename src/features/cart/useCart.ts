@@ -32,6 +32,7 @@ export function useCart() {
   const productsRef = useRef<CartProduct[]>([]);
   const nextDraftId = useRef(-1);
   const itemQueues = useRef(new Map<number, Promise<void>>());
+  const itemIdAliases = useRef(new Map<number, number>());
   const creatingDrafts = useRef(new Set<number>());
   const mergeAnimationTimer = useRef<number | null>(null);
 
@@ -117,31 +118,67 @@ export function useCart() {
     [setProducts, showMergeAnimation]
   );
 
+  const resolveItemId = useCallback((itemId: number) => {
+    const visitedIds: number[] = [];
+    let resolvedId = itemId;
+    let nextId = itemIdAliases.current.get(resolvedId);
+
+    while (nextId !== undefined && !visitedIds.includes(resolvedId)) {
+      visitedIds.push(resolvedId);
+      resolvedId = nextId;
+      nextId = itemIdAliases.current.get(resolvedId);
+    }
+
+    visitedIds.forEach((visitedId) => itemIdAliases.current.set(visitedId, resolvedId));
+    return resolvedId;
+  }, []);
+
   const queuePatch = useCallback(
     (itemId: number, body: UpdateCartItemRequest) => {
-      const previous = itemQueues.current.get(itemId) ?? Promise.resolve();
+      const resolvedItemId = resolveItemId(itemId);
+      const queueKey =
+        (itemQueues.current.has(resolvedItemId)
+          ? resolvedItemId
+          : [...itemQueues.current.keys()].find(
+              (queuedItemId) => resolveItemId(queuedItemId) === resolvedItemId
+            )) ?? itemId;
+      const previous = itemQueues.current.get(queueKey) ?? Promise.resolve();
       const queued = previous
         .catch(() => undefined)
         .then(() =>
           withPending(async () => {
-            const result = await updateCartItem(itemId, body);
+            const requestItemId = resolveItemId(itemId);
+            const result = await updateCartItem(requestItemId, body);
             if (result.error || !result.data) {
               throw new Error('Updating a cart item failed');
             }
-            if (result.data.id !== itemId) {
-              reconcileSavedDate(itemId, mapCartDate(result.data));
+
+            const savedDate = mapCartDate(result.data);
+            if (result.data.id !== requestItemId) {
+              itemIdAliases.current.set(requestItemId, result.data.id);
+              itemIdAliases.current.set(itemId, result.data.id);
+              const currentQueue = itemQueues.current.get(queueKey);
+              if (currentQueue) itemQueues.current.set(result.data.id, currentQueue);
+              reconcileSavedDate(requestItemId, savedDate);
+            } else if (
+              ![...itemQueues.current].some(
+                ([queuedItemId, queuedRequest]) =>
+                  resolveItemId(queuedItemId) === result.data.id && queuedRequest !== queued
+              )
+            ) {
+              reconcileSavedDate(requestItemId, savedDate);
             }
           })
         )
         .catch(recoverFromSaveError)
         .finally(() => {
-          if (itemQueues.current.get(itemId) === queued) {
-            itemQueues.current.delete(itemId);
+          for (const [queuedItemId, queuedRequest] of itemQueues.current) {
+            if (queuedRequest === queued) itemQueues.current.delete(queuedItemId);
           }
         });
-      itemQueues.current.set(itemId, queued);
+      itemQueues.current.set(queueKey, queued);
     },
-    [reconcileSavedDate, recoverFromSaveError, withPending]
+    [reconcileSavedDate, recoverFromSaveError, resolveItemId, withPending]
   );
 
   const createDraftIfComplete = useCallback(
