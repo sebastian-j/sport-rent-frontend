@@ -23,6 +23,7 @@ import type {
   InvoiceDetails,
   RecipientDetails,
 } from '../../features/userDetails/userDetailsTypes.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 
 const HEADER_OFFSET_PX = 64;
 const PANEL_VIEWPORT_GAP_PX = 16;
@@ -85,7 +86,7 @@ export default function OrderSummaryPage() {
       }
       const cart = result.data.map(mapCartProduct);
       if (cart.length === 0) {
-        navigate('/cart', { replace: true });
+        navigate(RENT_ROUTES.cart, { replace: true });
         return;
       }
       setSummaryProducts(cart);

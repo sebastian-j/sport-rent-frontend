@@ -6,6 +6,7 @@ import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
 } from '../../features/loyalty/constants.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 
 type FaqItemProps = {
   question: string;
@@ -51,8 +52,9 @@ export default function FaqPage() {
 
           <FaqItem question="Jak sprawdzić dostępność w wybranym terminie?">
             <p>
-              Przejdź do <Link to="/search">wyszukiwarki sprzętu</Link> i wybierz interesujący Cię
-              termin. Zobaczysz oferty, które możesz dopasować do planowanej aktywności.
+              Przejdź do <Link to={RENT_ROUTES.search}>wyszukiwarki sprzętu</Link> i wybierz
+              interesujący Cię termin. Zobaczysz oferty, które możesz dopasować do planowanej
+              aktywności.
             </p>
           </FaqItem>
 

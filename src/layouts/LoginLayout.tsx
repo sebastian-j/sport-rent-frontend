@@ -3,6 +3,7 @@ import { Link, Navigate, Outlet } from 'react-router-dom';
 import LogoHeader from '../assets/logo_header.png';
 import Footer from '../components/Footer';
 import { useAuth } from '../features/auth/authContext.ts';
+import { RENT_ROUTES, ROOT_ROUTE } from '../routes.ts';
 
 export default function LoginLayout() {
   const { status } = useAuth();
@@ -12,14 +13,14 @@ export default function LoginLayout() {
   }
 
   if (status === 'authenticated') {
-    return <Navigate to="/" replace />;
+    return <Navigate to={RENT_ROUTES.home} replace />;
   }
 
   return (
     <div className="flex min-h-screen flex-col bg-app-surface text-app-text">
       <header className="px-4 py-3 sm:px-6 sm:py-4 md:px-8">
         <Link
-          to="/"
+          to={ROOT_ROUTE}
           className="mx-auto block h-16 w-full max-w-[280px] sm:h-20 sm:max-w-[420px] md:h-24 md:max-w-[560px]"
         >
           <span

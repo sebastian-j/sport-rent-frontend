@@ -13,6 +13,7 @@ import CartSummaryPanel from '../../features/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../../features/cart/EmptyCartPanel.tsx';
 import TermsPanel from '../../features/cart/TermsPanel.tsx';
 import { useCart } from '../../features/cart/useCart.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 
 export default function CartPage() {
   const {
@@ -69,7 +70,7 @@ export default function CartPage() {
       return;
     }
 
-    navigate('/summary');
+    navigate(RENT_ROUTES.summary);
   };
 
   return (
@@ -190,6 +191,7 @@ export default function CartPage() {
           )}
         </AnimatePresence>
       )}
+      {products.length === 0 && <EmptyCartPanel onGoToOffer={() => navigate(RENT_ROUTES.home)} />}
     </div>
   );
 }

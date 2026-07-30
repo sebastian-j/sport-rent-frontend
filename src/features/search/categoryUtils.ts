@@ -1,3 +1,5 @@
+import { RENT_ROUTES } from '../../routes.ts';
+
 export const toCategorySlug = (category: string) =>
   category
     .toLowerCase()
@@ -8,7 +10,7 @@ export const toCategorySlug = (category: string) =>
     .replace(/(^-|-$)/g, '');
 
 export const getCategorySearchPath = (categorySlug: string) =>
-  `/search?${new URLSearchParams({
+  `${RENT_ROUTES.search}?${new URLSearchParams({
     category: categorySlug,
     page: '1',
     sort: 'name',

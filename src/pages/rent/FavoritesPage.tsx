@@ -6,6 +6,7 @@ import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
+import { RENT_ROUTES } from '../../routes.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
@@ -161,7 +162,7 @@ export default function FavoritesPage() {
                     isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
                     hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
                     onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
-                    onClick={() => navigate(`/product/${product.slug}`)}
+                    onClick={() => navigate(RENT_ROUTES.product(product.slug))}
                   />
                 </motion.div>
               ))

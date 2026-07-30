@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { getProducts } from '../api/product.ts';
 import type { ProductProps } from '../features/product/productProps.ts';
+import { RENT_ROUTES } from '../routes.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
 
 type SearchBarProps = {
@@ -85,7 +86,7 @@ export default function SearchBar({
     if (!query) return;
 
     navigate(
-      `/search?${new URLSearchParams({
+      `${RENT_ROUTES.search}?${new URLSearchParams({
         q: query,
         page: '1',
         sort: 'name',
@@ -149,7 +150,7 @@ export default function SearchBar({
               {matchingProducts.map((product) => (
                 <li key={product.id}>
                   <Link
-                    to={`/product/${product.slug}`}
+                    to={RENT_ROUTES.product(product.slug)}
                     onClick={() => {
                       setSearchValue('');
                       setIsOpen(false);

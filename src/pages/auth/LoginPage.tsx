@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -54,7 +55,8 @@ export default function LoginPage() {
       establishSession(result.data.access_token);
 
       const destination =
-        (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/';
+        (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ??
+        RENT_ROUTES.home;
       navigate(destination, { replace: true });
     } catch {
       setHasInvalidCredentials(false);

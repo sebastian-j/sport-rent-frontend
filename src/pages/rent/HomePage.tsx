@@ -19,6 +19,7 @@ import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
 import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 
 type PanoramicCategory = components['schemas']['RandomCategoryResponse'];
 type PanoramicStatus = 'loading' | 'ready' | 'hidden';
@@ -358,7 +359,7 @@ export default function HomePage() {
               price={product.price}
               image={product.images[0] ?? ''}
               alt={product.imageAlts?.[0]}
-              onClick={() => navigate(`/product/${product.slug}`)}
+              onClick={() => navigate(RENT_ROUTES.product(product.slug))}
               isFavorite={product.isFavorite ?? false}
               isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
               hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
@@ -370,7 +371,6 @@ export default function HomePage() {
           ))}
         </ProductCardGrid>
       )}
-
       {hasMore && !error && (
         <div ref={observerNodeRef} className="flex h-20 w-full items-center justify-center pb-8">
           {isLoading && <ActivityIndicator size={44} />}

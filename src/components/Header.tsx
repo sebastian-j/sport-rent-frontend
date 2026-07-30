@@ -1,6 +1,6 @@
 import { Heart, LogIn, LogOut, Menu, Search, Server, ShoppingCart, User } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { healthCheck } from '../api/health.ts';
 import headerLogo from '../assets/logo_header.png';
@@ -8,8 +8,10 @@ import headerLogoSmall from '../assets/logo_header_small.png';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
+import { getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
+import SubsiteSelector from './SubsiteSelector.tsx';
 
 const CATEGORIES = [
   'Rowery i akcesoria',
@@ -34,10 +36,14 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const categoryBarRef = useRef<HTMLDivElement>(null);
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const location = useLocation();
   const navigate = useNavigate();
   const { status: authStatus, logout } = useAuth();
   const { hasItems: hasCartItems } = useCartStatus();
   const isAuthenticated = authStatus === 'authenticated';
+  const sectionHomeRoute = getSectionHomeRoute(location.pathname);
+  const isSectionHomePage =
+    location.pathname === sectionHomeRoute || location.pathname === `${sectionHomeRoute}/`;
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -105,7 +111,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     setIsMenuOpen(false);
 
     if (isAuthenticated) {
-      navigate('/', { replace: true });
+      navigate(RENT_ROUTES.home, { replace: true });
       await logout();
       return;
     }
@@ -128,29 +134,48 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     }
   };
 
+  const handleLogoClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!isSectionHomePage) return;
+
+    event.preventDefault();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    });
+  };
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex w-full flex-col bg-app-surface">
-      <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-4 sm:px-6 md:px-12 lg:grid-cols-3">
-        <Link to="/" className="inline-flex w-fit items-center justify-self-start pe-4">
-          <span
-            role="img"
-            aria-label="Logo Polar Sport Rent"
-            className="block h-10 w-[67px] bg-app-text sm:hidden"
-            style={{
-              WebkitMask: `url(${headerLogoSmall}) center / contain no-repeat`,
-              mask: `url(${headerLogoSmall}) center / contain no-repeat`,
-            }}
-          />
-          <span
-            role="img"
-            aria-label="Logo Polar Sport Rent"
-            className="hidden h-[41px] w-64 bg-app-text sm:block"
-            style={{
-              WebkitMask: `url(${headerLogo}) center / contain no-repeat`,
-              mask: `url(${headerLogo}) center / contain no-repeat`,
-            }}
-          />
-        </Link>
+      <div className="relative z-10 grid h-12 grid-cols-[auto_minmax(0,1fr)] items-center px-3 sm:px-6 md:px-12 lg:grid-cols-3">
+        <div className="flex min-w-0 items-center gap-1 justify-self-start">
+          <Link
+            to={sectionHomeRoute}
+            onClick={handleLogoClick}
+            className="inline-flex w-fit shrink-0 items-center"
+          >
+            <span
+              role="img"
+              aria-label="Logo Polar Sport Rent"
+              className="block h-10 w-[67px] bg-app-text sm:hidden"
+              style={{
+                WebkitMask: `url(${headerLogoSmall}) left center / contain no-repeat`,
+                mask: `url(${headerLogoSmall}) left center / contain no-repeat`,
+              }}
+            />
+            <span
+              role="img"
+              aria-label="Logo Polar Sport"
+              className="hidden h-[41px] w-[205px] bg-app-text sm:block"
+              style={{
+                WebkitMask: `url(${headerLogo}) left center / contain no-repeat`,
+                mask: `url(${headerLogo}) left center / contain no-repeat`,
+              }}
+            />
+          </Link>
+          <SubsiteSelector />
+        </div>
         <div className="hidden min-w-0 lg:block">
           <SearchBar />
         </div>
@@ -162,7 +187,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
         )}
 
         <div
-          className={`${isMobileSearchOpen ? 'hidden' : 'flex'} justify-self-end gap-4 text-app-text lg:flex`}
+          className={`${isMobileSearchOpen ? 'hidden' : 'flex'} justify-self-end gap-3 text-app-text sm:gap-4 lg:flex`}
         >
           <button
             type="button"
@@ -175,11 +200,11 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
           >
             <Search />
           </button>
-          <Link to="/favorites">
+          <Link to={RENT_ROUTES.favorites}>
             <Heart className="cursor-pointer" />
           </Link>
           <Link
-            to="/cart"
+            to={RENT_ROUTES.cart}
             className="relative"
             aria-label={hasCartItems ? 'Koszyk zawiera produkty' : 'Koszyk'}
           >
@@ -188,7 +213,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
               <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-app-danger ring-2 ring-app-surface" />
             )}
           </Link>
-          <Link to="/profile">
+          <Link to={RENT_ROUTES.profile}>
             <User className="cursor-pointer" />
           </Link>
           <div ref={menuRef} className="relative">
