@@ -16,14 +16,16 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
     getOrderDetails(Number(orderId))
       .then(({ data, error }) => {
         if (error) {
-          setError('Nie udało się wczytać szczegółów.');
+          setError((error as any)?.detail.msg || "Nieznany błąd");
+          console.error(error);
         } else if (data) {
           setDetails(data);
         }
         setIsLoading(false);
       })
-      .catch(() => {
-        setError('Wystąpił błąd podczas ładowania szczegółów.');
+      .catch((error) => {
+        setError(error);
+        console.error(error);
         setIsLoading(false);
       });
   }, [orderId]);
@@ -105,7 +107,7 @@ export default function OrdersSection() {
     getUserHistory()
       .then(({ data, error }) => {
         if (error) {
-          setError('Wystąpił błąd podczas ładowania historii.');
+          setError(error);
         } else if (data) {
           const fetchedOrders: Order[] = data.map((item) => ({
             id: String(item.id),
@@ -121,8 +123,9 @@ export default function OrdersSection() {
         }
         setIsLoading(false);
       })
-      .catch(() => {
-        setError('Wystąpił błąd podczas ładowania historii.');
+      .catch((error) => {
+        setError(error);
+        console.error(error);
         setIsLoading(false);
       });
   }, []);
