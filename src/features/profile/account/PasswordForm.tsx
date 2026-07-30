@@ -26,11 +26,10 @@ export default function PasswordForm({ onCancel }: PasswordFormProps) {
 
     if (isSubmitting) return;
 
-    if (newPassword.length > 128 || !/^(?=.*\p{L})(?=.*\d)[\s\S]{8,}$/u.test(newPassword)) {
+    if (newPassword.length < 8 || newPassword.length > 128) {
       setStatus({
         tone: 'error',
-        message:
-          'Nowe hasło musi mieć od 8 do 128 znaków oraz zawierać co najmniej jedną literę i cyfrę.',
+        message: 'Nowe hasło musi mieć od 8 do 128 znaków.',
       });
       return;
     }
