@@ -185,10 +185,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
           >
             <ShoppingCart className="cursor-pointer" />
             {hasCartItems && (
-              <span
-                aria-hidden="true"
-                className="absolute -right-1 -top-1 size-2.5 rounded-full bg-app-danger ring-2 ring-app-surface"
-              />
+              <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-app-danger ring-2 ring-app-surface" />
             )}
           </Link>
           <Link to="/profile">
