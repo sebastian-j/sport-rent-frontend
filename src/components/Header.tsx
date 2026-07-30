@@ -6,6 +6,7 @@ import { healthCheck } from '../api/health.ts';
 import headerLogo from '../assets/logo_header.png';
 import headerLogoSmall from '../assets/logo_header_small.png';
 import { useAuth } from '../features/auth/authContext.ts';
+import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
@@ -35,6 +36,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const navigate = useNavigate();
   const { status: authStatus, logout } = useAuth();
+  const { hasItems: hasCartItems } = useCartStatus();
   const isAuthenticated = authStatus === 'authenticated';
 
   useEffect(() => {
@@ -176,8 +178,15 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
           <Link to="/favorites">
             <Heart className="cursor-pointer" />
           </Link>
-          <Link to="/cart">
+          <Link
+            to="/cart"
+            className="relative"
+            aria-label={hasCartItems ? 'Koszyk zawiera produkty' : 'Koszyk'}
+          >
             <ShoppingCart className="cursor-pointer" />
+            {hasCartItems && (
+              <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-app-danger ring-2 ring-app-surface" />
+            )}
           </Link>
           <Link to="/profile">
             <User className="cursor-pointer" />

@@ -1,8 +1,12 @@
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { getProductAvailability } from '../../api/product.ts';
+import { addCartItem } from '../../api/cart.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { formatLocalDate } from '../../utils/localDate.ts';
+import { useAuth } from '../auth/authContext.ts';
+import { useCartStatus } from '../cart/cartStatusContext.ts';
 import { getInclusiveDayCount, isDateAfter, isDateInPast } from '../cart/rentalDate.ts';
 import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
@@ -11,54 +15,77 @@ import SizeSelector from './addToCart/SizeSelector.tsx';
 import { type ProductProps } from './productProps';
 
 export default function AddToCart({ product }: { product: ProductProps }) {
+  const { status: authStatus } = useAuth();
+  const { refreshCartStatus } = useCartStatus();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const isSizeSelectionRequired = Boolean(product.sizes?.length && !selectedSize);
   const rentalDayCount = getInclusiveDayCount(startDate, endDate);
   const totalPrice = rentalDayCount * quantity * product.price;
 
-  const handleStartDateChange = (date: Date) => {
-    setStartDate(date);
-
-    if (isDateAfter(date, endDate)) {
-      setEndDate(date);
-    }
-  };
-
   const handleAddToCart = async () => {
+    setMessage(null);
+    setHasError(false);
+
+    if (authStatus !== 'authenticated') {
+      if (authStatus === 'anonymous') {
+        navigate('/login', { state: { from: location } });
+      } else {
+        setMessage('Nie udało się potwierdzić sesji. Spróbuj ponownie.');
+        setHasError(true);
+      }
+      return;
+    }
+
     if (isDateAfter(startDate, endDate)) {
-      alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
+      setMessage('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
+      setHasError(true);
       return;
     }
 
     if (isDateInPast(startDate)) {
-      alert('Data rozpoczęcia nie może być wcześniejsza niż dzisiejsza data.');
+      setMessage('Data rozpoczęcia nie może być wcześniejsza niż dzisiejsza data.');
+      setHasError(true);
       return;
     }
 
     if (isSizeSelectionRequired) {
-      alert('Proszę wybrać rozmiar produktu.');
+      setMessage('Proszę wybrać rozmiar produktu.');
+      setHasError(true);
       return;
     }
 
-    const { data, error } = await getProductAvailability(
-      product.slug,
-      startDate.toLocaleDateString('pl'),
-      endDate.toLocaleDateString('pl')
-    );
-
-    if (error || !data?.available) {
-      alert(
-        `Produkt niedostępny w okresie od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
+    setIsAdding(true);
+    try {
+      const result = await addCartItem({
+        product_id: product.id,
+        quantity,
+        size: selectedSize,
+        start_date: formatLocalDate(startDate),
+        end_date: formatLocalDate(endDate),
+      });
+      if (result.error || !result.data) {
+        setMessage('Nie udało się dodać produktu do koszyka. Sprawdź wybrany termin.');
+        setHasError(true);
+        return;
+      }
+      void refreshCartStatus();
+      setMessage(
+        `Dodano ${quantity} szt. produktu „${product.name}” do koszyka na okres ${startDate.toLocaleDateString('pl')}–${endDate.toLocaleDateString('pl')}.`
       );
-      return;
+    } catch {
+      setMessage('Nie udało się połączyć z serwerem. Spróbuj ponownie.');
+      setHasError(true);
+    } finally {
+      setIsAdding(false);
     }
-
-    alert(
-      `Dodano ${quantity} sztuk produktu ${product.name}${selectedSize ? ` o rozmiarze ${selectedSize}` : ''} do koszyka na okres od ${startDate.toLocaleDateString('pl')} do ${endDate.toLocaleDateString('pl')}.`
-    );
   };
 
   return (
@@ -67,7 +94,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
       <DateRangeFields
         startDate={startDate}
         endDate={endDate}
-        onStartDateChange={handleStartDateChange}
+        onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
       />
       <QuantitySelector
@@ -90,11 +117,19 @@ export default function AddToCart({ product }: { product: ProductProps }) {
         totalPrice={totalPrice}
       />
       <ButtonCore
-        text="Dodaj do koszyka"
+        text={isAdding ? 'Dodawanie…' : 'Dodaj do koszyka'}
         onClick={handleAddToCart}
-        disabled={isSizeSelectionRequired}
+        disabled={isSizeSelectionRequired || isAdding}
         className="my-[1vh] w-full max-w-xl p-[1.5vh] text-base disabled:cursor-not-allowed disabled:opacity-50"
       />
+      {message && (
+        <p
+          role={hasError ? 'alert' : 'status'}
+          className={`text-center ${hasError ? 'text-app-danger' : 'text-app-success'}`}
+        >
+          {message}
+        </p>
+      )}
     </ContentPanel>
   );
 }

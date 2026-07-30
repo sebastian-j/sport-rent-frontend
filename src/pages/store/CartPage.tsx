@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +11,6 @@ import {
 import CartProductCard from '../../features/cart/CartProductCard.tsx';
 import CartSummaryPanel from '../../features/cart/CartSummaryPanel.tsx';
 import EmptyCartPanel from '../../features/cart/EmptyCartPanel.tsx';
-import { INITIAL_CART } from '../../features/cart/initialCart.ts';
 import TermsPanel from '../../features/cart/TermsPanel.tsx';
 import { useCart } from '../../features/cart/useCart.ts';
 
@@ -23,7 +23,12 @@ export default function CartPage() {
     removeRentalDate,
     addRentalDate,
     removeProduct,
-  } = useCart(INITIAL_CART);
+    status,
+    error,
+    isPending,
+    mergeTargetId,
+    retry,
+  } = useCart();
   const [readTos, setReadTos] = useState(false);
   const [highlightTos, setHighlightTos] = useState(false);
   const tosRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +44,7 @@ export default function CartPage() {
   const getRentalDateRefKey = (productId: number, dateId: number) => `${productId}-${dateId}`;
 
   const handleBuy = () => {
+    if (isPending) return;
     const firstInvalidRentalDate = findFirstInvalidRentalDate(products);
 
     if (firstInvalidRentalDate) {
@@ -70,46 +76,120 @@ export default function CartPage() {
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
       <p className="text-center mt-12 font-semibold text-5xl text-app-text">Koszyk</p>
 
-      {products.length > 0 && (
-        <div>
-          <ContentPanel className="mx-4 mt-12 items-stretch gap-4 p-4 sm:mx-8 sm:p-8">
-            {products.map((product) => {
-              const information = getProductInformation(product);
+      {status === 'loading' && (
+        <p role="status" className="mt-12 text-center text-xl text-app-textMuted">
+          Ładowanie koszyka...
+        </p>
+      )}
 
-              return (
-                <CartProductCard
-                  key={product.id}
-                  product={product}
-                  information={information}
-                  onQuantityChange={(dateId, quantity) =>
-                    updateQuantity(product.id, dateId, quantity)
-                  }
-                  onSizeChange={(dateId, size) => updateSize(product.id, dateId, size)}
-                  onDateChange={(dateId, field, value) =>
-                    updateRentalDate(product.id, dateId, field, value)
-                  }
-                  onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
-                  onAddDate={() => addRentalDate(product.id)}
-                  onRemoveProduct={() => removeProduct(product.id)}
-                  getRentalDateRef={(dateId) => (element) => {
-                    rentalDateRefs.current[getRentalDateRefKey(product.id, dateId)] = element;
-                  }}
-                />
-              );
-            })}
-          </ContentPanel>
-
-          <TermsPanel
-            readTos={readTos}
-            highlighted={highlightTos}
-            onReadTos={handleReadTos}
-            ref={tosRef}
-          />
-
-          <CartSummaryPanel orderInformation={orderInformation} onBuy={handleBuy} />
+      {status === 'error' && (
+        <div role="alert" className="mt-12 flex flex-col items-center gap-4 text-app-danger">
+          <p>{error ?? 'Nie udało się pobrać koszyka.'}</p>
+          <button
+            type="button"
+            onClick={() => void retry()}
+            className="rounded-lg bg-app-accent px-5 py-2 text-app-textInverted"
+          >
+            Spróbuj ponownie
+          </button>
         </div>
       )}
-      {products.length === 0 && <EmptyCartPanel onGoToOffer={() => navigate('/')} />}
+
+      {status === 'ready' && error && (
+        <p role="alert" className="mx-8 mt-6 text-center text-app-danger">
+          {error}
+        </p>
+      )}
+
+      {status === 'ready' && (
+        <AnimatePresence initial={false} mode="wait">
+          {products.length > 0 ? (
+            <motion.div
+              key="filled-cart"
+              animate={{ height: 'auto', clipPath: 'inset(0 0 0% 0)' }}
+              exit={{ height: 0, clipPath: 'inset(0 0 100% 0)' }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <ContentPanel className="relative mx-4 mt-12 items-stretch p-4 sm:mx-8 sm:p-8">
+                <AnimatePresence initial={false} propagate>
+                  {products.map((product, index) => {
+                    const information = getProductInformation(product);
+
+                    return (
+                      <motion.div
+                        key={product.id}
+                        initial={{
+                          height: 0,
+                          marginBottom: 0,
+                          clipPath: 'inset(0 0 100% 0)',
+                        }}
+                        animate={{
+                          height: 'auto',
+                          marginBottom: index === products.length - 1 ? 0 : 16,
+                          clipPath: 'inset(0 0 0% 0)',
+                          scale: 1,
+                        }}
+                        exit={{
+                          height: 0,
+                          marginBottom: 0,
+                          clipPath: 'inset(0 0 100% 0)',
+                          scale: 0.98,
+                        }}
+                        transition={{ duration: 0.45, ease: 'easeInOut' }}
+                        className="w-full overflow-hidden"
+                      >
+                        <CartProductCard
+                          product={product}
+                          information={information}
+                          onQuantityChange={(dateId, quantity) =>
+                            updateQuantity(product.id, dateId, quantity)
+                          }
+                          onSizeChange={(dateId, size) => updateSize(product.id, dateId, size)}
+                          onDateChange={(dateId, field, value) =>
+                            updateRentalDate(product.id, dateId, field, value)
+                          }
+                          onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
+                          onAddDate={() => addRentalDate(product.id)}
+                          onRemoveProduct={() => removeProduct(product.id)}
+                          actionsDisabled={isPending}
+                          mergeTargetId={mergeTargetId}
+                          getRentalDateRef={(dateId) => (element) => {
+                            rentalDateRefs.current[getRentalDateRefKey(product.id, dateId)] =
+                              element;
+                          }}
+                        />
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </ContentPanel>
+
+              <TermsPanel
+                readTos={readTos}
+                highlighted={highlightTos}
+                onReadTos={handleReadTos}
+                ref={tosRef}
+              />
+
+              <CartSummaryPanel
+                orderInformation={orderInformation}
+                onBuy={handleBuy}
+                disabled={isPending}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty-cart"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.25 }}
+            >
+              <EmptyCartPanel onGoToOffer={() => navigate('/')} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

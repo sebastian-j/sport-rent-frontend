@@ -1,12 +1,19 @@
+import type { components } from '../../api/generated/schema.ts';
+
 export const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-export type RentalDate = {
-  id: number;
-  quantity: number;
-  size: string | null;
+type CartItemDateResponse = components['schemas']['CartItemDate'];
+
+export type RentalDate = Omit<CartItemDateResponse, 'size' | 'start_date' | 'end_date'> & {
+  uiKey: string;
+  size: Exclude<CartItemDateResponse['size'], undefined>;
   start_date: Date | null;
   end_date: Date | null;
 };
+
+export function isPersistedRentalDate(date: RentalDate) {
+  return date.id > 0;
+}
 
 export function toDayTimestamp(date: Date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
