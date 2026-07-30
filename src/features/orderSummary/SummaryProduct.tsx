@@ -14,8 +14,8 @@ export default function SummaryProduct({ product }: SummaryProductProps) {
     <article className="flex w-full flex-col gap-4">
       <div className="flex items-start gap-4">
         <img
-          src={product.images[0]}
-          alt={product.imageAlts?.[0]}
+          src={product.image}
+          alt={product.alt}
           className="h-20 w-20 shrink-0 rounded-lg object-cover"
         />
         <p className="min-w-0 flex-1 text-lg font-semibold text-app-textStrong">{product.name}</p>

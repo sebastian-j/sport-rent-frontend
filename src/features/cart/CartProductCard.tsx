@@ -37,8 +37,8 @@ export default function CartProductCard({
     <article className="relative grid w-full grid-cols-1 gap-4 rounded-xl bg-app-cartCard p-4 text-app-textInverted md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:p-[1vw] lg:grid-rows-[auto_auto_auto_1fr]">
       <div className="mx-auto w-full max-w-xl self-start md:relative md:col-start-1 md:row-span-3 md:row-start-1 md:h-full md:min-h-0 md:max-w-none md:self-stretch lg:row-span-4">
         <img
-          src={product.images[0]}
-          alt={product.imageAlts?.[0]}
+          src={product.image}
+          alt={product.alt}
           className="h-auto w-full rounded-xl border-2 border-app-border object-contain md:absolute md:left-1/2 md:top-0 md:max-h-full md:max-w-full md:w-auto md:-translate-x-1/2"
         />
       </div>

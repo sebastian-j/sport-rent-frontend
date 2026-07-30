@@ -108,7 +108,7 @@ export default function HomePage() {
           if (active) setPanoramicStatus('hidden');
         };
         categoryImage.src = data.image;
-      } catch (error) {
+      } catch {
         if (active) setPanoramicStatus('hidden');
       }
     };
@@ -193,7 +193,7 @@ export default function HomePage() {
             setHasMore(false);
           }
         }
-      } catch (err) {
+      } catch {
         setError('Nie udało się załadować produktów.');
       } finally {
         if (active) setIsLoading(false);
