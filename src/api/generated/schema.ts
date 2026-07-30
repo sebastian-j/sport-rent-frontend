@@ -89,40 +89,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/reset-password/validate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Validate Password Reset */
-        post: operations["validate_password_reset_auth_reset_password_validate_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/reset-password/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Confirm Reset Password */
-        post: operations["confirm_reset_password_auth_reset_password_confirm_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/auth/change-password": {
         parameters: {
             query?: never;
@@ -431,6 +397,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Address */
+        patch: operations["update_address_user_address_patch"];
+        trace?: never;
+    };
     "/user/history": {
         parameters: {
             query?: never;
@@ -559,13 +542,6 @@ export interface components {
         ChangePasswordRequest: {
             /** Current Password */
             current_password: string;
-            /** New Password */
-            new_password: string;
-        };
-        /** ConfirmPasswordResetRequest */
-        ConfirmPasswordResetRequest: {
-            /** Token */
-            token: string;
             /** New Password */
             new_password: string;
         };
@@ -776,6 +752,23 @@ export interface components {
              */
             email: string;
         };
+        /** UpdateAddressRequest */
+        UpdateAddressRequest: {
+            /** First Name */
+            first_name?: string | null;
+            /** Last Name */
+            last_name?: string | null;
+            /** City */
+            city?: string | null;
+            /** First Line */
+            first_line?: string | null;
+            /** Second Line */
+            second_line?: string | null;
+            /** Postal Code */
+            postal_code?: string | null;
+            /** Country */
+            country?: string | null;
+        };
         /** UpdateCartItemRequest */
         UpdateCartItemRequest: {
             /** Quantity */
@@ -823,19 +816,6 @@ export interface components {
             country: string;
             /** Privacy Policy Accepted */
             privacy_policy_accepted: boolean;
-        };
-        /** ValidatePasswordResetRequest */
-        ValidatePasswordResetRequest: {
-            /** Token */
-            token: string;
-        };
-        /** ValidatePasswordResetResponse */
-        ValidatePasswordResetResponse: {
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -995,70 +975,6 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ResetPasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    validate_password_reset_auth_reset_password_validate_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ValidatePasswordResetRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidatePasswordResetResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    confirm_reset_password_auth_reset_password_confirm_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ConfirmPasswordResetRequest"];
             };
         };
         responses: {
@@ -1628,6 +1544,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserResponse"];
+                };
+            };
+        };
+    };
+    update_address_user_address_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAddressRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
