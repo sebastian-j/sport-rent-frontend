@@ -53,6 +53,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
 
   const images = product.images;
   const selectedImage = getImageIndex(slidePosition, images.length);
+  const getImageAlt = (index: number) => product.imageAlts[index];
 
   const changeImage = (direction: 1 | -1) => {
     dispatch({ type: 'change', direction });
@@ -92,7 +93,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
             <motion.img
               key={slidePosition}
               src={images[selectedImage]}
-              alt={`${product.alt} — zdjęcie ${selectedImage + 1}`}
+              alt={getImageAlt(selectedImage)}
               className={
                 images.length === 1
                   ? 'relative block h-auto w-full select-none'
@@ -144,7 +145,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
                 <img
                   key={index}
                   src={image}
-                  alt={product.alt}
+                  alt={getImageAlt(index)}
                   className={`h-24 w-32 shrink-0 rounded-lg border-[2px] object-contain ${index === selectedImage ? 'border-app-border' : 'border-app-borderSoft'}`}
                   onClick={() => selectImage(index)}
                 />
@@ -154,7 +155,7 @@ export default function ProductGallery({ product }: { product: ProductProps }) {
           <div className={`flex flex-col gap-2 ${images.length === 1 ? 'w-full' : ''}`}>
             <img
               src={images[selectedImage]}
-              alt={product.alt}
+              alt={getImageAlt(selectedImage)}
               className={images.length === 1 ? 'h-auto w-full rounded-lg' : 'w-[30vw] rounded-lg'}
             />
           </div>

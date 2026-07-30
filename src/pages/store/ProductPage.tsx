@@ -34,7 +34,7 @@ export default function ProductPage() {
               price: data.price ?? 0,
               slug: data.slug,
               images: data.images ?? [],
-              alt: data.alt ?? data.name,
+              imageAlts: data.imageAlts,
               category: data.category ?? '',
               sizes:
                 data.sizes?.map((size) => ({

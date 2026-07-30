@@ -40,7 +40,7 @@ export default function SearchBar({
             price: product.price ?? 0,
             slug: product.slug,
             images: product.images ?? [],
-            alt: product.alt ?? product.name,
+            imageAlts: product.imageAlts,
             category: product.category ?? '',
           }))
         );
@@ -159,7 +159,7 @@ export default function SearchBar({
                   >
                     <img
                       src={product.images[0]}
-                      alt={product.alt}
+                      alt={product.imageAlts?.[0]}
                       className="h-16 w-20 shrink-0 rounded-md object-contain"
                     />
                     <div className="min-w-0 flex-1">

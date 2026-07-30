@@ -5,7 +5,7 @@ export type ProductProps = {
   price: number;
   slug: string;
   images: string[];
-  alt: string;
+  imageAlts: string[];
   category: string;
   sizes?: { size: string; description?: string | null; available?: boolean }[];
   isFavorite?: boolean;

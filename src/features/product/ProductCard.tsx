@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import { useCardTilt } from '../../components/core/useCardTilt.ts';
 
-export const PRODUCT_CARD_WIDTH = 256;
+export const PRODUCT_CARD_WIDTH = 300;
 
 const PRODUCT_IMAGE_SIZE = { width: PRODUCT_CARD_WIDTH, height: 224 } as const;
 const PRODUCT_CARD_CONTENT_HEIGHT = 120;
