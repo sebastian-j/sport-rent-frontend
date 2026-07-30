@@ -16,7 +16,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
     getOrderDetails(Number(orderId))
       .then(({ data, error }) => {
         if (error) {
-          setError((error as any)?.detail.msg || "Nieznany błąd");
+          setError((error as any)?.detail.msg || 'Nieznany błąd');
           console.error(error);
         } else if (data) {
           setDetails(data);
