@@ -8,22 +8,22 @@ import { type Order, type OrderStatus } from './orders/orderTypes.ts';
 function OrderDetailsLoader({ orderId }: { orderId: string }) {
   const [details, setDetails] = useState<OrderDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasLoadError, setHasLoadError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
-    setHasLoadError(false);
+    setError(null);
     getOrderDetails(Number(orderId))
       .then(({ data, error }) => {
         if (error) {
-          setHasLoadError(true);
+          setError('Nie udało się wczytać szczegółów.');
         } else if (data) {
           setDetails(data);
         }
         setIsLoading(false);
       })
       .catch(() => {
-        setHasLoadError(true);
+        setError('Wystąpił błąd podczas ładowania szczegółów.');
         setIsLoading(false);
       });
   }, [orderId]);
@@ -34,10 +34,10 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
     );
   }
 
-  if (hasLoadError || !details) {
+  if (error || !details) {
     return (
       <div className="mt-4 text-center text-sm text-app-danger">
-        Nie udało się wczytać szczegółów.
+        {error || 'Brak szczegółowych danych.'}
       </div>
     );
   }
@@ -73,7 +73,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
                   <span className="text-xs text-app-textMuted">Rozmiar: {item.size}</span>
                 )}
                 <span className="text-xs text-app-textMuted">
-                  Stawka: {formatPrice(dailyPrice)} / dzień
+                  Cena: {formatPrice(dailyPrice)} / dzień
                 </span>
               </div>
             </div>
@@ -99,13 +99,13 @@ export default function OrdersSection() {
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasLoadError, setHasLoadError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getUserHistory()
       .then(({ data, error }) => {
         if (error) {
-          setHasLoadError(true);
+          setError('Wystąpił błąd podczas ładowania historii.');
         } else if (data) {
           const fetchedOrders: Order[] = data.map((item) => ({
             id: String(item.id),
@@ -122,7 +122,7 @@ export default function OrdersSection() {
         setIsLoading(false);
       })
       .catch(() => {
-        setHasLoadError(true);
+        setError('Wystąpił błąd podczas ładowania historii.');
         setIsLoading(false);
       });
   }, []);
@@ -133,10 +133,8 @@ export default function OrdersSection() {
 
       {isLoading ? (
         <div className="mt-12 text-center text-app-textMuted">Ładowanie historii...</div>
-      ) : hasLoadError ? (
-        <div className="mt-12 text-center text-app-danger">
-          Wystąpił błąd podczas ładowania historii.
-        </div>
+      ) : error ? (
+        <div className="mt-12 text-center text-app-danger">{error}</div>
       ) : (
         <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-surfaceSoft md:m-12 md:max-w-[calc(100%-6rem)]">
           {orders.map((order) => (
