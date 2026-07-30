@@ -58,7 +58,6 @@ export default function AccountSection() {
       }
 
       setPersonalData(data);
-      alert('Dane osobowe zostały pomyślnie zapisane w bazie!');
       closeSection();
     } catch (error) {
       setError((error as any)?.message || 'Wystąpił błąd połączenia z serwerem.');
