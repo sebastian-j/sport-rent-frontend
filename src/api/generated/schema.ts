@@ -651,8 +651,8 @@ export interface components {
             description?: string | null;
             /** Images */
             images?: string[] | null;
-            /** Alt */
-            alt?: string | null;
+            /** Imagealts */
+            imageAlts: string[];
             /** Category */
             category?: string | null;
             /** Sizes */

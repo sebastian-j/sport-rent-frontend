@@ -147,7 +147,7 @@ export default function HomePage() {
             price: product.price ?? 0,
             slug: product.slug,
             images: product.images ?? [],
-            alt: product.alt ?? product.name,
+            imageAlts: product.imageAlts,
             category: product.category ?? '',
             isFavorite: product.isFavorite,
           }));
@@ -178,7 +178,7 @@ export default function HomePage() {
             price: product.price ?? 0,
             slug: product.slug,
             images: product.images ?? [],
-            alt: product.alt ?? product.name,
+            imageAlts: product.imageAlts,
             category: product.category ?? '',
             isFavorite: product.isFavorite ?? false,
           }));
@@ -357,7 +357,7 @@ export default function HomePage() {
               name={product.name}
               price={product.price}
               image={product.images[0] ?? ''}
-              alt={product.alt}
+              alt={product.imageAlts[0]}
               onClick={() => navigate(`/product/${product.slug}`)}
               isFavorite={product.isFavorite ?? false}
               isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
