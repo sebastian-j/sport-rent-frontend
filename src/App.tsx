@@ -26,9 +26,8 @@ import ProductPage from './pages/rent/ProductPage.tsx';
 import SearchPage from './pages/rent/SearchPage.tsx';
 import ServiceHomePage from './pages/service/ServiceHomePage.tsx';
 import SubsiteSelectionPage from './pages/SubsiteSelectionPage.tsx';
-import { BOOT_FITTING_ROUTES, RENT_ROUTES, ROOT_ROUTE, SERVICE_ROUTES } from './routes.ts';
 import { AppProviders } from './providers/AppProviders.tsx';
-
+import { BOOT_FITTING_ROUTES, RENT_ROUTES, ROOT_ROUTE, SERVICE_ROUTES } from './routes.ts';
 
 function App() {
   return (
