@@ -63,6 +63,14 @@ export default function PasswordForm({ onCancel }: PasswordFormProps) {
       });
 
       if (result.error) {
+        if (result.response.status === 422) {
+          setStatus({
+            tone: 'error',
+            message: 'Nowe hasło musi mieć od 8 do 128 znaków.',
+          });
+          return;
+        }
+
         if (result.response.status === 401) {
           setStatus({
             tone: 'error',
