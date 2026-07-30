@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { getUser } from '../../api/user.ts';
+import { getUser, updateAddress } from '../../api/user.ts';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';
@@ -14,6 +14,7 @@ export default function AccountSection() {
   const [newsletter, setNewsletter] = useState(true);
   const [personalData, setPersonalData] = useState<PersonalData | null>(null);
   const [currentEmail, setCurrentEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getUser().then(({ data }) => {
@@ -33,15 +34,36 @@ export default function AccountSection() {
   }, []);
 
   const toggleSection = (section: Exclude<Section, null>) => {
+    setError(null);
     setExpandedSection((currentSection) => (currentSection === section ? null : section));
   };
 
-  const closeSection = () => setExpandedSection(null);
+  const closeSection = () => {
+    setError(null);
+    setExpandedSection(null);
+  };
 
-  const savePersonalData = (data: PersonalData) => {
-    setPersonalData(data);
-    alert('Dane osobowe zostały pomyślnie zapisane!');
-    closeSection();
+  const savePersonalData = async (data: PersonalData) => {
+    setError(null);
+    try {
+      const { error } = await updateAddress(data);
+      if (error) {
+        setError(
+          (error as any)?.detail?.[0]?.msg ||
+            (error as any)?.detail ||
+            'Wystąpił nieznany błąd zapisu.'
+        );
+        console.error(error);
+        return;
+      }
+
+      setPersonalData(data);
+      alert('Dane osobowe zostały pomyślnie zapisane w bazie!');
+      closeSection();
+    } catch (error) {
+      setError((error as any)?.message || 'Wystąpił błąd połączenia z serwerem.');
+      console.error(error);
+    }
   };
 
   const saveEmail = (email: string) => {
@@ -64,6 +86,12 @@ export default function AccountSection() {
       <h2 className="text-5xl text-center text-3xl md:text-5xl">Ustawienia konta</h2>
 
       <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
+        {error && (
+          <div className="flex w-full flex-col items-center justify-center bg-red-100/10 p-4 text-center text-red-500">
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
+
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${personalData.firstName} ${personalData.lastName}, ${personalData.city}`}
@@ -73,7 +101,7 @@ export default function AccountSection() {
         >
           <PersonalDataForm
             initialData={personalData}
-            onSave={savePersonalData}
+            onSave={(data) => void savePersonalData(data)}
             onCancel={closeSection}
           />
         </SettingsCard>
