@@ -1,11 +1,16 @@
+import { LockKeyhole, Mail } from 'lucide-react';
 import { type ChangeEvent, type SubmitEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { register } from '../../api/auth.ts';
 import type { components } from '../../api/generated/schema.ts';
+import AuthField from '../../components/auth/AuthField.tsx';
+import AuthFormSection from '../../components/auth/AuthFormSection.tsx';
+import AuthNotice from '../../components/auth/AuthNotice.tsx';
+import AuthPageHeader from '../../components/auth/AuthPageHeader.tsx';
+import { authLinkClassName } from '../../components/auth/authStyles.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type HTTPValidationError = components['schemas']['HTTPValidationError'];
@@ -169,213 +174,211 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-app-surface">
-      <PageTitle className="mb-6 text-center sm:mb-8">Zarejestruj się</PageTitle>
-      <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
-        <form
-          className="flex w-full flex-col gap-4 sm:w-[90%]"
-          onSubmit={handleRegister}
-          aria-busy={isRegistering}
-        >
-          <label htmlFor="firstName" className="text-app-textStrong">
-            Imię
-          </label>
-          <input
-            name="firstName"
-            id="firstName"
-            type="text"
-            value={formData.firstName}
-            required
-            maxLength={100}
-            autoComplete="given-name"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            onChange={handleChange}
-          />
-          <label htmlFor="lastName" className="text-app-textStrong">
-            Nazwisko
-          </label>
-          <input
-            name="lastName"
-            id="lastName"
-            type="text"
-            value={formData.lastName}
-            required
-            maxLength={100}
-            autoComplete="family-name"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            onChange={handleChange}
-          />
-          <label htmlFor="email" className="text-app-textStrong">
-            Email
-          </label>
-          <input
-            name="email"
-            id="email"
-            type="email"
-            value={formData.email}
-            required
-            autoComplete="email"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            onChange={handleChange}
-          />
-          <label htmlFor="password" className="text-app-textStrong">
-            Hasło
-          </label>
-          <input
-            name="password"
-            type="password"
-            value={formData.password}
-            required
-            autoComplete="new-password"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="password"
-            onChange={handleChange}
-          />
-          <label htmlFor="confirmPassword" className="text-app-textStrong">
-            Powtórz hasło
-          </label>
-          <input
-            name="confirmPassword"
-            type="password"
-            value={formData.confirmPassword}
-            required
-            autoComplete="new-password"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="confirmPassword"
-            onChange={handleChange}
-          />
+    <section className="mx-auto w-full max-w-2xl">
+      <AuthPageHeader title="Dołącz do Polar Sport Rent" />
 
-          <p className="text-lg font-semibold text-app-textStrong"> Adres </p>
-
-          <label htmlFor="country" className="text-app-textStrong">
-            Państwo
-          </label>
-          <input
-            name="country"
-            type="text"
-            value={formData.address.country}
-            required
-            autoComplete="country-name"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="country"
-            onChange={handleAddressChange}
-          />
-          <label htmlFor="city" className="text-app-textStrong">
-            Miasto
-          </label>
-          <input
-            name="city"
-            type="text"
-            value={formData.address.city}
-            required
-            autoComplete="address-level2"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="city"
-            onChange={handleAddressChange}
-          />
-          <label htmlFor="addressLine1" className="text-app-textStrong">
-            Adres - pierwsza linia
-          </label>
-          <input
-            name="firstLine"
-            type="text"
-            value={formData.address.firstLine}
-            required
-            autoComplete="address-line1"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="addressLine1"
-            onChange={handleAddressChange}
-          />
-          <label htmlFor="addressLine2" className="text-app-textStrong">
-            Adres - druga linia
-          </label>
-          <input
-            name="secondLine"
-            type="text"
-            value={formData.address.secondLine}
-            autoComplete="address-line2"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="addressLine2"
-            onChange={handleAddressChange}
-          />
-          <label htmlFor="postalCode" className="text-app-textStrong">
-            Kod pocztowy
-          </label>
-          <input
-            name="postalCode"
-            type="text"
-            value={formData.address.postalCode}
-            required
-            autoComplete="postal-code"
-            className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-            id="postalCode"
-            onChange={handleAddressChange}
-          />
-          <label htmlFor="consent" className="flex flex-row justify-between text-app-textStrong">
-            <span>Zgoda na przetwarzanie danych osobowych</span>
-            <input
-              type="checkbox"
-              name="consent"
-              id="consent"
-              checked={formData.consent}
+      <form className="space-y-9" onSubmit={handleRegister} aria-busy={isRegistering}>
+        <AuthFormSection title="Dane konta">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <AuthField
+              name="firstName"
+              id="firstName"
+              label="Imię"
+              type="text"
+              value={formData.firstName}
               required
-              onChange={(event) => {
-                setRegisterError(null);
-                setValidationErrors([]);
-                setFormData((previousData) => ({
-                  ...previousData,
-                  consent: event.target.checked,
-                }));
-              }}
-              className="h-6 w-6 cursor-pointer"
+              maxLength={100}
+              autoComplete="given-name"
+              placeholder="Jan"
+              onChange={handleChange}
             />
-          </label>
-          {registerError && (
-            <p role="alert" className="text-sm text-app-danger">
-              {registerError}
-            </p>
-          )}
-          {validationErrors.length > 0 && (
-            <div role="alert" className="text-sm text-app-danger">
-              <p>Popraw następujące pola:</p>
-              <ul className="list-disc pl-5">
-                {validationErrors.map((message) => (
-                  <li key={message}>{message}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <ButtonCore
-            className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
-            type="submit"
-            disabled={isRegistering}
-          >
-            {isRegistering ? (
-              <span className="inline-flex items-center gap-2">
-                Rejestrowanie <LoadingDots />
-              </span>
-            ) : (
-              'Zarejestruj się'
-            )}
-          </ButtonCore>
-        </form>
+            <AuthField
+              name="lastName"
+              id="lastName"
+              label="Nazwisko"
+              type="text"
+              value={formData.lastName}
+              required
+              maxLength={100}
+              autoComplete="family-name"
+              placeholder="Kowalski"
+              onChange={handleChange}
+            />
+            <AuthField
+              name="email"
+              id="email"
+              label="Adres e-mail"
+              icon={Mail}
+              type="email"
+              value={formData.email}
+              required
+              autoComplete="email"
+              placeholder="nazwa@przyklad.pl"
+              containerClassName="sm:col-span-2"
+              onChange={handleChange}
+            />
+            <AuthField
+              name="password"
+              id="password"
+              label="Hasło"
+              icon={LockKeyhole}
+              type="password"
+              value={formData.password}
+              required
+              minLength={8}
+              maxLength={128}
+              autoComplete="new-password"
+              placeholder="Minimum 8 znaków"
+              onChange={handleChange}
+            />
+            <AuthField
+              name="confirmPassword"
+              id="confirmPassword"
+              label="Powtórz hasło"
+              icon={LockKeyhole}
+              type="password"
+              value={formData.confirmPassword}
+              required
+              minLength={8}
+              maxLength={128}
+              autoComplete="new-password"
+              placeholder="Wpisz hasło ponownie"
+              onChange={handleChange}
+            />
+          </div>
+        </AuthFormSection>
 
-        <div className="my-3 w-full text-left sm:w-[90%]">
-          <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
-            Wróć do logowania
-          </Link>
-        </div>
-      </div>
-      <div className="w-[60vw] max-w-[800px] text-left mt-4">
-        <Link
-          to={DOCUMENT_ROUTES.privacyPolicy}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[0.7vw] text-app-textMuted underline"
+        <AuthFormSection title="Adres">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <AuthField
+              name="country"
+              id="country"
+              label="Państwo"
+              type="text"
+              value={formData.address.country}
+              required
+              autoComplete="country-name"
+              placeholder="Polska"
+              onChange={handleAddressChange}
+            />
+            <AuthField
+              name="city"
+              id="city"
+              label="Miasto"
+              type="text"
+              value={formData.address.city}
+              required
+              autoComplete="address-level2"
+              placeholder="Kraków"
+              onChange={handleAddressChange}
+            />
+            <AuthField
+              name="firstLine"
+              id="addressLine1"
+              label="Ulica i numer"
+              type="text"
+              value={formData.address.firstLine}
+              required
+              autoComplete="address-line1"
+              placeholder="ul. Przykładowa 12"
+              onChange={handleAddressChange}
+            />
+            <AuthField
+              name="secondLine"
+              id="addressLine2"
+              label="Lokal (opcjonalnie)"
+              type="text"
+              value={formData.address.secondLine}
+              autoComplete="address-line2"
+              placeholder="np. lokal 4"
+              onChange={handleAddressChange}
+            />
+            <AuthField
+              name="postalCode"
+              id="postalCode"
+              label="Kod pocztowy"
+              type="text"
+              value={formData.address.postalCode}
+              required
+              autoComplete="postal-code"
+              placeholder="00-000"
+              className="sm:max-w-52"
+              onChange={handleAddressChange}
+            />
+          </div>
+        </AuthFormSection>
+
+        <label
+          htmlFor="consent"
+          className="flex cursor-pointer items-start gap-3 rounded-xl border border-app-borderSoft p-4 transition hover:border-app-border"
         >
-          Polityka prywatności
+          <input
+            type="checkbox"
+            name="consent"
+            id="consent"
+            checked={formData.consent}
+            required
+            onChange={(event) => {
+              setRegisterError(null);
+              setValidationErrors([]);
+              setFormData((previousData) => ({
+                ...previousData,
+                consent: event.target.checked,
+              }));
+            }}
+            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-app-surfaceStrong"
+          />
+          <span className="text-sm leading-6 text-app-textMuted">
+            Wyrażam zgodę na przetwarzanie danych osobowych zgodnie z{' '}
+            <Link
+              to={DOCUMENT_ROUTES.privacyPolicy}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={authLinkClassName}
+            >
+              polityką prywatności
+            </Link>
+            .
+          </span>
+        </label>
+
+        {registerError && (
+          <AuthNotice role="alert" tone="error">
+            {registerError}
+          </AuthNotice>
+        )}
+        {validationErrors.length > 0 && (
+          <AuthNotice role="alert" tone="error">
+            <p className="font-semibold">Popraw następujące pola:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {validationErrors.map((message) => (
+                <li key={message}>{message}</li>
+              ))}
+            </ul>
+          </AuthNotice>
+        )}
+
+        <ButtonCore
+          className="h-12 w-full rounded-xl px-6 text-base font-bold"
+          type="submit"
+          disabled={isRegistering}
+        >
+          {isRegistering ? (
+            <span className="inline-flex items-center gap-2">
+              Tworzenie konta <LoadingDots />
+            </span>
+          ) : (
+            'Utwórz konto'
+          )}
+        </ButtonCore>
+      </form>
+
+      <div className="mt-7 rounded-xl border border-app-borderSoft px-4 py-3 text-center text-sm text-app-textMuted">
+        Masz już konto?{' '}
+        <Link to={AUTH_ROUTES.login} className={authLinkClassName}>
+          Zaloguj się
         </Link>
       </div>
-    </div>
+    </section>
   );
 }
