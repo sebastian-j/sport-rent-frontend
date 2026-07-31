@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { addCartItem } from '../../api/cart.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import { AUTH_ROUTES } from '../../routes.ts';
 import { formatLocalDate } from '../../utils/localDate.ts';
 import { useAuth } from '../auth/authContext.ts';
 import { useCartStatus } from '../cart/cartStatusContext.ts';
@@ -36,7 +37,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
 
     if (authStatus !== 'authenticated') {
       if (authStatus === 'anonymous') {
-        navigate('/login', { state: { from: location } });
+        navigate(AUTH_ROUTES.login, { state: { from: location } });
       } else {
         setMessage('Nie udało się potwierdzić sesji. Spróbuj ponownie.');
         setHasError(true);

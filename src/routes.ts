@@ -3,11 +3,31 @@ export const ROOT_ROUTE = '/';
 export const RENT_ROUTES = {
   home: '/rent',
   favorites: '/rent/favorites',
+  productPattern: '/rent/product/:slug',
   product: (slug: string) => `/rent/product/${slug}`,
   search: '/rent/search',
   profile: '/rent/profile',
   cart: '/rent/cart',
   summary: '/rent/summary',
+} as const;
+
+export const AUTH_ROUTES = {
+  login: '/login',
+  register: '/register',
+  resetPassword: '/reset-password',
+  confirmPasswordReset: '/reset-password/confirm',
+} as const;
+
+export const DOCUMENT_ROUTES = {
+  terms: '/tos',
+  privacyPolicy: '/privacy-policy',
+} as const;
+
+export const INFO_ROUTES = {
+  about: '/about',
+  contact: '/contact',
+  loyaltyPoints: '/points',
+  faq: '/faq',
 } as const;
 
 export const SERVICE_ROUTES = {

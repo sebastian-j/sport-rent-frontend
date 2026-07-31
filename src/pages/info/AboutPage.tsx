@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { RENT_ROUTES } from '../../routes.ts';
+import { INFO_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 export default function AboutPage() {
   return (
@@ -76,7 +76,7 @@ export default function AboutPage() {
         </p>
         <div className="flex flex-wrap gap-6 pt-2">
           <Link to={RENT_ROUTES.search}>Przeglądaj sprzęt</Link>
-          <Link to="/contact">Skontaktuj się z nami</Link>
+          <Link to={INFO_ROUTES.contact}>Skontaktuj się z nami</Link>
         </div>
       </section>
     </article>

@@ -8,7 +8,7 @@ import 'react-social-icons/tiktok';
 import 'react-social-icons/twitter';
 
 import footerLogo from '../assets/logo_footer.svg';
-import { getSectionHomeRoute } from '../routes.ts';
+import { DOCUMENT_ROUTES, getSectionHomeRoute, INFO_ROUTES } from '../routes.ts';
 
 type FooterSectionProps = {
   children: ReactNode;
@@ -134,26 +134,26 @@ export default function Footer() {
           <FooterSection id="footer-information" title="Informacje">
             <ul className="space-y-3 pb-4 text-base text-app-textInvertedMuted [&_a:hover]:text-app-textInverted lg:pb-0 lg:text-lg">
               <li>
-                <Link to="/about">O nas</Link>
+                <Link to={INFO_ROUTES.about}>O nas</Link>
               </li>
               <li>
-                <Link to="/contact">Kontakt</Link>
+                <Link to={INFO_ROUTES.contact}>Kontakt</Link>
               </li>
               <li>
-                <Link to="/points">Program lojalnościowy</Link>
+                <Link to={INFO_ROUTES.loyaltyPoints}>Program lojalnościowy</Link>
               </li>
               <li>
-                <Link to="/tos" target="_blank">
+                <Link to={DOCUMENT_ROUTES.terms} target="_blank">
                   Regulamin
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" target="_blank">
+                <Link to={DOCUMENT_ROUTES.privacyPolicy} target="_blank">
                   Polityka prywatności RODO
                 </Link>
               </li>
               <li>
-                <Link to="/faq">FAQ</Link>
+                <Link to={INFO_ROUTES.faq}>FAQ</Link>
               </li>
             </ul>
           </FooterSection>
