@@ -4,33 +4,35 @@ import type { SortDirection } from '../../types/search.ts';
 
 type PriceRange = [number, number];
 
-type ProductSearchParamsOptions = {
+type ProductSearchParamsOptions<SortField extends string> = {
   totalPages: number;
   minPrice: number;
   maxPrice: number;
-  sortFields: readonly string[];
-  defaultSortField: string;
+  sortFields: readonly SortField[];
+  defaultSortField: SortField;
   categorySlugs: readonly string[];
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-export function useProductSearchParams({
+export function useProductSearchParams<SortField extends string>({
   totalPages,
   minPrice,
   maxPrice,
   sortFields,
   defaultSortField,
   categorySlugs,
-}: ProductSearchParamsOptions) {
+}: ProductSearchParamsOptions<SortField>) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('q')?.trim() ?? '';
+  const query = searchParams.get('query')?.trim() ?? '';
   const lastPage = Math.max(1, totalPages);
   const pageParam = searchParams.get('page');
   const parsedPage = pageParam === null ? 1 : Number(pageParam);
   const pageNumber = Number.isInteger(parsedPage) ? clamp(parsedPage, 1, lastPage) : 1;
   const sortParam = searchParams.get('sort') ?? '';
-  const sortField = sortFields.includes(sortParam) ? sortParam : defaultSortField;
+  const sortField = sortFields.includes(sortParam as SortField)
+    ? (sortParam as SortField)
+    : defaultSortField;
   const sortDirection: SortDirection = searchParams.get('order') === 'desc' ? 'desc' : 'asc';
   const minPriceParam = searchParams.get('minPrice');
   const maxPriceParam = searchParams.get('maxPrice');
@@ -59,7 +61,7 @@ export function useProductSearchParams({
     });
   };
 
-  const setSortField = (nextSortField: string) => {
+  const setSortField = (nextSortField: SortField) => {
     if (!sortFields.includes(nextSortField)) return;
 
     setSearchParams((previousSearchParams) => {

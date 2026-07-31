@@ -1,7 +1,7 @@
 import { ArrowRight, Bike, Footprints, Wrench, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import headerLogo from '../assets/logo_header.png';
+import headerLogo from '../assets/layout/logo_header.webp';
 import { BOOT_FITTING_ROUTES, RENT_ROUTES, ROOT_ROUTE, SERVICE_ROUTES } from '../routes.ts';
 
 type SubsiteCard = {

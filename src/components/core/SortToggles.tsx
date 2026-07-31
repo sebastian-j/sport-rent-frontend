@@ -5,21 +5,21 @@ import type { SortDirection } from '../../types/search.ts';
 import ButtonCore from './ButtonCore.tsx';
 import Select, { type SelectOption } from './Select.tsx';
 
-type SortTogglesProps = {
-  value: string;
-  options: readonly SelectOption[];
+type SortTogglesProps<Value extends string> = {
+  value: Value;
+  options: readonly SelectOption<Value>[];
   direction: SortDirection;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: Value) => void;
   onDirectionChange: (direction: SortDirection) => void;
 };
 
-export default function SortToggles({
+export default function SortToggles<Value extends string>({
   value,
   options,
   direction,
   onValueChange,
   onDirectionChange,
-}: SortTogglesProps) {
+}: SortTogglesProps<Value>) {
   const isAscending = direction === 'asc';
 
   return (
