@@ -1,5 +1,6 @@
 import { Coins, Gift, ShoppingBag } from 'lucide-react';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
@@ -17,7 +18,7 @@ export default function PointsPage() {
   return (
     <article>
       <header>
-        <h1>Program lojalnościowy</h1>
+        <PageTitle>Program lojalnościowy</PageTitle>
         <p>
           Każde zamówienie przybliża Cię do kolejnego wypożyczenia. Zbieraj punkty podczas zakupów,
           a gdy zgromadzisz ich wystarczająco dużo, opłać nimi całe zamówienie.

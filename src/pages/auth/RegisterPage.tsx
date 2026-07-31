@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../../api/auth.ts';
 import type { components } from '../../api/generated/schema.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
@@ -169,9 +170,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col items-center bg-app-surface">
-      <h1 className="mb-6 text-3xl font-bold text-app-textStrong sm:mb-8 sm:text-4xl">
-        Zarejestruj się
-      </h1>
+      <PageTitle className="mb-6 text-center sm:mb-8">Zarejestruj się</PageTitle>
       <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
         <form
           className="flex w-full flex-col gap-4 sm:w-[90%]"

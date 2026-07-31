@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { getUser } from '../../api/user.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import AccountSection from '../../features/profile/AccountSection.tsx';
 import LoyaltySection from '../../features/profile/LoyaltySection.tsx';
@@ -75,14 +76,14 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[100rem] flex-col">
-      <p className="mt-6 px-4 text-center text-3xl font-semibold text-app-text lg:mt-12 lg:text-5xl">
+      <PageTitle className="mt-6 px-4 text-center text-app-text lg:mt-12">
         {userName ?? (
           <>
             <span className="sr-only">Ładowanie profilu</span>
             <LoadingDots />
           </>
         )}
-      </p>
+      </PageTitle>
 
       <div className="my-6 flex flex-col gap-4 px-4 lg:mx-auto lg:my-12 lg:grid lg:w-full lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16 lg:px-16">
         <nav

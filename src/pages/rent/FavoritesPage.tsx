@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type FavoritesResponse, getFavorites, removeFavorite } from '../../api/favorites.ts';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
@@ -109,7 +110,7 @@ export default function FavoritesPage() {
   return (
     <div className="w-full">
       <div className="max-w-[1400px] mx-auto px-4 pt-8 pb-4">
-        <h1 className="mb-4 text-center text-4xl font-bold text-app-textStrong">Ulubione</h1>
+        <PageTitle className="mb-4 text-center">Ulubione</PageTitle>
       </div>
 
       {error && (

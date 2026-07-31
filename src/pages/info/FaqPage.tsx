@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
@@ -32,7 +33,7 @@ export default function FaqPage() {
   return (
     <article>
       <header>
-        <h1>Najczęściej zadawane pytania</h1>
+        <PageTitle>Najczęściej zadawane pytania</PageTitle>
         <p>
           Zebraliśmy odpowiedzi na pytania dotyczące wypożyczania sprzętu, programu lojalnościowego
           i kontaktu z Polar Sport Rent.

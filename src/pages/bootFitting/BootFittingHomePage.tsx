@@ -16,6 +16,7 @@ import {
   UserRoundCheck,
 } from 'lucide-react';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { scrollToSection } from '../../utils/scrollToSection.ts';
 
 const FITTING_AREAS = [
@@ -80,7 +81,7 @@ export default function BootFittingHomePage() {
         <p className="mb-3 font-bold uppercase tracking-[0.08em] text-app-textMuted">
           Polar Sport Boot-Fitting
         </p>
-        <h1>Profesjonalny boot-fitting w Krakowie</h1>
+        <PageTitle>Profesjonalny boot-fitting w Krakowie</PageTitle>
         <p>
           Dopasujemy buty narciarskie do kształtu Twoich stóp i naturalnego ustawienia nóg, aby
           poprawić trzymanie stopy oraz ograniczyć dyskomfort podczas jazdy.

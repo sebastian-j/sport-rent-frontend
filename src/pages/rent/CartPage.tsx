@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import {
   findFirstInvalidRentalDate,
@@ -76,7 +77,7 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
-      <p className="text-center mt-12 font-semibold text-5xl text-app-text">Koszyk</p>
+      <PageTitle className="mt-12 text-center text-app-text">Koszyk</PageTitle>
 
       {status === 'loading' && (
         <p role="status" className="mt-12 text-center text-xl text-app-textMuted">

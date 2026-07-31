@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
@@ -100,7 +101,7 @@ export default function ConfirmPasswordResetPage() {
 
   return (
     <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <h1 className="mb-8 text-4xl font-bold text-app-textStrong">Ustaw nowe hasło</h1>
+      <PageTitle className="mb-8 text-center">Ustaw nowe hasło</PageTitle>
 
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
         {pageState === 'validating' && (
