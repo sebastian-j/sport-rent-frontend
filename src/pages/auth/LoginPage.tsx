@@ -11,7 +11,7 @@ import { authLinkClassName } from '../../components/auth/authStyles.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
-import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
+import { AUTH_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();

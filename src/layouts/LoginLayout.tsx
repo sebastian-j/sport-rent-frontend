@@ -4,7 +4,7 @@ import { Link, Navigate, Outlet } from 'react-router-dom';
 import LogoHeader from '../assets/layout/logo_header.webp';
 import LoadingDots from '../components/core/LoadingDots.tsx';
 import { useAuth } from '../features/auth/authContext.ts';
-import { RENT_ROUTES, ROOT_ROUTE } from '../routes.ts';
+import { DOCUMENT_ROUTES, INFO_ROUTES, RENT_ROUTES, ROOT_ROUTE } from '../routes.ts';
 
 export default function LoginLayout() {
   const { status } = useAuth();
@@ -71,13 +71,16 @@ export default function LoginLayout() {
             aria-label="Informacje prawne"
             className="flex flex-wrap justify-center gap-x-5 gap-y-2"
           >
-            <Link className="transition hover:text-app-textStrong" to="/tos">
+            <Link className="transition hover:text-app-textStrong" to={DOCUMENT_ROUTES.terms}>
               Regulamin
             </Link>
-            <Link className="transition hover:text-app-textStrong" to="/privacy-policy">
+            <Link
+              className="transition hover:text-app-textStrong"
+              to={DOCUMENT_ROUTES.privacyPolicy}
+            >
               Polityka prywatności
             </Link>
-            <Link className="transition hover:text-app-textStrong" to="/contact">
+            <Link className="transition hover:text-app-textStrong" to={INFO_ROUTES.contact}>
               Kontakt
             </Link>
           </nav>
