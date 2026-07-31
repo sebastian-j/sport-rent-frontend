@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { type ReactNode, useId } from 'react';
+import { type ReactNode, useId, useLayoutEffect, useRef, useState } from 'react';
 
 import { formatPrice } from '../../../utils/formatPrice.ts';
 import { useDisclosureScroll } from '../useDisclosureScroll.ts';
@@ -16,7 +16,24 @@ type OrderCardProps = {
 export default function OrderCard({ order, isExpanded, onToggle, children }: OrderCardProps) {
   const cardRef = useDisclosureScroll(isExpanded);
   const contentId = useId();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
   const prefersReducedMotion = useReducedMotion();
+
+  useLayoutEffect(() => {
+    if (!isExpanded) return;
+
+    const content = contentRef.current;
+    if (!content) return;
+
+    const updateHeight = () => setContentHeight(content.getBoundingClientRect().height);
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(content);
+
+    return () => resizeObserver.disconnect();
+  }, [isExpanded]);
 
   return (
     <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated lg:scroll-mt-16">
@@ -59,7 +76,7 @@ export default function OrderCard({ order, isExpanded, onToggle, children }: Ord
             key="order-content"
             id={contentId}
             initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
+            animate={{ height: contentHeight, opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={
               prefersReducedMotion
@@ -71,7 +88,12 @@ export default function OrderCard({ order, isExpanded, onToggle, children }: Ord
             }
             className="overflow-hidden"
           >
-            <div className="border-t border-app-borderSoft p-4 pt-0 lg:p-6 lg:pt-0">{children}</div>
+            <div
+              ref={contentRef}
+              className="border-t border-app-borderSoft p-4 pt-0 lg:p-6 lg:pt-0"
+            >
+              {children}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
