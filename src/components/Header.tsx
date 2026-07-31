@@ -8,7 +8,7 @@ import headerLogoSmall from '../assets/layout/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
-import { getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
+import { AUTH_ROUTES, getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
 import SubsiteSelector from './SubsiteSelector.tsx';
@@ -116,7 +116,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       return;
     }
 
-    navigate('/login');
+    navigate(AUTH_ROUTES.login);
   };
 
   const handleHealthCheck = async () => {

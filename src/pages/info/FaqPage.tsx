@@ -6,7 +6,7 @@ import {
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
 } from '../../features/loyalty/constants.ts';
-import { RENT_ROUTES } from '../../routes.ts';
+import { INFO_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 type FaqItemProps = {
   question: string;
@@ -68,7 +68,7 @@ export default function FaqPage() {
           <FaqItem question="Nie wiem, jaki sprzęt wybrać. Czy możecie pomóc?">
             <p>
               Tak. Opisz planowany termin, miejsce wyjazdu, rodzaj aktywności oraz liczbę osób. Dane
-              kontaktowe znajdziesz na <Link to="/contact">stronie kontaktowej</Link>.
+              kontaktowe znajdziesz na <Link to={INFO_ROUTES.contact}>stronie kontaktowej</Link>.
             </p>
           </FaqItem>
         </div>
@@ -101,7 +101,7 @@ export default function FaqPage() {
           <FaqItem question="Gdzie znajdę więcej informacji o punktach?">
             <p>
               Zasady oraz przykładowe obliczenia opisaliśmy na stronie{' '}
-              <Link to="/points">programu lojalnościowego</Link>.
+              <Link to={INFO_ROUTES.loyaltyPoints}>programu lojalnościowego</Link>.
             </p>
           </FaqItem>
         </div>
@@ -137,7 +137,7 @@ export default function FaqPage() {
           rezerwacji.
         </p>
         <p>
-          <Link to="/contact">Przejdź do kontaktu</Link>
+          <Link to={INFO_ROUTES.contact}>Przejdź do kontaktu</Link>
         </p>
       </section>
     </article>

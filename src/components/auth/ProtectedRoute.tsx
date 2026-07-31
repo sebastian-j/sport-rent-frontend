@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../../features/auth/authContext.ts';
+import { AUTH_ROUTES } from '../../routes.ts';
 
 const ProtectedRoute = () => {
   const { status, retrySessionRestore } = useAuth();
@@ -22,7 +23,7 @@ const ProtectedRoute = () => {
   }
 
   if (status === 'anonymous') {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    return <Navigate to={AUTH_ROUTES.login} replace state={{ from: location }} />;
   }
 
   return <Outlet />;
