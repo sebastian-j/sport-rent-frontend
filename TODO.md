@@ -1,3 +1,5 @@
+## Do zrobienia
+
 - dodać obsługę newslettera
 - przygotować dynamiczną sekcję `CategoryCard`
 - zapewnić użytkowy `CategoryBar`
