@@ -183,8 +183,8 @@ export function useCart() {
   );
 
   const createDraftIfComplete = useCallback(
-    (productId: number, date: RentalDate) => {
-      const product = productsRef.current.find((item) => item.id === productId);
+    (productSlug: string, date: RentalDate) => {
+      const product = productsRef.current.find((item) => item.slug === productSlug);
       if (
         !product ||
         isPersistedRentalDate(date) ||
@@ -198,7 +198,7 @@ export function useCart() {
       void withPending(async () => {
         try {
           const result = await addCartItem({
-            product_id: productId,
+            product_slug: productSlug,
             quantity: date.quantity,
             size: date.size,
             start_date: formatLocalDate(date.start_date),
@@ -218,8 +218,8 @@ export function useCart() {
   );
 
   const changeDate = useCallback(
-    (productId: number, dateId: number, changes: Partial<RentalDate>) => {
-      const result = updateCartDate(productsRef.current, productId, dateId, changes);
+    (productSlug: string, dateId: number, changes: Partial<RentalDate>) => {
+      const result = updateCartDate(productsRef.current, productSlug, dateId, changes);
       setProducts(result.products);
       if (!result.date) return;
 
@@ -233,34 +233,34 @@ export function useCart() {
           end_date: formatLocalDate(result.date.end_date),
         });
       } else {
-        createDraftIfComplete(productId, result.date);
+        createDraftIfComplete(productSlug, result.date);
       }
     },
     [createDraftIfComplete, queuePatch, setProducts]
   );
 
   const updateRentalDate = (
-    productId: number,
+    productSlug: string,
     dateId: number,
     field: DateField,
     value: Date | null
-  ) => changeDate(productId, dateId, { [field]: value });
+  ) => changeDate(productSlug, dateId, { [field]: value });
 
-  const updateQuantity = (productId: number, dateId: number, quantity: number) =>
-    changeDate(productId, dateId, { quantity });
+  const updateQuantity = (productSlug: string, dateId: number, quantity: number) =>
+    changeDate(productSlug, dateId, { quantity });
 
-  const updateSize = (productId: number, dateId: number, size: string) =>
-    changeDate(productId, dateId, { size });
+  const updateSize = (productSlug: string, dateId: number, size: string) =>
+    changeDate(productSlug, dateId, { size });
 
   const removeRentalDate = useCallback(
-    (productId: number, dateId: number) => {
+    (productSlug: string, dateId: number) => {
       const date = productsRef.current
-        .find((product) => product.id === productId)
+        .find((product) => product.slug === productSlug)
         ?.dates.find((item) => item.id === dateId);
       if (!date || creatingDrafts.current.has(dateId)) return;
 
       const removeLocally = () =>
-        setProducts((previous) => removeCartDate(previous, productId, dateId));
+        setProducts((previous) => removeCartDate(previous, productSlug, dateId));
 
       if (!isPersistedRentalDate(date)) {
         removeLocally();
@@ -281,10 +281,10 @@ export function useCart() {
   );
 
   const addRentalDate = useCallback(
-    (productId: number) => {
+    (productSlug: string) => {
       const id = nextDraftId.current--;
       setProducts((previous) =>
-        appendCartDate(previous, productId, {
+        appendCartDate(previous, productSlug, {
           id,
           uiKey: `draft-${Math.abs(id)}`,
           quantity: 1,
@@ -298,12 +298,12 @@ export function useCart() {
   );
 
   const removeProduct = useCallback(
-    (productId: number) => {
+    (productSlug: string) => {
       void withPending(async () => {
         try {
-          const result = await deleteCartProduct(productId);
+          const result = await deleteCartProduct(productSlug);
           if (result.error) throw new Error('Deleting a cart product failed');
-          setProducts((previous) => removeCartProduct(previous, productId));
+          setProducts((previous) => removeCartProduct(previous, productSlug));
           void refreshCartStatus();
         } catch {
           await recoverFromSaveError();

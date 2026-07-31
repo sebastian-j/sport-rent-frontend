@@ -32,7 +32,7 @@ export function reconcileCartDate(
 
     return {
       products: products.map((item) =>
-        item.id === product.id
+        item.slug === product.slug
           ? {
               ...item,
               dates: item.dates.map((date) => (date.id === sourceId ? persistedDate : date)),
@@ -58,18 +58,18 @@ export function reconcileCartDate(
   });
 
   return {
-    products: products.map((item) => (item.id === product.id ? { ...item, dates } : item)),
+    products: products.map((item) => (item.slug === product.slug ? { ...item, dates } : item)),
     merged: true,
   };
 }
 
 export function updateCartDate(
   products: CartProduct[],
-  productId: number,
+  productSlug: string,
   dateId: number,
   changes: Partial<RentalDate>
 ): UpdatedCartDate {
-  const product = products.find((item) => item.id === productId);
+  const product = products.find((item) => item.slug === productSlug);
   const currentDate = product?.dates.find((date) => date.id === dateId);
   if (!product || !currentDate) {
     return { products, requiresSize: false };
@@ -78,7 +78,7 @@ export function updateCartDate(
   const date = { ...currentDate, ...changes };
   return {
     products: products.map((item) =>
-      item.id === productId
+      item.slug === productSlug
         ? {
             ...item,
             dates: item.dates.map((current) => (current.id === dateId ? date : current)),
@@ -92,11 +92,11 @@ export function updateCartDate(
 
 export function removeCartDate(
   products: CartProduct[],
-  productId: number,
+  productSlug: string,
   dateId: number
 ): CartProduct[] {
   return products.flatMap((product) => {
-    if (product.id !== productId) return [product];
+    if (product.slug !== productSlug) return [product];
 
     const dates = product.dates.filter((date) => date.id !== dateId);
     return dates.length > 0 ? [{ ...product, dates }] : [];
@@ -105,14 +105,14 @@ export function removeCartDate(
 
 export function appendCartDate(
   products: CartProduct[],
-  productId: number,
+  productSlug: string,
   date: RentalDate
 ): CartProduct[] {
   return products.map((product) =>
-    product.id === productId ? { ...product, dates: [...product.dates, date] } : product
+    product.slug === productSlug ? { ...product, dates: [...product.dates, date] } : product
   );
 }
 
-export function removeCartProduct(products: CartProduct[], productId: number): CartProduct[] {
-  return products.filter((product) => product.id !== productId);
+export function removeCartProduct(products: CartProduct[], productSlug: string): CartProduct[] {
+  return products.filter((product) => product.slug !== productSlug);
 }

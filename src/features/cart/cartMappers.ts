@@ -18,7 +18,7 @@ export function mapCartDate(item: CartItemDateResponse): RentalDate {
 
 export function mapCartProduct(product: CartItemResponse): CartProduct {
   return {
-    id: product.product_id,
+    slug: product.slug,
     name: product.product_name,
     price: product.price,
     image: product.image,

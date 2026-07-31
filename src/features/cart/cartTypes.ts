@@ -4,8 +4,7 @@ import type { RentalDate } from './rentalDate.ts';
 type CartProductResponse = components['schemas']['CartItemResponse'];
 type CartProductSizeResponse = CartProductResponse['sizes'][number];
 
-export type CartProduct = Pick<CartProductResponse, 'price' | 'image'> & {
-  id: CartProductResponse['product_id'];
+export type CartProduct = Pick<CartProductResponse, 'slug' | 'price' | 'image'> & {
   name: CartProductResponse['product_name'];
   alt: NonNullable<CartProductResponse['alt']>;
   sizes: CartProductSizeResponse['size'][];
@@ -26,6 +25,6 @@ export type OrderInformation = {
 export type DateField = 'start_date' | 'end_date';
 
 export type InvalidRentalDate = {
-  productId: number;
+  productSlug: string;
   date: RentalDate;
 };

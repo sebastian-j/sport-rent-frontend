@@ -209,7 +209,7 @@ export interface paths {
         patch: operations["update_cart_item_cart_items__item_id__patch"];
         trace?: never;
     };
-    "/cart/products/{product_id}": {
+    "/cart/products/{product_slug}": {
         parameters: {
             query?: never;
             header?: never;
@@ -220,7 +220,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Całkowite usunięcie produktu z koszyka */
-        delete: operations["remove_product_from_cart_cart_products__product_id__delete"];
+        delete: operations["remove_product_from_cart_cart_products__product_slug__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -497,8 +497,8 @@ export interface components {
         };
         /** AddToCartRequest */
         AddToCartRequest: {
-            /** Product Id */
-            product_id: number;
+            /** Product Slug */
+            product_slug: string;
             /**
              * Start Date
              * Format: date
@@ -538,8 +538,8 @@ export interface components {
         };
         /** CartItemResponse */
         CartItemResponse: {
-            /** Product Id */
-            product_id: number;
+            /** Slug */
+            slug: string;
             /** Product Name */
             product_name: string;
             /** Image */
@@ -1282,12 +1282,12 @@ export interface operations {
             };
         };
     };
-    remove_product_from_cart_cart_products__product_id__delete: {
+    remove_product_from_cart_cart_products__product_slug__delete: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                product_id: number;
+                product_slug: string;
             };
             cookie?: never;
         };

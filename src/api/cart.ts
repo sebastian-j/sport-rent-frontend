@@ -22,9 +22,9 @@ export const deleteCartItem = (itemId: number) =>
     params: { path: { item_id: itemId } },
   });
 
-export const deleteCartProduct = (productId: number) =>
-  api.DELETE('/cart/products/{product_id}', {
-    params: { path: { product_id: productId } },
+export const deleteCartProduct = (productSlug: string) =>
+  api.DELETE('/cart/products/{product_slug}', {
+    params: { path: { product_slug: productSlug } },
   });
 
 export const validatePromoCode = async (body: PromoCodeValidationRequest) =>
