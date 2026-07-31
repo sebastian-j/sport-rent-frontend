@@ -13,7 +13,7 @@ import RegisterPage from './pages/auth/RegisterPage.tsx';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import BootFittingHomePage from './pages/bootFitting/BootFittingHomePage.tsx';
 import PrivacyPolicyPage from './pages/document/PrivacyPolicyPage.tsx';
-import TosPage from './pages/document/TosPage.tsx';
+import TermsPage from './pages/document/TermsPage.tsx';
 import AboutPage from './pages/info/AboutPage.tsx';
 import ContactPage from './pages/info/ContactPage.tsx';
 import FaqPage from './pages/info/FaqPage.tsx';
@@ -68,7 +68,7 @@ function App() {
             <Route path={AUTH_ROUTES.confirmPasswordReset} element={<ConfirmPasswordResetPage />} />
           </Route>
           <Route element={<DocumentLayout />}>
-            <Route path={DOCUMENT_ROUTES.terms} element={<TosPage />} />
+            <Route path={DOCUMENT_ROUTES.terms} element={<TermsPage />} />
             <Route path={DOCUMENT_ROUTES.privacyPolicy} element={<PrivacyPolicyPage />} />
           </Route>
           <Route element={<InfoLayout />}>

@@ -6,13 +6,13 @@ import ContentPanel from '../../components/core/ContentPanel.tsx';
 import { DOCUMENT_ROUTES } from '../../routes.ts';
 
 type TermsPanelProps = {
-  readTos: boolean;
+  readTerms: boolean;
   highlighted: boolean;
-  onReadTos: () => void;
+  onReadTerms: () => void;
 };
 
 const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPanel(
-  { readTos, highlighted, onReadTos },
+  { readTerms, highlighted, onReadTerms },
   ref
 ) {
   return (
@@ -27,20 +27,20 @@ const TermsPanel = forwardRef<HTMLDivElement, TermsPanelProps>(function TermsPan
           className="font-semibold underline"
           to={DOCUMENT_ROUTES.terms}
           target="_blank"
-          onClick={onReadTos}
+          onClick={onReadTerms}
         >
           Regulamin
         </Link>
         , aby dokonać zakupu.
       </p>
       <div>
-        {readTos ? (
+        {readTerms ? (
           <BadgeCheck size={32} className="text-app-success" />
         ) : (
           <Link
             to={DOCUMENT_ROUTES.terms}
             target="_blank"
-            onClick={onReadTos}
+            onClick={onReadTerms}
             aria-label="Otwórz regulamin w nowej karcie"
             className="inline-flex text-app-danger"
           >

@@ -30,16 +30,16 @@ export default function CartPage() {
     mergeTargetId,
     retry,
   } = useCart();
-  const [readTos, setReadTos] = useState(false);
-  const [highlightTos, setHighlightTos] = useState(false);
-  const tosRef = useRef<HTMLDivElement | null>(null);
+  const [readTerms, setReadTerms] = useState(false);
+  const [highlightTerms, setHighlightTerms] = useState(false);
+  const termsRef = useRef<HTMLDivElement | null>(null);
   const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
 
   const orderInformation = getOrderInformation(products);
 
-  const handleReadTos = () => {
-    setReadTos(true);
+  const handleReadTerms = () => {
+    setReadTerms(true);
   };
 
   const getRentalDateRefKey = (productId: number, dateId: number) => `${productId}-${dateId}`;
@@ -62,10 +62,10 @@ export default function CartPage() {
       return;
     }
 
-    if (!readTos) {
-      tosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setHighlightTos(true);
-      window.setTimeout(() => setHighlightTos(false), 500);
+    if (!readTerms) {
+      termsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightTerms(true);
+      window.setTimeout(() => setHighlightTerms(false), 500);
 
       return;
     }
@@ -167,10 +167,10 @@ export default function CartPage() {
               </ContentPanel>
 
               <TermsPanel
-                readTos={readTos}
-                highlighted={highlightTos}
-                onReadTos={handleReadTos}
-                ref={tosRef}
+                readTerms={readTerms}
+                highlighted={highlightTerms}
+                onReadTerms={handleReadTerms}
+                ref={termsRef}
               />
 
               <CartSummaryPanel

@@ -19,7 +19,7 @@ export const AUTH_ROUTES = {
 } as const;
 
 export const DOCUMENT_ROUTES = {
-  terms: '/tos',
+  terms: '/terms',
   privacyPolicy: '/privacy-policy',
 } as const;
 

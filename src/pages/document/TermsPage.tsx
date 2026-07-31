@@ -23,7 +23,7 @@ const TERMS_DATA = {
   last_updated_at: new Date().toUTCString(),
 };
 
-export default function TosPage() {
+export default function TermsPage() {
   return (
     <article>
       <header>
