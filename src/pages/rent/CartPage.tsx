@@ -42,7 +42,7 @@ export default function CartPage() {
     setReadTos(true);
   };
 
-  const getRentalDateRefKey = (productId: number, dateId: number) => `${productId}-${dateId}`;
+  const getRentalDateRefKey = (productSlug: string, dateId: number) => `${productSlug}-${dateId}`;
 
   const handleBuy = () => {
     if (isPending) return;
@@ -50,7 +50,7 @@ export default function CartPage() {
 
     if (firstInvalidRentalDate) {
       const refKey = getRentalDateRefKey(
-        firstInvalidRentalDate.productId,
+        firstInvalidRentalDate.productSlug,
         firstInvalidRentalDate.date.id
       );
 
@@ -119,7 +119,7 @@ export default function CartPage() {
 
                     return (
                       <motion.div
-                        key={product.id}
+                        key={product.slug}
                         initial={{
                           height: 0,
                           marginBottom: 0,
@@ -144,19 +144,19 @@ export default function CartPage() {
                           product={product}
                           information={information}
                           onQuantityChange={(dateId, quantity) =>
-                            updateQuantity(product.id, dateId, quantity)
+                            updateQuantity(product.slug, dateId, quantity)
                           }
-                          onSizeChange={(dateId, size) => updateSize(product.id, dateId, size)}
+                          onSizeChange={(dateId, size) => updateSize(product.slug, dateId, size)}
                           onDateChange={(dateId, field, value) =>
-                            updateRentalDate(product.id, dateId, field, value)
+                            updateRentalDate(product.slug, dateId, field, value)
                           }
-                          onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
-                          onAddDate={() => addRentalDate(product.id)}
-                          onRemoveProduct={() => removeProduct(product.id)}
+                          onRemoveDate={(dateId) => removeRentalDate(product.slug, dateId)}
+                          onAddDate={() => addRentalDate(product.slug)}
+                          onRemoveProduct={() => removeProduct(product.slug)}
                           actionsDisabled={isPending}
                           mergeTargetId={mergeTargetId}
                           getRentalDateRef={(dateId) => (element) => {
-                            rentalDateRefs.current[getRentalDateRefKey(product.id, dateId)] =
+                            rentalDateRefs.current[getRentalDateRefKey(product.slug, dateId)] =
                               element;
                           }}
                         />

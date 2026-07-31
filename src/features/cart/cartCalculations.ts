@@ -54,12 +54,12 @@ export function findFirstInvalidRentalDate(products: CartProduct[]): InvalidRent
   return products
     .flatMap((product) =>
       product.dates.map((date) => ({
-        productId: product.id,
+        productSlug: product.slug,
         date,
       }))
     )
-    .find(({ productId, date }) => {
-      const product = products.find((item) => item.id === productId);
+    .find(({ productSlug, date }) => {
+      const product = products.find((item) => item.slug === productSlug);
       const requiresSize = Boolean(product?.sizes.length);
 
       return !isRentalDateValid(date, requiresSize);

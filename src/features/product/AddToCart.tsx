@@ -65,7 +65,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
     setIsAdding(true);
     try {
       const result = await addCartItem({
-        product_id: product.id,
+        product_slug: product.slug,
         quantity,
         size: selectedSize,
         start_date: formatLocalDate(startDate),
