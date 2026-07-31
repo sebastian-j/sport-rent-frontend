@@ -1,11 +1,15 @@
+import { LockKeyhole, Mail } from 'lucide-react';
 import { type SubmitEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
+import AuthField from '../../components/auth/AuthField.tsx';
+import AuthNotice from '../../components/auth/AuthNotice.tsx';
+import AuthPageHeader from '../../components/auth/AuthPageHeader.tsx';
+import { authLinkClassName } from '../../components/auth/authStyles.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
-import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
+import { AUTH_ROUTES } from '../../routes.ts';
 
 type PageState = 'validating' | 'ready' | 'invalid' | 'validation-error' | 'success';
 
@@ -100,143 +104,136 @@ export default function ConfirmPasswordResetPage() {
   };
 
   return (
-    <div className="mb-8 mt-[-90px] flex flex-col items-center bg-app-surface">
-      <PageTitle className="mb-8 text-center">Ustaw nowe hasło</PageTitle>
+    <section className="mx-auto w-full max-w-xl">
+      <AuthPageHeader title="Ustaw nowe hasło" />
 
-      <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
-        {pageState === 'validating' && (
-          <p role="status" className="w-[90%] text-sm text-app-textMuted">
-            Sprawdzanie linku <LoadingDots />
-          </p>
-        )}
-
-        {pageState === 'invalid' && (
-          <div className="flex w-[90%] flex-col gap-4">
-            <p role="alert" className="text-sm text-app-danger">
-              Link do zmiany hasła jest nieprawidłowy, wygasł lub został już wykorzystany.
-            </p>
-            <Link to={AUTH_ROUTES.resetPassword} className="text-app-textStrong underline">
-              Wygeneruj nowy link
-            </Link>
-          </div>
-        )}
-
-        {pageState === 'validation-error' && (
-          <div className="flex w-[90%] flex-col gap-4">
-            <p role="alert" className="text-sm text-app-danger">
-              Nie udało się sprawdzić linku. Sprawdź połączenie z internetem i spróbuj ponownie.
-            </p>
-            <ButtonCore
-              text="Spróbuj ponownie"
-              onClick={() => {
-                setPageState('validating');
-                setValidationAttempt((attempt) => attempt + 1);
-              }}
-              className="w-fit px-4 py-2"
-            />
-          </div>
-        )}
-
-        {pageState === 'success' && (
-          <div className="flex w-[90%] flex-col gap-4">
-            <p role="status" className="text-sm text-app-textMuted">
-              Hasło zostało zmienione. Możesz się teraz zalogować.
-            </p>
-            <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
-              Przejdź do logowania
-            </Link>
-          </div>
-        )}
-
-        {pageState === 'ready' && (
-          <div className="flex w-[90%] flex-col gap-4">
-            <p className="text-center text-app-textMuted">{email}</p>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <label htmlFor="password-reset-new-password" className="text-app-textStrong">
-                Nowe hasło
-              </label>
-              <input
-                id="password-reset-new-password"
-                type="password"
-                value={password}
-                required
-                minLength={8}
-                maxLength={128}
-                autoComplete="new-password"
-                className="rounded-lg border border-app-borderSoft bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border"
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                  setSubmitError(null);
-                }}
-              />
-
-              <label htmlFor="password-reset-repeated-password" className="text-app-textStrong">
-                Powtórz nowe hasło
-              </label>
-              <input
-                id="password-reset-repeated-password"
-                type="password"
-                value={repeatedPassword}
-                required
-                minLength={8}
-                maxLength={128}
-                autoComplete="new-password"
-                aria-invalid={submitError !== null}
-                aria-describedby={submitError ? 'password-reset-submit-error' : undefined}
-                className={`rounded-lg border bg-app-surface p-3 text-app-text outline-none focus:ring-1 focus:ring-app-border ${
-                  submitError ? 'border-app-danger' : 'border-app-borderSoft'
-                }`}
-                onChange={(event) => {
-                  setRepeatedPassword(event.target.value);
-                  setSubmitError(null);
-                }}
-              />
-
-              {submitError && (
-                <p
-                  id="password-reset-submit-error"
-                  role="alert"
-                  className="text-sm text-app-danger"
-                >
-                  {submitError}
-                </p>
-              )}
-
-              <ButtonCore
-                type="submit"
-                disabled={isSubmitting}
-                className="my-2 p-2 ps-12 pe-12 text-[0.8vw]"
-              >
-                {isSubmitting ? (
-                  <span className="inline-flex items-center gap-2">
-                    Zapisywanie <LoadingDots />
-                  </span>
-                ) : (
-                  'Ustaw nowe hasło'
-                )}
-              </ButtonCore>
-            </form>
-          </div>
-        )}
-
-        {pageState !== 'success' && (
-          <div className="my-3 w-[90%] text-left">
-            <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
-              Wróć do logowania
-            </Link>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-4 w-[60vw] max-w-[800px] text-left">
-        <Link
-          to={DOCUMENT_ROUTES.privacyPolicy}
-          className="text-[0.7vw] text-app-textMuted underline"
+      {pageState === 'validating' && (
+        <div
+          role="status"
+          className="flex items-center gap-4 rounded-xl border border-app-borderSoft px-4 py-4 text-sm text-app-textMuted"
         >
-          Polityka prywatności
-        </Link>
-      </div>
-    </div>
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-app-borderSoft border-t-app-border" />
+          Sprawdzamy poprawność linku <LoadingDots />
+        </div>
+      )}
+
+      {pageState === 'invalid' && (
+        <div className="space-y-5">
+          <AuthNotice role="alert" tone="error">
+            <p className="font-semibold">Ten link nie jest już aktywny</p>
+            <p className="mt-1 text-app-text">
+              Link jest nieprawidłowy, wygasł lub został już wykorzystany.
+            </p>
+          </AuthNotice>
+          <Link
+            to={AUTH_ROUTES.resetPassword}
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-app-surfaceStrong px-6 text-base font-bold text-app-textInverted"
+          >
+            Wygeneruj nowy link
+          </Link>
+        </div>
+      )}
+
+      {pageState === 'validation-error' && (
+        <div className="space-y-5">
+          <AuthNotice role="alert" tone="error">
+            Nie udało się sprawdzić linku. Sprawdź połączenie z internetem i spróbuj ponownie.
+          </AuthNotice>
+          <ButtonCore
+            text="Spróbuj ponownie"
+            onClick={() => {
+              setPageState('validating');
+              setValidationAttempt((attempt) => attempt + 1);
+            }}
+            className="h-12 w-full rounded-xl px-6 text-base font-bold"
+          />
+        </div>
+      )}
+
+      {pageState === 'success' && (
+        <div className="space-y-5">
+          <AuthNotice role="status" tone="success">
+            <p className="font-semibold">Hasło zostało zmienione</p>
+            <p className="mt-1 text-app-text">
+              Możesz teraz zalogować się przy użyciu nowego hasła.
+            </p>
+          </AuthNotice>
+          <Link
+            to={AUTH_ROUTES.login}
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-app-surfaceStrong px-6 text-base font-bold text-app-textInverted"
+          >
+            Przejdź do logowania
+          </Link>
+        </div>
+      )}
+
+      {pageState === 'ready' && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 rounded-xl border border-app-borderSoft px-4 py-3 text-sm text-app-textMuted">
+            <Mail aria-hidden="true" size={18} className="shrink-0" />
+            <span className="min-w-0 truncate">{email}</span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <AuthField
+              id="password-reset-new-password"
+              label="Nowe hasło"
+              icon={LockKeyhole}
+              type="password"
+              value={password}
+              required
+              minLength={8}
+              maxLength={128}
+              autoComplete="new-password"
+              placeholder="Minimum 8 znaków"
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setSubmitError(null);
+              }}
+            />
+            <AuthField
+              id="password-reset-repeated-password"
+              label="Powtórz nowe hasło"
+              icon={LockKeyhole}
+              type="password"
+              value={repeatedPassword}
+              required
+              minLength={8}
+              maxLength={128}
+              autoComplete="new-password"
+              placeholder="Wpisz hasło ponownie"
+              aria-invalid={submitError !== null}
+              aria-describedby={submitError ? 'password-reset-submit-error' : undefined}
+              hasError={submitError !== null}
+              onChange={(event) => {
+                setRepeatedPassword(event.target.value);
+                setSubmitError(null);
+              }}
+            />
+
+            {submitError && (
+              <AuthNotice id="password-reset-submit-error" role="alert" tone="error">
+                {submitError}
+              </AuthNotice>
+            )}
+
+            <ButtonCore
+              text={isSubmitting ? 'Zapisywanie' : 'Ustaw nowe hasło'}
+              type="submit"
+              disabled={isSubmitting}
+              className="h-12 w-full rounded-xl px-6 text-base font-bold"
+            />
+          </form>
+        </div>
+      )}
+
+      {pageState !== 'success' && (
+        <div className="mt-7 border-t border-app-borderSoft pt-5 text-center text-sm text-app-textMuted">
+          <Link to={AUTH_ROUTES.login} className={authLinkClassName}>
+            Wróć do logowania
+          </Link>
+        </div>
+      )}
+    </section>
   );
 }

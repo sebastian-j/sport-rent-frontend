@@ -1,12 +1,17 @@
+import { LockKeyhole, Mail } from 'lucide-react';
 import { type ChangeEvent, type SubmitEvent, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { login } from '../../api/auth.ts';
+import googleLogo from '../../assets/google_logo.svg';
+import AuthField from '../../components/auth/AuthField.tsx';
+import AuthNotice from '../../components/auth/AuthNotice.tsx';
+import AuthPageHeader from '../../components/auth/AuthPageHeader.tsx';
+import { authLinkClassName } from '../../components/auth/authStyles.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
-import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
+import { AUTH_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -73,100 +78,102 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-app-surface">
-      <PageTitle className="mb-6 text-center sm:mb-8">Zaloguj się</PageTitle>
-      <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
-        <form
-          onSubmit={handleLogin}
-          aria-busy={isLoggingIn}
-          className="flex w-full flex-col gap-4 sm:w-[90%]"
-        >
-          <label htmlFor="email" className="text-app-textStrong">
-            Email
-          </label>
-          <input
-            name="email"
-            id="email"
-            type="email"
-            value={formData.email}
-            required
-            autoComplete="email"
-            aria-invalid={hasInvalidCredentials}
-            aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-3 outline-none bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
-              hasInvalidCredentials ? 'border-app-danger' : 'border-app-borderSoft'
-            }`}
-            onChange={handleChange}
-          />
-          <label htmlFor="password" className="text-app-textStrong">
-            Hasło
-          </label>
-          <input
+    <section className="mx-auto w-full max-w-xl">
+      <AuthPageHeader title="Witaj ponownie" />
+
+      <form onSubmit={handleLogin} aria-busy={isLoggingIn} className="space-y-5">
+        <AuthField
+          name="email"
+          id="email"
+          label="Adres e-mail"
+          icon={Mail}
+          type="email"
+          value={formData.email}
+          required
+          autoComplete="email"
+          placeholder="nazwa@przyklad.pl"
+          aria-invalid={hasInvalidCredentials}
+          aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
+          hasError={hasInvalidCredentials}
+          onChange={handleChange}
+        />
+        <div>
+          <AuthField
             name="password"
             id="password"
+            label="Hasło"
+            icon={LockKeyhole}
             type="password"
+            value={formData.password}
             required
             autoComplete="current-password"
+            placeholder="Wpisz swoje hasło"
             aria-invalid={hasInvalidCredentials}
             aria-describedby={hasInvalidCredentials ? 'login-error' : undefined}
-            className={`rounded-lg border p-3 outline-none bg-app-surface text-app-text focus:ring-1 focus:ring-app-border ${
-              hasInvalidCredentials ? 'border-app-danger' : 'border-app-borderSoft'
-            }`}
+            hasError={hasInvalidCredentials}
             onChange={handleChange}
           />
-          {isLoggingIn ? (
-            <p role="status" className="text-sm text-app-textMuted">
-              {loginError ? 'Ponowne sprawdzanie danych' : 'Sprawdzanie danych'} <LoadingDots />
-            </p>
-          ) : (
-            loginError && (
-              <p id="login-error" role="alert" className="text-sm text-app-danger">
-                {loginError}
-              </p>
-            )
-          )}
-          <ButtonCore
-            type="submit"
-            className={`my-2 p-2 px-6 text-sm sm:px-12 sm:text-base ${
-              isLoggingIn ? 'pointer-events-none cursor-wait opacity-70' : ''
-            }`}
-          >
-            {isLoggingIn ? (
-              <span className="inline-flex items-center gap-2">
-                Logowanie <LoadingDots />
-              </span>
-            ) : (
-              'Zaloguj się'
-            )}
-          </ButtonCore>
-        </form>
-
-        <div className="my-3 w-full text-left sm:w-[90%]">
-          <Link to={AUTH_ROUTES.resetPassword} className="text-app-textStrong underline">
-            Zapomniałeś hasła?
-          </Link>
+          <div className="mt-3 text-right text-sm">
+            <Link to={AUTH_ROUTES.resetPassword} className={authLinkClassName}>
+              Nie pamiętasz hasła?
+            </Link>
+          </div>
         </div>
+
+        {isLoggingIn ? (
+          <AuthNotice role="status">
+            {loginError ? 'Ponownie sprawdzamy dane' : 'Sprawdzamy dane logowania'} <LoadingDots />
+          </AuthNotice>
+        ) : (
+          loginError && (
+            <AuthNotice id="login-error" role="alert" tone="error">
+              {loginError}
+            </AuthNotice>
+          )
+        )}
 
         <ButtonCore
-          text="Kontynuuj z Google"
-          onClick={handleGoogleLogin}
-          className="my-2 w-full p-2 px-6 text-sm sm:w-[90%] sm:px-12 sm:text-base"
-        />
+          type="submit"
+          disabled={isLoggingIn}
+          className="h-12 w-full rounded-xl px-6 text-base font-bold"
+        >
+          {isLoggingIn ? (
+            <span className="inline-flex items-center gap-2">
+              Logowanie <LoadingDots />
+            </span>
+          ) : (
+            'Zaloguj się'
+          )}
+        </ButtonCore>
+      </form>
 
-        <div className="my-3 w-full text-left sm:w-[90%]">
-          <p className="text-app-textMuted">
-            Nie masz konta?{' '}
-            <Link to={AUTH_ROUTES.register} className="text-app-textStrong underline">
-              Zarejestruj się
-            </Link>
-          </p>
-        </div>
+      <div className="my-7 flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.16em] text-app-textMuted">
+        <span className="h-px flex-1 bg-app-borderSoft" />
+        lub
+        <span className="h-px flex-1 bg-app-borderSoft" />
       </div>
-      <div className="mt-4 w-full max-w-[800px] text-left">
-        <Link to={DOCUMENT_ROUTES.privacyPolicy} className="text-sm text-app-textMuted underline">
-          Polityka prywatności
+
+      <ButtonCore
+        inverted
+        onClick={handleGoogleLogin}
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-app-borderSoft bg-transparent px-6 text-base font-semibold text-app-text hover:border-app-border"
+      >
+        <img
+          src={googleLogo}
+          alt=""
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0"
+          style={{ filter: 'none' }}
+        />
+        Kontynuuj z Google
+      </ButtonCore>
+
+      <div className="mt-7 rounded-xl border border-app-borderSoft px-4 py-3 text-center text-sm text-app-textMuted">
+        Nie masz jeszcze konta?{' '}
+        <Link to={AUTH_ROUTES.register} className={authLinkClassName}>
+          Utwórz konto
         </Link>
       </div>
-    </div>
+    </section>
   );
 }
