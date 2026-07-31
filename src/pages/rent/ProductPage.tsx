@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getProductBySlug } from '../../api/product.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import Markdown from '../../components/core/Markdown.tsx';
+import PageHeader from '../../components/core/PageHeader.tsx';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -94,10 +95,10 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface px-4">
-      <main className="flex-grow mt-[2vh]">
-        <h1 className="mb-4 text-center text-4xl font-semibold text-app-text">{product?.name}</h1>
-        <div className="mb-[2vh] mt-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:items-start min-[961px]:gap-4">
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface">
+      <PageHeader titleClassName="text-app-text">{product.name}</PageHeader>
+      <div className="flex-grow px-4">
+        <div className="mb-[2vh] flex flex-col gap-6 text-lg text-app-textMuted min-[961px]:flex-row min-[961px]:items-start min-[961px]:gap-4">
           <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start font-bold min-[961px]:sticky min-[961px]:top-[110px]">
             <ProductGallery key={product.id} product={product} />
           </div>
@@ -124,7 +125,7 @@ export default function ProductPage() {
         <div className="mb-[2vh] mt-[2vh] text-lg text-app-text">
           <Markdown>{product.description}</Markdown>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

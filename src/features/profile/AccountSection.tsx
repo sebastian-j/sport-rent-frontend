@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { getUser, updatePersonalAddress } from '../../api/user.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';
@@ -105,7 +106,7 @@ export default function AccountSection({ onUserNameUpdate }: AccountSectionProps
 
   return (
     <div className="flex flex-col items-center w-full pt-6 text-app-text md:pt-12">
-      <h2 className="text-5xl text-center text-3xl md:text-5xl">Ustawienia konta</h2>
+      <SectionTitle className="text-center text-app-text">Ustawienia konta</SectionTitle>
 
       <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
         {error && (

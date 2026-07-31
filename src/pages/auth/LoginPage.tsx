@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
@@ -73,9 +74,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center bg-app-surface">
-      <h1 className="mb-6 text-3xl font-bold text-app-textStrong sm:mb-8 sm:text-4xl">
-        Zaloguj się
-      </h1>
+      <PageTitle className="mb-6 text-center sm:mb-8">Zaloguj się</PageTitle>
       <div className="flex w-full max-w-[800px] flex-col items-center justify-center rounded-lg border-2 border-app-borderSoft bg-app-surfaceElevated p-4 sm:p-6 md:p-8">
         <form
           onSubmit={handleLogin}

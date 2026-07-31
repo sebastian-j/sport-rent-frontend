@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { getUser } from '../../api/user.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageHeader from '../../components/core/PageHeader.tsx';
 import AccountSection from '../../features/profile/AccountSection.tsx';
 import LoyaltySection from '../../features/profile/LoyaltySection.tsx';
 import OrdersSection from '../../features/profile/OrdersSection.tsx';
@@ -75,16 +76,16 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[100rem] flex-col">
-      <p className="mt-6 px-4 text-center text-3xl font-semibold text-app-text lg:mt-12 lg:text-5xl">
+      <PageHeader titleClassName="text-app-text">
         {userName ?? (
           <>
             <span className="sr-only">Ładowanie profilu</span>
             <LoadingDots />
           </>
         )}
-      </p>
+      </PageHeader>
 
-      <div className="my-6 flex flex-col gap-4 px-4 lg:mx-auto lg:my-12 lg:grid lg:w-full lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16 lg:px-16">
+      <div className="mb-6 flex flex-col gap-4 px-4 lg:mx-auto lg:mb-12 lg:grid lg:w-full lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16 lg:px-16">
         <nav
           aria-label="Sekcje profilu"
           className="sticky top-12 z-40 -mx-4 flex h-fit w-[calc(100%+2rem)] flex-row gap-0.5 self-start rounded-none bg-app-surface px-4 py-2 text-app-textInverted [&>*:first-child]:rounded-l-xl [&>*:last-child]:rounded-r-xl lg:top-16 lg:mx-0 lg:w-full lg:max-w-96 lg:justify-self-end lg:flex-col lg:rounded-xl lg:bg-transparent lg:px-0 lg:py-0 lg:[&>*:first-child]:rounded-bl-none lg:[&>*:first-child]:rounded-tr-xl lg:[&>*:last-child]:rounded-bl-xl lg:[&>*:last-child]:rounded-tr-none"

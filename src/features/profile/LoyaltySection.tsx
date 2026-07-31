@@ -2,6 +2,7 @@ import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react
 import { useEffect, useState } from 'react';
 
 import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import PointsCard from './loyalty/PointsCard.tsx';
 
 const LOADING_CARD_IDS = ['loading-card-1', 'loading-card-2', 'loading-card-3'];
@@ -71,9 +72,9 @@ export default function LoyaltySection() {
 
   return (
     <section className="flex w-full flex-col items-center justify-center pt-6 text-app-text [container-type:inline-size] lg:pt-12">
-      <p className="w-full text-center text-[clamp(1.875rem,8cqi,3rem)] leading-tight">
+      <SectionTitle className="w-full text-center text-app-text">
         Program lojalnościowy
-      </p>
+      </SectionTitle>
       {!hasLoadError && (
         <p
           className="mt-4 w-full text-center text-[clamp(1.25rem,5cqi,1.875rem)] leading-tight"

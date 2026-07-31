@@ -1,10 +1,12 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
+
 export default function ContactPage() {
   return (
     <article>
       <header>
-        <h1>Skontaktuj się z nami</h1>
+        <PageTitle>Skontaktuj się z nami</PageTitle>
         <p>
           Masz pytanie o sprzęt, rezerwację albo przygotowanie do wyjazdu? Zadzwoń, napisz lub
           odwiedź naszą wypożyczalnię w Krakowie.

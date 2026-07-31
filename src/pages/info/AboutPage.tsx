@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { INFO_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 export default function AboutPage() {
   return (
     <article>
       <header>
-        <h1>Sprzęt na przygodę, nie na półkę</h1>
+        <PageTitle>Sprzęt na przygodę, nie na półkę</PageTitle>
         <p>
           SportRent powstał po to, by ułatwiać aktywny wypoczynek. Wybierasz kierunek, a my pomagamy
           dobrać sprzęt, który pozwoli Ci ruszyć w drogę bez kosztownych zakupów i przechowywania

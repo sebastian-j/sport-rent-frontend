@@ -1,5 +1,6 @@
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { OrderInformation } from './cartTypes.ts';
 
@@ -16,7 +17,7 @@ export default function CartSummaryPanel({
 }: CartSummaryPanelProps) {
   return (
     <ContentPanel className="mx-8 mt-12 flex-[2] items-center gap-2 text-center lg:items-stretch lg:text-left">
-      <p className="text-3xl">Podsumowanie zamówienia</p>
+      <SectionTitle className="text-app-text">Podsumowanie zamówienia</SectionTitle>
       <p className="text-xl">Wartość koszyka: {formatPrice(orderInformation.totalValue)}</p>
       <p className="text-xl">Liczba produktów: {orderInformation.totalQuantity}</p>
 

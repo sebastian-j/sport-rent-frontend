@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useId, useState } from 'react';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { scrollToSection } from '../../utils/scrollToSection.ts';
 
 type PriceItem = {
@@ -320,7 +321,7 @@ export default function ServiceHomePage() {
         <p className="mb-3 font-bold uppercase tracking-[0.08em] text-app-textMuted">
           Polar Sport Service
         </p>
-        <h1>Serwis rowerowy, narciarski i snowboardowy w Krakowie</h1>
+        <PageTitle>Serwis rowerowy, narciarski i snowboardowy w Krakowie</PageTitle>
         <p>
           Przygotujemy Twój sprzęt do sezonu, wyjazdu i codziennej jazdy. W jednym miejscu
           wykonujemy przeglądy rowerów oraz profesjonalny serwis nart i snowboardów.

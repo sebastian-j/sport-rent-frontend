@@ -1,5 +1,7 @@
 // Based on https://psrentservice.pl/polityka-prywatnosci/
 
+import PageTitle from '../../components/core/PageTitle.tsx';
+
 const PRIVACY_POLICY_DATA = {
   admin_name: 'Mikstura A. Radwańska, A. Radwański s.c.',
   admin_address: 'ul. Stradomska 19, 31-068 Kraków',
@@ -24,7 +26,7 @@ export default function PrivacyPolicyPage() {
     <article>
       <header>
         <p>Dokument prawny</p>
-        <h1>Polityka prywatności</h1>
+        <PageTitle>Polityka prywatności</PageTitle>
         <p>Ostatnia aktualizacja: {PRIVACY_POLICY_DATA.last_updated_at}</p>
       </header>
 

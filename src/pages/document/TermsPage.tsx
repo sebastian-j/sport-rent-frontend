@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { DOCUMENT_ROUTES } from '../../routes.ts';
 
 const TERMS_DATA = {
@@ -28,7 +29,7 @@ export default function TermsPage() {
     <article>
       <header>
         <p>Dokument prawny</p>
-        <h1>Regulamin wypożyczalni</h1>
+        <PageTitle>Regulamin wypożyczalni</PageTitle>
         <p>Ostatnia aktualizacja: {TERMS_DATA.last_updated_at}</p>
       </header>
 
