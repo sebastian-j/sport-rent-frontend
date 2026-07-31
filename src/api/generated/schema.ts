@@ -431,6 +431,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Personal Address */
+        patch: operations["update_personal_address_user_address_patch"];
+        trace?: never;
+    };
     "/user/history": {
         parameters: {
             query?: never;
@@ -775,6 +792,23 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /** UpdateAddressRequest */
+        UpdateAddressRequest: {
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+            /** City */
+            city: string;
+            /** First Line */
+            first_line: string;
+            /** Second Line */
+            second_line?: string | null;
+            /** Postal Code */
+            postal_code: string;
+            /** Country */
+            country: string;
         };
         /** UpdateCartItemRequest */
         UpdateCartItemRequest: {
@@ -1628,6 +1662,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserResponse"];
+                };
+            };
+        };
+    };
+    update_personal_address_user_address_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAddressRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
