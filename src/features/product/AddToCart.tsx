@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { addCartItem } from '../../api/cart.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES } from '../../routes.ts';
 import { formatLocalDate } from '../../utils/localDate.ts';
 import { useAuth } from '../auth/authContext.ts';
@@ -118,11 +119,18 @@ export default function AddToCart({ product }: { product: ProductProps }) {
         totalPrice={totalPrice}
       />
       <ButtonCore
-        text={isAdding ? 'Dodawanie…' : 'Dodaj do koszyka'}
         onClick={handleAddToCart}
         disabled={isSizeSelectionRequired || isAdding}
         className="my-[1vh] w-full max-w-xl p-[1.5vh] text-base disabled:cursor-not-allowed disabled:opacity-50"
-      />
+      >
+        {isAdding ? (
+          <span className="inline-flex items-center gap-2">
+            Dodawanie <LoadingDots />
+          </span>
+        ) : (
+          'Dodaj do koszyka'
+        )}
+      </ButtonCore>
       {message && (
         <p
           role={hasError ? 'alert' : 'status'}

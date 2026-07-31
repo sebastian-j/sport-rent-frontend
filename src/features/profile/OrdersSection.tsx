@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
 import { type Order, type OrderStatus } from './orders/orderTypes.ts';
@@ -32,7 +33,9 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
 
   if (isLoading) {
     return (
-      <div className="mt-4 text-center text-sm text-app-textMuted">Ładowanie szczegółów...</div>
+      <div role="status" className="mt-4 text-center text-sm text-app-textMuted">
+        Ładowanie szczegółów <LoadingDots />
+      </div>
     );
   }
 
@@ -135,7 +138,9 @@ export default function OrdersSection() {
       <p className="text-center text-3xl md:text-5xl">Historia zamówień</p>
 
       {isLoading ? (
-        <div className="mt-12 text-center text-app-textMuted">Ładowanie historii...</div>
+        <div role="status" className="mt-12 text-center text-app-textMuted">
+          Ładowanie historii <LoadingDots />
+        </div>
       ) : error ? (
         <div className="mt-12 text-center text-app-danger">{error}</div>
       ) : (

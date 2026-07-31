@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { getUser, updatePersonalAddress } from '../../api/user.ts';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';
@@ -95,7 +96,11 @@ export default function AccountSection({ onUserNameUpdate }: AccountSectionProps
   };
 
   if (!personalData) {
-    return <div className="w-full pt-12 text-center text-app-text">Ładowanie ustawień...</div>;
+    return (
+      <div role="status" className="w-full pt-12 text-center text-app-text">
+        Ładowanie ustawień <LoadingDots />
+      </div>
+    );
   }
 
   return (

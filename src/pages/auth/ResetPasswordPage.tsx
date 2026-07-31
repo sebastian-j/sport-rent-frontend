@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { resetPassword } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 export default function ResetPasswordPage() {
@@ -85,11 +86,18 @@ export default function ResetPasswordPage() {
             )}
 
             <ButtonCore
-              text={isSending ? 'Wysyłanie…' : 'Wyślij wiadomość'}
               type="submit"
               disabled={isSending}
               className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
-            />
+            >
+              {isSending ? (
+                <span className="inline-flex items-center gap-2">
+                  Wysyłanie <LoadingDots />
+                </span>
+              ) : (
+                'Wyślij wiadomość'
+              )}
+            </ButtonCore>
           </form>
         )}
 

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
@@ -116,7 +117,7 @@ export default function LoginPage() {
           />
           {isLoggingIn ? (
             <p role="status" className="text-sm text-app-textMuted">
-              {loginError ? 'Ponowne sprawdzanie danych…' : 'Sprawdzanie danych…'}
+              {loginError ? 'Ponowne sprawdzanie danych' : 'Sprawdzanie danych'} <LoadingDots />
             </p>
           ) : (
             loginError && (
@@ -126,12 +127,19 @@ export default function LoginPage() {
             )
           )}
           <ButtonCore
-            text={isLoggingIn ? 'Logowanie…' : 'Zaloguj się'}
             type="submit"
             className={`my-2 p-2 px-6 text-sm sm:px-12 sm:text-base ${
               isLoggingIn ? 'pointer-events-none cursor-wait opacity-70' : ''
             }`}
-          />
+          >
+            {isLoggingIn ? (
+              <span className="inline-flex items-center gap-2">
+                Logowanie <LoadingDots />
+              </span>
+            ) : (
+              'Zaloguj się'
+            )}
+          </ButtonCore>
         </form>
 
         <div className="my-3 w-full text-left sm:w-[90%]">

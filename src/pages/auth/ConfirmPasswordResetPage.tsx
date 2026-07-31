@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type PageState = 'validating' | 'ready' | 'invalid' | 'validation-error' | 'success';
@@ -104,7 +105,7 @@ export default function ConfirmPasswordResetPage() {
       <div className="flex w-[60vw] max-w-[800px] flex-col items-center justify-center rounded-lg border-[2px] border-app-borderSoft bg-app-surfaceElevated p-8">
         {pageState === 'validating' && (
           <p role="status" className="w-[90%] text-sm text-app-textMuted">
-            Sprawdzanie linku…
+            Sprawdzanie linku <LoadingDots />
           </p>
         )}
 
@@ -202,11 +203,18 @@ export default function ConfirmPasswordResetPage() {
               )}
 
               <ButtonCore
-                text={isSubmitting ? 'Zapisywanie...' : 'Ustaw nowe hasło'}
                 type="submit"
                 disabled={isSubmitting}
                 className="my-2 p-2 ps-12 pe-12 text-[0.8vw]"
-              />
+              >
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    Zapisywanie <LoadingDots />
+                  </span>
+                ) : (
+                  'Ustaw nowe hasło'
+                )}
+              </ButtonCore>
             </form>
           </div>
         )}

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../../api/auth.ts';
 import type { components } from '../../api/generated/schema.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type HTTPValidationError = components['schemas']['HTTPValidationError'];
@@ -347,10 +348,17 @@ export default function RegisterPage() {
           )}
           <ButtonCore
             className="my-2 p-2 px-6 text-sm sm:px-12 sm:text-base"
-            text={isRegistering ? 'Rejestrowanie…' : 'Zarejestruj się'}
             type="submit"
             disabled={isRegistering}
-          />
+          >
+            {isRegistering ? (
+              <span className="inline-flex items-center gap-2">
+                Rejestrowanie <LoadingDots />
+              </span>
+            ) : (
+              'Zarejestruj się'
+            )}
+          </ButtonCore>
         </form>
 
         <div className="my-3 w-full text-left sm:w-[90%]">
