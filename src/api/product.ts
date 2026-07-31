@@ -1,15 +1,14 @@
 import { api } from './client.ts';
-import type { operations } from './generated/schema.ts';
+import type { operations, paths } from './generated/schema.ts';
 
-type ProductQueryParams = operations['get_products_product_get']['parameters']['query'];
+export type GetProductsQuery = NonNullable<paths['/product']['get']['parameters']['query']>;
+export type ProductCountQuery =
+  operations['get_categories_count_product_count_get']['parameters']['query'];
 
-export const getProducts = (params?: ProductQueryParams) => {
-  return api.GET('/product', {
-    params: {
-      query: params,
-    },
+export const getProducts = (query: GetProductsQuery = {}) =>
+  api.GET('/product', {
+    params: { query },
   });
-};
 
 export const getProductBySlug = (slug: string) =>
   api.GET('/product/{product_slug}', {
@@ -26,7 +25,7 @@ export const getProductAvailability = (slug: string, startDate: string, endDate:
     },
   });
 
-export const getCategoriesCount = (params?: ProductQueryParams) => {
+export const getCategoriesCount = (params?: ProductCountQuery) => {
   return api.GET('/product/count', {
     params: {
       query: params,
