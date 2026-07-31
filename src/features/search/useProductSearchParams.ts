@@ -24,7 +24,7 @@ export function useProductSearchParams({
   categorySlugs,
 }: ProductSearchParamsOptions) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('q')?.trim() ?? '';
+  const query = searchParams.get('query')?.trim() ?? '';
   const lastPage = Math.max(1, totalPages);
   const pageParam = searchParams.get('page');
   const parsedPage = pageParam === null ? 1 : Number(pageParam);
