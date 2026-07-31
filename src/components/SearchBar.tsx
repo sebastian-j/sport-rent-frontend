@@ -125,16 +125,17 @@ export default function SearchBar({
     event.preventDefault();
 
     const query = searchValue.trim();
-    if (!query) return;
+    const searchParams = new URLSearchParams({
+      page: '1',
+      sort: 'name',
+      order: 'asc',
+    });
 
-    navigate(
-      `${RENT_ROUTES.search}?${new URLSearchParams({
-        query,
-        page: '1',
-        sort: 'name',
-        order: 'asc',
-      }).toString()}`
-    );
+    if (query) {
+      searchParams.set('query', query);
+    }
+
+    navigate(`${RENT_ROUTES.search}?${searchParams.toString()}`);
     setIsOpen(false);
     onClose?.();
   };
