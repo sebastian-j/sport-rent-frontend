@@ -1,0 +1,25 @@
+- dodać obsługę newslettera
+- przygotować dynamiczną sekcję `CategoryCard`
+- zapewnić użytkowy `CategoryBar`
+- dodać opcje filtrowania, takie jak np. firma
+- dodać serwis z akcesoriami
+- wyświetlać sugerowane akcesoria do wypożyczanych produktów
+- dodać stronnicowanie w `LoyaltySection`
+- dodać stronnicowanie w `OrdersSection`
+- dodać maksymalną liczbę produktów pobieranych w `HomePage`
+- dodać dostępność produktów
+- przygotować komponent kalendarza umożliwiający jednoczesny wybór daty startowej i końcowej
+- ujednolicić sposób prezentowania ładowania - aktualnie używane są zarówno placeholdery jak i komunikaty tekstowe
+- określić ramy czasowe zwrotów oraz zmienić system zliczania dni
+- przechowywać kody promocyjne
+- dodać obsługę dodawania do koszyka w `SearchPage`
+- umożliwić składanie zamówień wraz z otrzymywaniem punktów lojalnościowych
+- umożliwić płacenie za zamówienie punktami
+- przygotować właściwą politykę prywatności i regulamin
+- poprawić `routes/product.ts`, aby endpointy korzystały z bazy danych
+- dodać sanityzację komponentu `Markdown`
+- dodać minimalną i maksymalną cenę w `SearchPage` za pomocą facets
+- dodać testy frontendu
+- rozwiązać problem zbyt dużych plików wskazywany przez `pnpm build`
+- wysyłać link do resetowani hasła w wiadomości email i usunąć go z CLI
+- przygotować `Dockerfile` i `docker-compose` do uruchamiania aplikacji
