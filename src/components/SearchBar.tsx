@@ -132,7 +132,7 @@ export default function SearchBar({
     });
 
     if (query) {
-      searchParams.set('q', query);
+      searchParams.set('query', query);
     }
 
     navigate(`${RENT_ROUTES.search}?${searchParams.toString()}`);
