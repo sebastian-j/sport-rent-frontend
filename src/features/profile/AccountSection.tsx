@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { getUser, updateAddress } from '../../api/user.ts';
+import { getUser, updatePersonalAddress } from '../../api/user.ts';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';
@@ -9,7 +9,11 @@ import SettingsCard from './account/SettingsCard.tsx';
 
 type Section = 'personal' | 'email' | 'password' | null;
 
-export default function AccountSection() {
+type AccountSectionProps = {
+  onUserNameUpdate?: (name: string) => void;
+};
+
+export default function AccountSection({ onUserNameUpdate }: AccountSectionProps = {}) {
   const [expandedSection, setExpandedSection] = useState<Section>(null);
   const [newsletter, setNewsletter] = useState(true);
   const [personalData, setPersonalData] = useState<PersonalData | null>(null);
@@ -45,8 +49,22 @@ export default function AccountSection() {
 
   const savePersonalData = async (data: PersonalData) => {
     setError(null);
+
+    const requiredFields = [
+      data.firstName,
+      data.lastName,
+      data.city,
+      data.addressLine1,
+      data.postalCode,
+      data.country,
+    ];
+    if (requiredFields.some((field) => !field.trim())) {
+      setError('Pola nie mogą składać się z samych znaków białych.');
+      return;
+    }
+
     try {
-      const { error } = await updateAddress(data);
+      const { error } = await updatePersonalAddress(data);
       if (error) {
         setError(
           (error as any)?.detail?.[0]?.msg ||
@@ -58,6 +76,11 @@ export default function AccountSection() {
       }
 
       setPersonalData(data);
+
+      if (onUserNameUpdate) {
+        onUserNameUpdate(`${data.firstName} ${data.lastName}`);
+      }
+
       closeSection();
     } catch (error) {
       setError((error as any)?.message || 'Wystąpił błąd połączenia z serwerem.');

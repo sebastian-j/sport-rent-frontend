@@ -13,7 +13,7 @@ export const getOrderDetails = (orderId: number) =>
     params: { path: { order_id: orderId } },
   });
 
-export const updateAddress = (data: PersonalData) =>
+export const updatePersonalAddress = (data: PersonalData) =>
   api.PATCH('/user/address', {
     body: {
       first_name: data.firstName,

@@ -14,7 +14,7 @@ const PROFILE_SECTIONS = ['settings', 'loyalty', 'orders'] as const;
 
 type ProfileSection = (typeof PROFILE_SECTIONS)[number];
 
-const SECTION_COMPONENTS: Record<ProfileSection, ComponentType> = {
+const SECTION_COMPONENTS: Record<ProfileSection, ComponentType<any>> = {
   settings: AccountSection,
   loyalty: LoyaltySection,
   orders: OrdersSection,
@@ -106,7 +106,7 @@ export default function ProfilePage() {
           ref={sectionContentRef}
           className="min-w-0 w-full flex-none scroll-mt-36 items-stretch p-4 lg:max-w-[64rem] lg:justify-self-start lg:scroll-mt-16 lg:p-8"
         >
-          <SelectedSection />
+          <SelectedSection onUserNameUpdate={setUserName} />
         </ContentPanel>
       </div>
     </div>

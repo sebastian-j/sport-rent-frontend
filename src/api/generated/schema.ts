@@ -444,8 +444,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Update Address */
-        patch: operations["update_address_user_address_patch"];
+        /** Update Personal Address */
+        patch: operations["update_personal_address_user_address_patch"];
         trace?: never;
     };
     "/user/history": {
@@ -796,19 +796,19 @@ export interface components {
         /** UpdateAddressRequest */
         UpdateAddressRequest: {
             /** First Name */
-            first_name?: string | null;
+            first_name: string;
             /** Last Name */
-            last_name?: string | null;
+            last_name: string;
             /** City */
-            city?: string | null;
+            city: string;
             /** First Line */
-            first_line?: string | null;
+            first_line: string;
             /** Second Line */
             second_line?: string | null;
             /** Postal Code */
-            postal_code?: string | null;
+            postal_code: string;
             /** Country */
-            country?: string | null;
+            country: string;
         };
         /** UpdateCartItemRequest */
         UpdateCartItemRequest: {
@@ -1666,7 +1666,7 @@ export interface operations {
             };
         };
     };
-    update_address_user_address_patch: {
+    update_personal_address_user_address_patch: {
         parameters: {
             query?: never;
             header?: never;
