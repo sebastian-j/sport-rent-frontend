@@ -8,7 +8,7 @@ type EmptyCartPanelProps = {
 
 export default function EmptyCartPanel({ onGoToOffer }: EmptyCartPanelProps) {
   return (
-    <ContentPanel className="mx-8 mt-12 text-center">
+    <ContentPanel className="mx-8 text-center">
       <SectionTitle>Twój koszyk jest pusty</SectionTitle>
       <p className="mt-3 max-w-xl text-lg text-app-textMuted">
         Wybierz sprzęt, który chcesz wypożyczyć, dodaj terminy rezerwacji i wróć tutaj, aby

@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
+import PageHeader from '../../components/core/PageHeader.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import {
   findFirstInvalidRentalDate,
@@ -77,7 +77,7 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto mb-12 flex w-full max-w-[100rem] flex-col">
-      <PageTitle className="mt-12 text-center text-app-text">Koszyk</PageTitle>
+      <PageHeader titleClassName="text-app-text">Koszyk</PageHeader>
 
       {status === 'loading' && (
         <p role="status" className="mt-12 text-center text-xl text-app-textMuted">
@@ -86,7 +86,7 @@ export default function CartPage() {
       )}
 
       {status === 'error' && (
-        <div role="alert" className="mt-12 flex flex-col items-center gap-4 text-app-danger">
+        <div role="alert" className="flex flex-col items-center gap-4 text-app-danger">
           <p>{error ?? 'Nie udało się pobrać koszyka.'}</p>
           <button
             type="button"
@@ -114,7 +114,7 @@ export default function CartPage() {
               transition={{ duration: 0.45, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <ContentPanel className="relative mx-4 mt-12 items-stretch p-4 sm:mx-8 sm:p-8">
+              <ContentPanel className="relative mx-4 items-stretch p-4 sm:mx-8 sm:p-8">
                 <AnimatePresence initial={false} propagate>
                   {products.map((product, index) => {
                     const information = getProductInformation(product);
