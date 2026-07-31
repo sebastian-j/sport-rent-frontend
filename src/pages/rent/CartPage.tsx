@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import {
   findFirstInvalidRentalDate,
   getOrderInformation,
@@ -79,7 +80,7 @@ export default function CartPage() {
 
       {status === 'loading' && (
         <p role="status" className="mt-12 text-center text-xl text-app-textMuted">
-          Ładowanie koszyka...
+          Ładowanie koszyka <LoadingDots />
         </p>
       )}
 

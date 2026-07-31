@@ -1,6 +1,7 @@
 import { Link, Navigate, Outlet } from 'react-router-dom';
 
 import LogoHeader from '../assets/layout/logo_header.webp';
+import LoadingDots from '../components/core/LoadingDots.tsx';
 import Footer from '../components/Footer';
 import { useAuth } from '../features/auth/authContext.ts';
 import { RENT_ROUTES, ROOT_ROUTE } from '../routes.ts';
@@ -9,7 +10,11 @@ export default function LoginLayout() {
   const { status } = useAuth();
 
   if (status === 'loading') {
-    return <p role="status">Sprawdzanie sesji…</p>;
+    return (
+      <p role="status">
+        Sprawdzanie sesji <LoadingDots />
+      </p>
+    );
   }
 
   if (status === 'authenticated') {

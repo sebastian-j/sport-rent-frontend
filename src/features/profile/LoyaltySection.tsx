@@ -81,7 +81,7 @@ export default function LoyaltySection() {
         >
           {isLoading ? (
             <>
-              <span className="sr-only">Ładowanie salda punktów…</span>
+              <span className="sr-only">Ładowanie salda punktów</span>
               <span aria-hidden="true">
                 Posiadasz{' '}
                 <span className="relative inline-block h-[0.8em] w-[2.5em] overflow-hidden rounded bg-app-surfaceStrong align-middle">
@@ -125,7 +125,7 @@ export default function LoyaltySection() {
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              <span className="sr-only">Ładowanie historii punktów…</span>
+              <span className="sr-only">Ładowanie historii punktów</span>
               <div aria-hidden="true" className="divide-y divide-app-borderSoft">
                 {LOADING_CARD_IDS.map((id, index) => {
                   const revealDelay =

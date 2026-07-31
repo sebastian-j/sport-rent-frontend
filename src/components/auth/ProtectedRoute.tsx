@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../../features/auth/authContext.ts';
+import LoadingDots from '../core/LoadingDots.tsx';
 import { AUTH_ROUTES } from '../../routes.ts';
 
 const ProtectedRoute = () => {
@@ -8,7 +9,11 @@ const ProtectedRoute = () => {
   const location = useLocation();
 
   if (status === 'loading') {
-    return <p role="status">Sprawdzanie sesji…</p>;
+    return (
+      <p role="status">
+        Sprawdzanie sesji <LoadingDots />
+      </p>
+    );
   }
 
   if (status === 'error') {

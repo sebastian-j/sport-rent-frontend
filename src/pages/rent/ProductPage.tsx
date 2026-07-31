@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getProductBySlug } from '../../api/product.ts';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import Markdown from '../../components/core/Markdown.tsx';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
@@ -61,7 +62,9 @@ export default function ProductPage() {
 
   if (isLoading) {
     return (
-      <div className="text-center text-5xl text-app-text mt-[10vh]">Ładowanie produktu...</div>
+      <div role="status" className="mt-[10vh] text-center text-5xl text-app-text">
+        Ładowanie produktu <LoadingDots />
+      </div>
     );
   }
 

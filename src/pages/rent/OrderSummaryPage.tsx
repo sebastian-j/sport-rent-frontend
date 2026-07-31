@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCart } from '../../api/cart.ts';
 import { getLoyalty } from '../../api/loyalty.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
+import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import { mapCartProduct } from '../../features/cart/cartMappers.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
@@ -207,7 +208,11 @@ export default function OrderSummaryPage() {
           <p className="text-2xl font-semibold text-app-textStrong">Podsumowanie</p>
 
           <div className="flex w-full flex-col gap-5">
-            {isCartLoading && <p role="status">Ładowanie koszyka…</p>}
+            {isCartLoading && (
+              <p role="status">
+                Ładowanie koszyka <LoadingDots />
+              </p>
+            )}
             {cartLoadError && (
               <div role="alert" className="flex flex-col gap-3 text-app-danger">
                 <p>{cartLoadError}</p>
