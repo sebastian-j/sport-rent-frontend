@@ -6,6 +6,7 @@ import { getProducts } from '../api/product.ts';
 import type { ProductProps } from '../features/product/productProps.ts';
 import { RENT_ROUTES } from '../routes.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
+import { getErrorMessage } from '../utils/getErrorMessage.ts';
 
 type SearchBarProps = {
   autoFocus?: boolean;
@@ -15,6 +16,7 @@ type SearchBarProps = {
 
 const SEARCH_DEBOUNCE_MS = 250;
 const SEARCH_RESULTS_LIMIT = 5;
+const DEFAULT_SEARCH_ERROR = 'Nie udało się pobrać produktów';
 
 export default function SearchBar({
   autoFocus = false,
@@ -27,7 +29,7 @@ export default function SearchBar({
   const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState<ProductProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const searchQuery = searchValue.trim();
@@ -36,13 +38,13 @@ export default function SearchBar({
     if (!isOpen || !searchQuery) {
       setProducts([]);
       setIsLoading(false);
-      setHasError(false);
+      setError(null);
       return;
     }
 
     let ignoreResponse = false;
     setIsLoading(true);
-    setHasError(false);
+    setError(null);
 
     const timeout = window.setTimeout(() => {
       void getProducts({
@@ -50,12 +52,12 @@ export default function SearchBar({
         page: 1,
         pageSize: SEARCH_RESULTS_LIMIT,
       })
-        .then(({ data, error }) => {
+        .then(({ data, error: requestError }) => {
           if (ignoreResponse) return;
 
-          if (error || !data) {
+          if (requestError || !data) {
             setProducts([]);
-            setHasError(true);
+            setError(getErrorMessage(requestError, DEFAULT_SEARCH_ERROR));
             return;
           }
 
@@ -75,7 +77,7 @@ export default function SearchBar({
         .catch(() => {
           if (!ignoreResponse) {
             setProducts([]);
-            setHasError(true);
+            setError(DEFAULT_SEARCH_ERROR);
           }
         })
         .finally(() => {
@@ -191,8 +193,8 @@ export default function SearchBar({
         >
           {isLoading ? (
             <p className="p-3 text-center text-app-textMuted">Ładowanie produktów...</p>
-          ) : hasError ? (
-            <p className="p-3 text-center text-app-danger">Nie udało się pobrać produktów</p>
+          ) : error ? (
+            <p className="p-3 text-center text-app-danger">{error}</p>
           ) : products.length > 0 ? (
             <ul className="flex flex-col gap-2">
               {products.map((product) => (

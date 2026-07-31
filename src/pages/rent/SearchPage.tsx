@@ -16,10 +16,12 @@ import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
 import type { SortDirection } from '../../types/search.ts';
+import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 
 const PAGE_SIZE = 10;
 const MIN_PRICE = 0;
 const MAX_PRICE = 200;
+const DEFAULT_SEARCH_ERROR = 'Nie udało się pobrać produktów.';
 
 const SORT_OPTIONS = [
   { value: 'name', label: 'Nazwa' },
@@ -125,7 +127,7 @@ export default function SearchPage() {
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
   const [searchResults, setSearchResults] = useState<ProductProps[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(true);
-  const [hasSearchError, setHasSearchError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
   const prefersReducedMotion = useReducedMotion();
 
@@ -180,7 +182,7 @@ export default function SearchPage() {
     let ignoreResponse = false;
 
     setIsSearchLoading(true);
-    setHasSearchError(false);
+    setError(null);
 
     void getProducts({
       query: searchQuery || null,
@@ -192,12 +194,12 @@ export default function SearchPage() {
       page: pageNumber,
       pageSize: PAGE_SIZE,
     })
-      .then(({ data, error }) => {
+      .then(({ data, error: requestError }) => {
         if (ignoreResponse) return;
 
-        if (error || !data) {
+        if (requestError || !data) {
           setSearchResults([]);
-          setHasSearchError(true);
+          setError(getErrorMessage(requestError, DEFAULT_SEARCH_ERROR));
           return;
         }
 
@@ -206,7 +208,7 @@ export default function SearchPage() {
       .catch(() => {
         if (!ignoreResponse) {
           setSearchResults([]);
-          setHasSearchError(true);
+          setError(DEFAULT_SEARCH_ERROR);
         }
       })
       .finally(() => {
@@ -370,7 +372,7 @@ export default function SearchPage() {
                 <span className="sr-only">Ładowanie produktów...</span>
                 <SearchProductCardPlaceholder />
               </motion.div>
-            ) : hasSearchError ? (
+            ) : error ? (
               <motion.p
                 key="products-error"
                 role="alert"
@@ -379,7 +381,7 @@ export default function SearchPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.25 }}
               >
-                Nie udało się pobrać produktów.
+                {error}
               </motion.p>
             ) : searchResults.length === 0 ? (
               <motion.p
