@@ -186,7 +186,7 @@ export default function CartPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.25 }}
             >
-              <EmptyCartPanel onGoToOffer={() => navigate('/')} />
+              <EmptyCartPanel onGoToOffer={() => navigate(RENT_ROUTES.home)} />
             </motion.div>
           )}
         </AnimatePresence>
