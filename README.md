@@ -39,14 +39,16 @@ ma jeszcze charakter demonstracyjny.
 | Sprawdzanie dostępności | Połączone z demonstracyjnym endpointem API |
 | Logowanie i wylogowanie | Połączone z API |
 | Sesja użytkownika | Automatyczne przywracanie i odświeżanie sesji oraz ponawianie żądań po `401` |
-| Rejestracja | Formularz istnieje, wysyłanie danych do API nie jest jeszcze podłączone |
-| Dane profilu | Pobierane z API; zapis zmian pozostaje po stronie interfejsu |
-| Ulubione i punkty lojalnościowe | Połączone z demonstracyjnymi endpointami API |
-| Historia zamówień | Prezentowana na danych demonstracyjnych |
-| Koszyk | Stan obsługiwany po stronie przeglądarki |
+| Rejestracja | Połączona z API |
+| Dane osobowe i adres w profilu | Pobierane i zapisywane przez API |
+| Zmiana adresu e-mail i hasła w profilu | Obsługiwana wyłącznie po stronie interfejsu |
+| Ulubione | Połączone z API i zapisywane w bazie danych |
+| Punkty lojalnościowe | Połączone z demonstracyjnymi endpointami API |
+| Historia zamówień | Pobierana przez API z danych demonstracyjnych backendu |
+| Koszyk | Połączony z API i zapisywany w bazie danych |
 | Kody promocyjne | Walidowane przez demonstracyjny endpoint API |
 | Składanie zamówień i płatności | Widoki są gotowe, finalizacja nie jest jeszcze podłączona |
-| Resetowanie i zmiana hasła | Połączone z tymczasowymi endpointami |
+| Resetowanie hasła | Połączone z API |
 
 ## Technologie
 
