@@ -1,6 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import './DatePickerElem.css';
 import DatePicker from 'react-datepicker';
 import { twMerge } from 'tailwind-merge';
 
@@ -49,6 +50,7 @@ export default function DatePickerElem({
       minDate={minDate ?? new Date()}
       onChange={(date: Date | null) => onChange(date)}
       dateFormat="dd.MM.yyyy"
+      calendarClassName="app-datepicker"
       popperClassName="z-50"
       portalId="datepicker-popper-root"
       popperProps={{ strategy: 'fixed' }}
