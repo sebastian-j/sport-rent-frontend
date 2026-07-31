@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getRandomCategory } from '../../api/category.ts';
@@ -69,13 +69,46 @@ const CATEGORY_CARDS = {
   },
 } as const;
 
+type HomeProductCardProps = {
+  product: ProductProps;
+  hideFavoriteButton: boolean;
+  hasFavoriteError: boolean;
+  onFavoriteToggle: (slug: string) => void;
+  onProductClick: (slug: string) => void;
+};
+
+const HomeProductCard = memo(function HomeProductCard({
+  product,
+  hideFavoriteButton,
+  hasFavoriteError,
+  onFavoriteToggle,
+  onProductClick,
+}: HomeProductCardProps) {
+  return (
+    <ProductCard
+      name={product.name}
+      price={product.price}
+      image={product.images[0] ?? ''}
+      alt={product.imageAlts?.[0]}
+      onClick={() => onProductClick(product.slug)}
+      isFavorite={product.isFavorite ?? false}
+      hasFavoriteError={hasFavoriteError}
+      favoriteErrorTarget="button"
+      hideFavoriteButton={hideFavoriteButton}
+      showFavoriteUpdatingOverlay={false}
+      onFavoriteToggle={() => onFavoriteToggle(product.slug)}
+    />
+  );
+});
+
 export default function HomePage() {
   const navigate = useNavigate();
-  const [pendingFavoriteSlugs, setPendingFavoriteSlugs] = useState<Set<string>>(() => new Set());
+  const pendingFavoriteSlugsRef = useRef<Set<string>>(new Set());
   const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
   const errorTimeouts = useRef<Map<string, number>>(new Map());
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const productsRef = useRef<ProductProps[]>([]);
   const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
   const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
   const [error, setError] = useState<string | null>(null);
@@ -234,19 +267,35 @@ export default function HomePage() {
     }
   }, [isIntersecting, isLoading, hasMore]);
 
-  const toggleFavorite = async (productSlug: string) => {
-    if (pendingFavoriteSlugs.has(productSlug)) return;
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
 
-    const product = products.find((p) => p.slug === productSlug);
+  const toggleFavorite = useCallback(async (productSlug: string) => {
+    if (pendingFavoriteSlugsRef.current.has(productSlug)) return;
+
+    const product = productsRef.current.find((p) => p.slug === productSlug);
     if (!product) return;
 
     const isFavorite = product.isFavorite ?? false;
+    const nextIsFavorite = !isFavorite;
 
-    setPendingFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
+    pendingFavoriteSlugsRef.current.add(productSlug);
     setFailedFavoriteSlugs((currentSlugs) => {
+      if (!currentSlugs.has(productSlug)) return currentSlugs;
+
       const nextSlugs = new Set(currentSlugs);
       nextSlugs.delete(productSlug);
       return nextSlugs;
+    });
+    setProducts((currentProducts) => {
+      const nextProducts = currentProducts.map((currentProduct) =>
+        currentProduct.slug === productSlug
+          ? { ...currentProduct, isFavorite: nextIsFavorite }
+          : currentProduct
+      );
+      productsRef.current = nextProducts;
+      return nextProducts;
     });
 
     try {
@@ -255,15 +304,18 @@ export default function HomePage() {
         : await addFavorite(productSlug);
 
       if (error) throw error;
-
-      setProducts((currentProducts) =>
-        currentProducts.map((p) => (p.slug === productSlug ? { ...p, isFavorite: !isFavorite } : p))
-      );
     } catch (error) {
       console.error(
         `Błąd ${isFavorite ? 'usuwania produktu z' : 'dodawania produktu do'} ulubionych (${productSlug}):`,
         error
       );
+      setProducts((currentProducts) => {
+        const nextProducts = currentProducts.map((currentProduct) =>
+          currentProduct.slug === productSlug ? { ...currentProduct, isFavorite } : currentProduct
+        );
+        productsRef.current = nextProducts;
+        return nextProducts;
+      });
       setFailedFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
 
       const previousTimeout = errorTimeouts.current.get(productSlug);
@@ -280,13 +332,14 @@ export default function HomePage() {
 
       errorTimeouts.current.set(productSlug, timeout);
     } finally {
-      setPendingFavoriteSlugs((currentSlugs) => {
-        const nextSlugs = new Set(currentSlugs);
-        nextSlugs.delete(productSlug);
-        return nextSlugs;
-      });
+      pendingFavoriteSlugsRef.current.delete(productSlug);
     }
-  };
+  }, []);
+
+  const handleProductClick = useCallback(
+    (productSlug: string) => navigate(RENT_ROUTES.product(productSlug)),
+    [navigate]
+  );
 
   useEffect(() => {
     const activeErrorTimeouts = errorTimeouts.current;
@@ -353,20 +406,13 @@ export default function HomePage() {
       {!error && (
         <ProductCardGrid className="my-4">
           {products.map((product) => (
-            <ProductCard
+            <HomeProductCard
               key={product.slug}
-              name={product.name}
-              price={product.price}
-              image={product.images[0] ?? ''}
-              alt={product.imageAlts?.[0]}
-              onClick={() => navigate(RENT_ROUTES.product(product.slug))}
-              isFavorite={product.isFavorite ?? false}
-              isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+              product={product}
               hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
-              favoriteErrorTarget="button"
               hideFavoriteButton={authStatus !== 'authenticated'}
-              showFavoriteUpdatingOverlay={false}
-              onFavoriteToggle={() => void toggleFavorite(product.slug)}
+              onFavoriteToggle={toggleFavorite}
+              onProductClick={handleProductClick}
             />
           ))}
         </ProductCardGrid>
