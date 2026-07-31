@@ -191,7 +191,6 @@ export default function CartPage() {
           )}
         </AnimatePresence>
       )}
-      {products.length === 0 && <EmptyCartPanel onGoToOffer={() => navigate(RENT_ROUTES.home)} />}
     </div>
   );
 }
