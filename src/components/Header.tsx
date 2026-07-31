@@ -3,8 +3,8 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'r
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { healthCheck } from '../api/health.ts';
-import headerLogo from '../assets/logo_header.png';
-import headerLogoSmall from '../assets/logo_header_small.png';
+import headerLogo from '../assets/logo_header.webp';
+import headerLogoSmall from '../assets/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';

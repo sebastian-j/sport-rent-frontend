@@ -4,7 +4,7 @@ import googlePayLogo from '../../assets/payments/google-pay.svg';
 import instantTransferLogo from '../../assets/payments/instant-transfer.svg';
 import mastercardLogo from '../../assets/payments/mastercard.svg';
 import traditionalTransferLogo from '../../assets/payments/traditional-transfer.svg';
-import visaLogo from '../../assets/payments/visa.png';
+import visaLogo from '../../assets/payments/visa.webp';
 
 export const PAYMENT_METHODS = [
   {
