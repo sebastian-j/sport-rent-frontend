@@ -94,11 +94,6 @@ export default function AccountSection({ onUserNameUpdate }: AccountSectionProps
     closeSection();
   };
 
-  const savePassword = () => {
-    alert('Hasło zostało zaktualizowane!');
-    closeSection();
-  };
-
   if (!personalData) {
     return <div className="w-full pt-12 text-center text-app-text">Ładowanie ustawień...</div>;
   }
@@ -145,7 +140,7 @@ export default function AccountSection({ onUserNameUpdate }: AccountSectionProps
           scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('password')}
         >
-          <PasswordForm onSave={savePassword} onCancel={closeSection} />
+          <PasswordForm onCancel={closeSection} />
         </SettingsCard>
 
         <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 md:p-6">
