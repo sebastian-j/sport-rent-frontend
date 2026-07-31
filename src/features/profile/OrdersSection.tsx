@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
@@ -135,7 +136,7 @@ export default function OrdersSection() {
 
   return (
     <div className="flex w-full flex-col items-center pt-6 text-app-text md:pt-12">
-      <p className="text-center text-3xl md:text-5xl">Historia zamówień</p>
+      <SectionTitle className="text-center text-app-text">Historia zamówień</SectionTitle>
 
       {isLoading ? (
         <div role="status" className="mt-12 text-center text-app-textMuted">
