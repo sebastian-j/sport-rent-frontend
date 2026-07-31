@@ -15,6 +15,7 @@ import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
+import { RENT_ROUTES } from '../../routes.ts';
 import type { SortDirection } from '../../types/search.ts';
 import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 
@@ -410,7 +411,7 @@ export default function SearchPage() {
                   >
                     <SearchProductCard
                       product={product}
-                      onClick={() => navigate(`/product/${product.slug}`)}
+                      onClick={() => navigate(RENT_ROUTES.product(product.slug))}
                       onAddToCart={() => undefined}
                       isFavorite={favoriteProductIds.has(product.id)}
                       onFavoriteToggle={() =>
