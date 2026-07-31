@@ -38,6 +38,7 @@ export default function ProductCard({
   hideFavoriteButton = false,
 }: ProductCardProps) {
   const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt();
+  const cardHoverAnimation = hoverAnimation ? { scale: hoverAnimation.scale } : undefined;
   const hasCardFavoriteError = hasFavoriteError && favoriteErrorTarget === 'card';
   const hasButtonFavoriteError = hasFavoriteError && favoriteErrorTarget === 'button';
 
@@ -45,7 +46,7 @@ export default function ProductCard({
     <motion.div
       onPointerMove={handlePointerMove}
       onPointerLeave={resetTilt}
-      whileHover={hoverAnimation}
+      whileHover={cardHoverAnimation}
       animate={hasCardFavoriteError ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }}
       transition={
         hasCardFavoriteError
@@ -58,7 +59,7 @@ export default function ProductCard({
         ...cardStyle,
       }}
       aria-busy={showFavoriteUpdatingOverlay && isFavoriteUpdating}
-      className={`relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] bg-app-surfaceSoft ring-2 transition-[filter,border-color,box-shadow] duration-300 ease-linear hover:z-10 ${
+      className={`relative flex transform-gpu cursor-pointer select-none flex-col overflow-hidden rounded-xl border-[1px] bg-app-surfaceSoft shadow-none ring-2 transition-[filter,border-color,box-shadow] duration-300 ease-linear hover:z-10 hover:shadow-[0_16px_32px_rgb(0_0_0_/_0.16)] ${
         hasCardFavoriteError
           ? 'border-app-danger ring-app-danger'
           : 'border-app-borderSoft ring-transparent'
