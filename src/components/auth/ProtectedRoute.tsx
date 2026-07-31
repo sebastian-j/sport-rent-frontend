@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../../features/auth/authContext.ts';
-import LoadingDots from '../core/LoadingDots.tsx';
 import { AUTH_ROUTES } from '../../routes.ts';
+import LoadingDots from '../core/LoadingDots.tsx';
 
 const ProtectedRoute = () => {
   const { status, retrySessionRestore } = useAuth();
