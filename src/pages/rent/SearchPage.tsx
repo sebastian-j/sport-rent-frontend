@@ -105,7 +105,7 @@ const toProductProps = (product: {
   price?: number | null;
   slug: string;
   images?: string[] | null;
-  alt?: string | null;
+  imageAlts?: string[] | null;
   category?: string | null;
   sizes?: { size: string; description?: string | null }[] | null;
 }): ProductProps => ({
@@ -115,7 +115,7 @@ const toProductProps = (product: {
   price: product.price ?? 0,
   slug: product.slug,
   images: product.images ?? [],
-  alt: product.alt ?? product.name,
+  imageAlts: product.imageAlts ?? [product.name],
   category: product.category ?? '',
   sizes: product.sizes ?? [],
 });

@@ -41,7 +41,7 @@ export default function SearchProductCard({
       <div className="relative w-[clamp(8rem,40%,13rem)] shrink-0 overflow-hidden md:w-60">
         <img
           src={product.images[0] ?? ''}
-          alt={product.alt}
+          alt={product.imageAlts?.[0]}
           className="h-full w-full object-cover"
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1 bg-gradient-to-r from-transparent via-app-surface to-app-surface" />
