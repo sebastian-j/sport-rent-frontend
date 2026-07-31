@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
 

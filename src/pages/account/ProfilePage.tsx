@@ -4,8 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { getUser } from '../../api/user.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
-import PageHeader from '../../components/core/PageHeader.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageHeader from '../../components/core/PageHeader.tsx';
 import AccountSection from '../../features/profile/AccountSection.tsx';
 import LoyaltySection from '../../features/profile/LoyaltySection.tsx';
 import OrdersSection from '../../features/profile/OrdersSection.tsx';

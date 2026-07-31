@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../../api/auth.ts';
 import type { components } from '../../api/generated/schema.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type HTTPValidationError = components['schemas']['HTTPValidationError'];

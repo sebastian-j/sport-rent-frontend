@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { getUser, updatePersonalAddress } from '../../api/user.ts';
-import SectionTitle from '../../components/core/SectionTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';

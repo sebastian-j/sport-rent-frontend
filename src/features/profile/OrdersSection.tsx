@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
-import SectionTitle from '../../components/core/SectionTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
 import { type Order, type OrderStatus } from './orders/orderTypes.ts';

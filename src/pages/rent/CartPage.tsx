@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ContentPanel from '../../components/core/ContentPanel.tsx';
-import PageHeader from '../../components/core/PageHeader.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageHeader from '../../components/core/PageHeader.tsx';
 import {
   findFirstInvalidRentalDate,
   getOrderInformation,

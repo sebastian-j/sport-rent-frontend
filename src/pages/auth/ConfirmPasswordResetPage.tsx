@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
-import PageTitle from '../../components/core/PageTitle.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageTitle from '../../components/core/PageTitle.tsx';
 import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type PageState = 'validating' | 'ready' | 'invalid' | 'validation-error' | 'success';
