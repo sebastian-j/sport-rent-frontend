@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { ImageOff, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,17 @@ import { getProducts } from '../api/product.ts';
 import type { ProductProps } from '../features/product/productProps.ts';
 import { RENT_ROUTES } from '../routes.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
+import { getErrorMessage } from '../utils/getErrorMessage.ts';
 
 type SearchBarProps = {
   autoFocus?: boolean;
   onClose?: () => void;
   showCloseButton?: boolean;
 };
+
+const SEARCH_DEBOUNCE_MS = 250;
+const SEARCH_RESULTS_LIMIT = 5;
+const DEFAULT_SEARCH_ERROR = 'Nie udało się pobrać produktów';
 
 export default function SearchBar({
   autoFocus = false,
@@ -23,31 +28,68 @@ export default function SearchBar({
   const [searchValue, setSearchValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const normalizedSearchValue = searchValue.trim().toLocaleLowerCase();
-  const matchingProducts = normalizedSearchValue
-    ? products.filter((product) => product.name.toLocaleLowerCase().includes(normalizedSearchValue))
-    : [];
+  const searchQuery = searchValue.trim();
 
   useEffect(() => {
-    getProducts().then(({ data }) => {
-      if (data) {
-        setProducts(
-          data.map((product) => ({
-            id: product.id,
-            name: product.name,
-            description: product.description ?? '',
-            price: product.price ?? 0,
-            slug: product.slug,
-            images: product.images ?? [],
-            imageAlts: product.imageAlts,
-            category: product.category ?? '',
-          }))
-        );
-      }
-    });
-  }, []);
+    if (!isOpen || !searchQuery) {
+      setProducts([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    let ignoreResponse = false;
+    setIsLoading(true);
+    setError(null);
+
+    const timeout = window.setTimeout(() => {
+      void getProducts({
+        query: searchQuery,
+        page: 1,
+        pageSize: SEARCH_RESULTS_LIMIT,
+      })
+        .then(({ data, error: requestError }) => {
+          if (ignoreResponse) return;
+
+          if (requestError || !data) {
+            setProducts([]);
+            setError(getErrorMessage(requestError, DEFAULT_SEARCH_ERROR));
+            return;
+          }
+
+          setProducts(
+            data.map((product) => ({
+              id: product.id,
+              name: product.name,
+              description: product.description ?? '',
+              price: product.price ?? 0,
+              slug: product.slug,
+              images: product.images ?? [],
+              imageAlts: product.imageAlts,
+              category: product.category ?? '',
+            }))
+          );
+        })
+        .catch(() => {
+          if (!ignoreResponse) {
+            setProducts([]);
+            setError(DEFAULT_SEARCH_ERROR);
+          }
+        })
+        .finally(() => {
+          if (!ignoreResponse) setIsLoading(false);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      ignoreResponse = true;
+      window.clearTimeout(timeout);
+    };
+  }, [isOpen, searchQuery]);
 
   useEffect(() => {
     setSearchValue(queryFromUrl);
@@ -83,16 +125,17 @@ export default function SearchBar({
     event.preventDefault();
 
     const query = searchValue.trim();
-    if (!query) return;
+    const searchParams = new URLSearchParams({
+      page: '1',
+      sort: 'name',
+      order: 'asc',
+    });
 
-    navigate(
-      `${RENT_ROUTES.search}?${new URLSearchParams({
-        query,
-        page: '1',
-        sort: 'name',
-        order: 'asc',
-      }).toString()}`
-    );
+    if (query) {
+      searchParams.set('query', query);
+    }
+
+    navigate(`${RENT_ROUTES.search}?${searchParams.toString()}`);
     setIsOpen(false);
     onClose?.();
   };
@@ -121,8 +164,9 @@ export default function SearchBar({
           onFocus={() => setIsOpen(true)}
           placeholder="Szukaj..."
           aria-label="Wyszukaj produkt po nazwie"
-          aria-expanded={isOpen && Boolean(normalizedSearchValue)}
-          aria-controls="product-search-results"
+          aria-expanded={isOpen && Boolean(searchQuery)}
+          aria-controls={isOpen ? 'product-search-results' : undefined}
+          role="combobox"
           className="w-full select-none rounded-lg bg-app-surfaceSoft p-2 text-app-text outline-none placeholder:text-app-textMuted"
         />
         {showCloseButton && (
@@ -140,14 +184,21 @@ export default function SearchBar({
         )}
       </form>
 
-      {isOpen && normalizedSearchValue && (
+      {isOpen && searchQuery && (
         <div
           id="product-search-results"
+          aria-busy={isLoading}
+          aria-live="polite"
+          role="listbox"
           className="absolute left-0 right-0 top-full mt-2 max-h-[70vh] overflow-y-auto rounded-lg border border-app-border bg-app-surface p-2 shadow-lg"
         >
-          {matchingProducts.length > 0 ? (
+          {isLoading ? (
+            <p className="p-3 text-center text-app-textMuted">Ładowanie produktów...</p>
+          ) : error ? (
+            <p className="p-3 text-center text-app-danger">{error}</p>
+          ) : products.length > 0 ? (
             <ul className="flex flex-col gap-2">
-              {matchingProducts.map((product) => (
+              {products.map((product) => (
                 <li key={product.id}>
                   <Link
                     to={RENT_ROUTES.product(product.slug)}
@@ -158,11 +209,21 @@ export default function SearchBar({
                     }}
                     className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-app-surfaceSoft"
                   >
-                    <img
-                      src={product.images[0]}
-                      alt={product.imageAlts?.[0]}
-                      className="h-16 w-20 shrink-0 rounded-md object-contain"
-                    />
+                    {product.images?.[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.imageAlts?.[0]}
+                        className="h-16 w-20 shrink-0 rounded-md object-contain"
+                      />
+                    ) : (
+                      <div
+                        role="img"
+                        aria-label={`Brak zdjęcia produktu ${product.name}`}
+                        className="flex h-16 w-20 shrink-0 items-center justify-center rounded-md bg-app-surfaceSoft text-app-textMuted"
+                      >
+                        <ImageOff aria-hidden="true" />
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold text-app-text">{product.name}</p>
                       <p className="text-sm text-app-textMuted">

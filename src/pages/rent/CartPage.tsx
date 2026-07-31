@@ -30,19 +30,19 @@ export default function CartPage() {
     mergeTargetId,
     retry,
   } = useCart();
-  const [readTos, setReadTos] = useState(false);
-  const [highlightTos, setHighlightTos] = useState(false);
-  const tosRef = useRef<HTMLDivElement | null>(null);
+  const [readTerms, setReadTerms] = useState(false);
+  const [highlightTerms, setHighlightTerms] = useState(false);
+  const termsRef = useRef<HTMLDivElement | null>(null);
   const rentalDateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
 
   const orderInformation = getOrderInformation(products);
 
-  const handleReadTos = () => {
-    setReadTos(true);
+  const handleReadTerms = () => {
+    setReadTerms(true);
   };
 
-  const getRentalDateRefKey = (productId: number, dateId: number) => `${productId}-${dateId}`;
+  const getRentalDateRefKey = (productSlug: string, dateId: number) => `${productSlug}-${dateId}`;
 
   const handleBuy = () => {
     if (isPending) return;
@@ -50,7 +50,7 @@ export default function CartPage() {
 
     if (firstInvalidRentalDate) {
       const refKey = getRentalDateRefKey(
-        firstInvalidRentalDate.productId,
+        firstInvalidRentalDate.productSlug,
         firstInvalidRentalDate.date.id
       );
 
@@ -62,10 +62,10 @@ export default function CartPage() {
       return;
     }
 
-    if (!readTos) {
-      tosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setHighlightTos(true);
-      window.setTimeout(() => setHighlightTos(false), 500);
+    if (!readTerms) {
+      termsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightTerms(true);
+      window.setTimeout(() => setHighlightTerms(false), 500);
 
       return;
     }
@@ -119,7 +119,7 @@ export default function CartPage() {
 
                     return (
                       <motion.div
-                        key={product.id}
+                        key={product.slug}
                         initial={{
                           height: 0,
                           marginBottom: 0,
@@ -144,19 +144,19 @@ export default function CartPage() {
                           product={product}
                           information={information}
                           onQuantityChange={(dateId, quantity) =>
-                            updateQuantity(product.id, dateId, quantity)
+                            updateQuantity(product.slug, dateId, quantity)
                           }
-                          onSizeChange={(dateId, size) => updateSize(product.id, dateId, size)}
+                          onSizeChange={(dateId, size) => updateSize(product.slug, dateId, size)}
                           onDateChange={(dateId, field, value) =>
-                            updateRentalDate(product.id, dateId, field, value)
+                            updateRentalDate(product.slug, dateId, field, value)
                           }
-                          onRemoveDate={(dateId) => removeRentalDate(product.id, dateId)}
-                          onAddDate={() => addRentalDate(product.id)}
-                          onRemoveProduct={() => removeProduct(product.id)}
+                          onRemoveDate={(dateId) => removeRentalDate(product.slug, dateId)}
+                          onAddDate={() => addRentalDate(product.slug)}
+                          onRemoveProduct={() => removeProduct(product.slug)}
                           actionsDisabled={isPending}
                           mergeTargetId={mergeTargetId}
                           getRentalDateRef={(dateId) => (element) => {
-                            rentalDateRefs.current[getRentalDateRefKey(product.id, dateId)] =
+                            rentalDateRefs.current[getRentalDateRefKey(product.slug, dateId)] =
                               element;
                           }}
                         />
@@ -167,10 +167,10 @@ export default function CartPage() {
               </ContentPanel>
 
               <TermsPanel
-                readTos={readTos}
-                highlighted={highlightTos}
-                onReadTos={handleReadTos}
-                ref={tosRef}
+                readTerms={readTerms}
+                highlighted={highlightTerms}
+                onReadTerms={handleReadTerms}
+                ref={termsRef}
               />
 
               <CartSummaryPanel
@@ -186,12 +186,11 @@ export default function CartPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.25 }}
             >
-              <EmptyCartPanel onGoToOffer={() => navigate('/')} />
+              <EmptyCartPanel onGoToOffer={() => navigate(RENT_ROUTES.home)} />
             </motion.div>
           )}
         </AnimatePresence>
       )}
-      {products.length === 0 && <EmptyCartPanel onGoToOffer={() => navigate(RENT_ROUTES.home)} />}
     </div>
   );
 }

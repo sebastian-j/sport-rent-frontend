@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { getUser } from '../../api/user.ts';
+import { getUser, updatePersonalAddress } from '../../api/user.ts';
 import Switch from '../../components/core/Switch.tsx';
 import EmailForm from './account/EmailForm.tsx';
 import PasswordForm from './account/PasswordForm.tsx';
@@ -9,11 +9,16 @@ import SettingsCard from './account/SettingsCard.tsx';
 
 type Section = 'personal' | 'email' | 'password' | null;
 
-export default function AccountSection() {
+type AccountSectionProps = {
+  onUserNameUpdate?: (name: string) => void;
+};
+
+export default function AccountSection({ onUserNameUpdate }: AccountSectionProps = {}) {
   const [expandedSection, setExpandedSection] = useState<Section>(null);
   const [newsletter, setNewsletter] = useState(true);
   const [personalData, setPersonalData] = useState<PersonalData | null>(null);
   const [currentEmail, setCurrentEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getUser().then(({ data }) => {
@@ -33,25 +38,59 @@ export default function AccountSection() {
   }, []);
 
   const toggleSection = (section: Exclude<Section, null>) => {
+    setError(null);
     setExpandedSection((currentSection) => (currentSection === section ? null : section));
   };
 
-  const closeSection = () => setExpandedSection(null);
+  const closeSection = () => {
+    setError(null);
+    setExpandedSection(null);
+  };
 
-  const savePersonalData = (data: PersonalData) => {
-    setPersonalData(data);
-    alert('Dane osobowe zostały pomyślnie zapisane!');
-    closeSection();
+  const savePersonalData = async (data: PersonalData) => {
+    setError(null);
+
+    const requiredFields = [
+      data.firstName,
+      data.lastName,
+      data.city,
+      data.addressLine1,
+      data.postalCode,
+      data.country,
+    ];
+    if (requiredFields.some((field) => !field.trim())) {
+      setError('Pola nie mogą składać się z samych znaków białych.');
+      return;
+    }
+
+    try {
+      const { error } = await updatePersonalAddress(data);
+      if (error) {
+        setError(
+          (error as any)?.detail?.[0]?.msg ||
+            (error as any)?.detail ||
+            'Wystąpił nieznany błąd zapisu.'
+        );
+        console.error(error);
+        return;
+      }
+
+      setPersonalData(data);
+
+      if (onUserNameUpdate) {
+        onUserNameUpdate(`${data.firstName} ${data.lastName}`);
+      }
+
+      closeSection();
+    } catch (error) {
+      setError((error as any)?.message || 'Wystąpił błąd połączenia z serwerem.');
+      console.error(error);
+    }
   };
 
   const saveEmail = (email: string) => {
     setCurrentEmail(email);
     alert('Adres e-mail został zmieniony!');
-    closeSection();
-  };
-
-  const savePassword = () => {
-    alert('Hasło zostało zaktualizowane!');
     closeSection();
   };
 
@@ -64,6 +103,12 @@ export default function AccountSection() {
       <h2 className="text-5xl text-center text-3xl md:text-5xl">Ustawienia konta</h2>
 
       <div className="my-6 flex w-full flex-col gap-0.5 overflow-hidden rounded-xl bg-app-borderSoft md:m-12 md:max-w-[calc(100%-6rem)]">
+        {error && (
+          <div className="flex w-full flex-col items-center justify-center bg-red-100/10 p-4 text-center text-red-500">
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
+
         <SettingsCard
           title="Dane osobowe i adres"
           subtitle={`${personalData.firstName} ${personalData.lastName}, ${personalData.city}`}
@@ -73,7 +118,7 @@ export default function AccountSection() {
         >
           <PersonalDataForm
             initialData={personalData}
-            onSave={savePersonalData}
+            onSave={(data) => void savePersonalData(data)}
             onCancel={closeSection}
           />
         </SettingsCard>
@@ -95,7 +140,7 @@ export default function AccountSection() {
           scrollOnCollapse={expandedSection === null}
           onToggle={() => toggleSection('password')}
         >
-          <PasswordForm onSave={savePassword} onCancel={closeSection} />
+          <PasswordForm onCancel={closeSection} />
         </SettingsCard>
 
         <div className="flex select-none items-center justify-between gap-4 bg-app-surfaceElevated p-4 md:p-6">

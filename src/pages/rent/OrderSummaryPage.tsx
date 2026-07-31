@@ -223,7 +223,7 @@ export default function OrderSummaryPage() {
             {!isCartLoading &&
               !cartLoadError &&
               summaryProducts.map((product) => (
-                <SummaryProduct key={product.id} product={product} />
+                <SummaryProduct key={product.slug} product={product} />
               ))}
           </div>
 

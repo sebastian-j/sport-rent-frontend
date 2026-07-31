@@ -28,17 +28,10 @@ const IMAGE_WIDTH_CLASSES: Record<CategoryCardProps['size'], string> = {
   large: 'w-1/3 lg:w-1/2',
 };
 
-const TILT_BY_SIZE: Record<
-  CategoryCardProps['size'],
-  {
-    maxCardTiltDegrees: number;
-    maxImageTiltDegrees: number;
-    maxImageShiftPixels: number;
-  }
-> = {
-  small: { maxCardTiltDegrees: 1.6, maxImageTiltDegrees: 0.55, maxImageShiftPixels: 1.25 },
-  medium: { maxCardTiltDegrees: 1.25, maxImageTiltDegrees: 0.45, maxImageShiftPixels: 1 },
-  large: { maxCardTiltDegrees: 0.8, maxImageTiltDegrees: 0.3, maxImageShiftPixels: 0.75 },
+const CARD_TILT_BY_SIZE: Record<CategoryCardProps['size'], number> = {
+  small: 1.6,
+  medium: 1.25,
+  large: 0.8,
 };
 
 export default function CategoryCard({
@@ -52,9 +45,11 @@ export default function CategoryCard({
   className,
 }: CategoryCardProps) {
   const navigate = useNavigate();
-  const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt(
-    TILT_BY_SIZE[size]
-  );
+  const { cardStyle, imageStyle, hoverAnimation, handlePointerMove, resetTilt } = useCardTilt({
+    maxCardTiltDegrees: CARD_TILT_BY_SIZE[size],
+    maxImageTiltDegrees: 0,
+    maxImageShiftPixels: 0,
+  });
   const sizeClasses = SIZE_CLASSES[size];
   const imageWidthClasses = IMAGE_WIDTH_CLASSES[size];
   const flexRow = imagePosition === 'left' ? 'flex-row' : 'flex-row-reverse';

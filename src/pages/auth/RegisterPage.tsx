@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../../api/auth.ts';
 import type { components } from '../../api/generated/schema.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type HTTPValidationError = components['schemas']['HTTPValidationError'];
 type ValidationError = components['schemas']['ValidationError'];
@@ -157,7 +158,7 @@ export default function RegisterPage() {
         return;
       }
 
-      navigate('/login', { replace: true });
+      navigate(AUTH_ROUTES.login, { replace: true });
     } catch {
       setRegisterError('Nie udało się połączyć z serwerem. Spróbuj ponownie.');
     } finally {
@@ -353,14 +354,14 @@ export default function RegisterPage() {
         </form>
 
         <div className="my-3 w-full text-left sm:w-[90%]">
-          <Link to="/login" className="text-app-textStrong underline">
+          <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
             Wróć do logowania
           </Link>
         </div>
       </div>
       <div className="w-[60vw] max-w-[800px] text-left mt-4">
         <Link
-          to="/privacy-policy"
+          to={DOCUMENT_ROUTES.privacyPolicy}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[0.7vw] text-app-textMuted underline"

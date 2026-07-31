@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { resetPassword } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
@@ -93,14 +94,14 @@ export default function ResetPasswordPage() {
         )}
 
         <div className="my-3 w-full text-left sm:w-[90%]">
-          <Link to="/login" className="text-app-textStrong underline">
+          <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
             Wróć do logowania
           </Link>
         </div>
       </div>
 
       <div className="mt-4 w-full max-w-[800px] text-left">
-        <Link to="/privacy-policy" className="text-sm text-app-textMuted underline">
+        <Link to={DOCUMENT_ROUTES.privacyPolicy} className="text-sm text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { confirmPasswordReset, validatePasswordReset } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
+import { AUTH_ROUTES, DOCUMENT_ROUTES } from '../../routes.ts';
 
 type PageState = 'validating' | 'ready' | 'invalid' | 'validation-error' | 'success';
 
@@ -112,7 +113,7 @@ export default function ConfirmPasswordResetPage() {
             <p role="alert" className="text-sm text-app-danger">
               Link do zmiany hasła jest nieprawidłowy, wygasł lub został już wykorzystany.
             </p>
-            <Link to="/reset-password" className="text-app-textStrong underline">
+            <Link to={AUTH_ROUTES.resetPassword} className="text-app-textStrong underline">
               Wygeneruj nowy link
             </Link>
           </div>
@@ -139,7 +140,7 @@ export default function ConfirmPasswordResetPage() {
             <p role="status" className="text-sm text-app-textMuted">
               Hasło zostało zmienione. Możesz się teraz zalogować.
             </p>
-            <Link to="/login" className="text-app-textStrong underline">
+            <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
               Przejdź do logowania
             </Link>
           </div>
@@ -212,7 +213,7 @@ export default function ConfirmPasswordResetPage() {
 
         {pageState !== 'success' && (
           <div className="my-3 w-[90%] text-left">
-            <Link to="/login" className="text-app-textStrong underline">
+            <Link to={AUTH_ROUTES.login} className="text-app-textStrong underline">
               Wróć do logowania
             </Link>
           </div>
@@ -220,7 +221,10 @@ export default function ConfirmPasswordResetPage() {
       </div>
 
       <div className="mt-4 w-[60vw] max-w-[800px] text-left">
-        <Link to="/privacy-policy" className="text-[0.7vw] text-app-textMuted underline">
+        <Link
+          to={DOCUMENT_ROUTES.privacyPolicy}
+          className="text-[0.7vw] text-app-textMuted underline"
+        >
           Polityka prywatności
         </Link>
       </div>

@@ -1,7 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Ref } from 'react';
+import { Link } from 'react-router-dom';
 
+import { RENT_ROUTES } from '../../routes.ts';
 import { formatPrice } from '../../utils/formatPrice.ts';
 import type { CartProduct, DateField, ProductInformation } from './cartTypes.ts';
 import ProductRentalDate from './ProductRentalDate.tsx';
@@ -43,9 +45,12 @@ export default function CartProductCard({
         />
       </div>
 
-      <p className="min-w-0 px-2 text-center text-2xl md:col-start-2 md:row-start-1 md:px-12 md:text-3xl lg:px-2 lg:pe-44 lg:text-left">
+      <Link
+        to={RENT_ROUTES.product(product.slug)}
+        className="min-w-0 px-2 text-center text-2xl md:col-start-2 md:row-start-1 md:px-12 md:text-3xl lg:px-2 lg:pe-44 lg:text-left"
+      >
         {product.name}
-      </p>
+      </Link>
 
       <div className="flex h-fit self-start flex-col overflow-hidden rounded-xl bg-app-cartCardInner/80 p-2 sm:p-4 md:col-span-2 md:row-start-4 lg:col-span-1 lg:col-start-2 lg:row-start-2">
         <AnimatePresence initial={false}>

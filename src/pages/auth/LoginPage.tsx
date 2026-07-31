@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth.ts';
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
-import { RENT_ROUTES } from '../../routes.ts';
+import { AUTH_ROUTES, DOCUMENT_ROUTES, RENT_ROUTES } from '../../routes.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ export default function LoginPage() {
         </form>
 
         <div className="my-3 w-full text-left sm:w-[90%]">
-          <Link to="/reset-password" className="text-app-textStrong underline">
+          <Link to={AUTH_ROUTES.resetPassword} className="text-app-textStrong underline">
             Zapomniałeś hasła?
           </Link>
         </div>
@@ -149,14 +149,14 @@ export default function LoginPage() {
         <div className="my-3 w-full text-left sm:w-[90%]">
           <p className="text-app-textMuted">
             Nie masz konta?{' '}
-            <Link to="/register" className="text-app-textStrong underline">
+            <Link to={AUTH_ROUTES.register} className="text-app-textStrong underline">
               Zarejestruj się
             </Link>
           </p>
         </div>
       </div>
       <div className="mt-4 w-full max-w-[800px] text-left">
-        <Link to="/privacy-policy" className="text-sm text-app-textMuted underline">
+        <Link to={DOCUMENT_ROUTES.privacyPolicy} className="text-sm text-app-textMuted underline">
           Polityka prywatności
         </Link>
       </div>

@@ -161,6 +161,8 @@ export default function FavoritesPage() {
                     isFavorite={true}
                     isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
                     hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                    favoriteErrorTarget="card"
+                    showFavoriteUpdatingOverlay={true}
                     onFavoriteToggle={() => handleRemoveFavorite(product.slug)}
                     onClick={() => navigate(RENT_ROUTES.product(product.slug))}
                   />

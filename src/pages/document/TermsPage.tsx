@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import { DOCUMENT_ROUTES } from '../../routes.ts';
+
 const TERMS_DATA = {
   brand_name: 'PS Rent & Service',
   company_name: 'Mikstura A. Radwańska, A. Radwański s.c.',
@@ -17,12 +19,11 @@ const TERMS_DATA = {
   free_cancellation_hours: 48,
   late_cancellation_fee_percent: 50,
   complaint_processing_days: 14,
-  privacy_policy_path: '/privacy-policy',
   effective_date: new Date().toUTCString(),
   last_updated_at: new Date().toUTCString(),
 };
 
-export default function TosPage() {
+export default function TermsPage() {
   return (
     <article>
       <header>
@@ -225,7 +226,7 @@ export default function TosPage() {
           </li>
           <li>
             Szczegółowe informacje znajdują się w{' '}
-            <Link to={TERMS_DATA.privacy_policy_path}>Polityce prywatności</Link>.
+            <Link to={DOCUMENT_ROUTES.privacyPolicy}>Polityce prywatności</Link>.
           </li>
         </ol>
       </section>
