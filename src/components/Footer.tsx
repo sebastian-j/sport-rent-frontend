@@ -7,7 +7,7 @@ import 'react-social-icons/instagram';
 import 'react-social-icons/tiktok';
 import 'react-social-icons/twitter';
 
-import footerLogo from '../assets/logo_footer.svg';
+import footerLogo from '../assets/layout/logo_footer.svg';
 import { getSectionHomeRoute } from '../routes.ts';
 
 type FooterSectionProps = {

@@ -1,6 +1,6 @@
 import { Link, Navigate, Outlet } from 'react-router-dom';
 
-import LogoHeader from '../assets/logo_header.webp';
+import LogoHeader from '../assets/layout/logo_header.webp';
 import Footer from '../components/Footer';
 import { useAuth } from '../features/auth/authContext.ts';
 import { RENT_ROUTES, ROOT_ROUTE } from '../routes.ts';
