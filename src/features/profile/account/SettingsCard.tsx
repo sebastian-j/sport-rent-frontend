@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { type ReactNode, useId } from 'react';
 
 import { useDisclosureScroll } from '../useDisclosureScroll.ts';
@@ -22,6 +23,7 @@ export default function SettingsCard({
 }: SettingsCardProps) {
   const cardRef = useDisclosureScroll(isExpanded, { scrollOnCollapse });
   const contentId = useId();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated md:scroll-mt-16">
@@ -36,17 +38,39 @@ export default function SettingsCard({
           <span className="block text-lg font-bold">{title}</span>
           <span className="mt-1 block text-sm text-app-textMuted">{subtitle}</span>
         </span>
-        {isExpanded ? (
-          <ChevronDown aria-hidden="true" className="shrink-0 text-app-textMuted" />
-        ) : (
+        <motion.span
+          aria-hidden="true"
+          animate={{ rotate: isExpanded ? 90 : 0 }}
+          transition={
+            prefersReducedMotion ? { duration: 0 } : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
+          }
+          className="shrink-0 text-app-textMuted"
+        >
           <ChevronRight aria-hidden="true" className="shrink-0 text-app-textMuted" />
-        )}
+        </motion.span>
       </button>
-      {isExpanded && (
-        <div id={contentId} className="border-t border-app-borderSoft p-4 pt-0 md:p-6 md:pt-0">
-          {children}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="settings-content"
+            id={contentId}
+            initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    height: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
+                    opacity: { duration: 0.2, ease: 'easeOut' },
+                  }
+            }
+            className="overflow-hidden"
+          >
+            <div className="border-t border-app-borderSoft p-4 pt-0 md:p-6 md:pt-0">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

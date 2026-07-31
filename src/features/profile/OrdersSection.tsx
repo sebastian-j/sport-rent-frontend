@@ -155,7 +155,7 @@ export default function OrdersSection() {
                 setExpandedOrder((current) => (current === order.id ? null : order.id))
               }
             >
-              {expandedOrder === order.id && <OrderDetailsLoader orderId={order.id} />}
+              <OrderDetailsLoader orderId={order.id} />
             </OrderCard>
           ))}
           {orders.length === 0 && (
