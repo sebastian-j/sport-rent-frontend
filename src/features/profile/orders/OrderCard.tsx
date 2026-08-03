@@ -1,5 +1,6 @@
-import { ChevronRight, ChevronDown } from 'lucide-react';
-import { type ReactNode, useId } from 'react';
+import { ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { type ReactNode, useId, useLayoutEffect, useRef, useState } from 'react';
 
 import { formatPrice } from '../../../utils/formatPrice.ts';
 import { useDisclosureScroll } from '../useDisclosureScroll.ts';
@@ -15,6 +16,24 @@ type OrderCardProps = {
 export default function OrderCard({ order, isExpanded, onToggle, children }: OrderCardProps) {
   const cardRef = useDisclosureScroll(isExpanded);
   const contentId = useId();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  useLayoutEffect(() => {
+    if (!isExpanded) return;
+
+    const content = contentRef.current;
+    if (!content) return;
+
+    const updateHeight = () => setContentHeight(content.getBoundingClientRect().height);
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(content);
+
+    return () => resizeObserver.disconnect();
+  }, [isExpanded]);
 
   return (
     <div ref={cardRef} className="scroll-mt-36 bg-app-surfaceElevated lg:scroll-mt-16">
@@ -36,19 +55,48 @@ export default function OrderCard({ order, isExpanded, onToggle, children }: Ord
           <span className="text-sm lg:hidden">{formatPrice(order.price)}</span>
           <span className="flex min-w-0 items-center gap-2">
             <span className="min-w-0 text-sm">{ORDER_STATUS_MAP[order.status]}</span>
-            {isExpanded ? (
-              <ChevronDown aria-hidden="true" className="shrink-0 text-app-textMuted" />
-            ) : (
+            <motion.span
+              aria-hidden="true"
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
+              }
+              className="shrink-0 text-app-textMuted"
+            >
               <ChevronRight aria-hidden="true" className="shrink-0 text-app-textMuted" />
-            )}
+            </motion.span>
           </span>
         </span>
       </button>
-      {isExpanded && (
-        <div id={contentId} className="border-t border-app-borderSoft p-4 pt-0 lg:p-6 lg:pt-0">
-          {children}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="order-content"
+            id={contentId}
+            initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: contentHeight, opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    height: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
+                    opacity: { duration: 0.2, ease: 'easeOut' },
+                  }
+            }
+            className="overflow-hidden"
+          >
+            <div
+              ref={contentRef}
+              className="border-t border-app-borderSoft p-4 pt-0 lg:p-6 lg:pt-0"
+            >
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
