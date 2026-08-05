@@ -18,7 +18,6 @@
 - umożliwić składanie zamówień wraz z otrzymywaniem punktów lojalnościowych
 - umożliwić płacenie za zamówienie punktami
 - przygotować właściwą politykę prywatności i regulamin
-- poprawić `routes/product.ts`, aby endpointy korzystały z bazy danych
 - dodać sanityzację komponentu `Markdown`
 - dodać minimalną i maksymalną cenę w `SearchPage` za pomocą facets
 - dodać testy frontendu

@@ -33,22 +33,22 @@ Projekt składa się z dwóch współpracujących aplikacji:
 Frontend realizuje docelową ścieżkę wypożyczenia, ale część operacji backendu
 ma jeszcze charakter demonstracyjny.
 
-| Obszar | Aktualny stan |
-| --- | --- |
-| Katalog, wyszukiwanie i szczegóły produktów | Połączone z API |
-| Sprawdzanie dostępności | Połączone z demonstracyjnym endpointem API |
-| Logowanie i wylogowanie | Połączone z API |
-| Sesja użytkownika | Automatyczne przywracanie i odświeżanie sesji oraz ponawianie żądań po `401` |
-| Rejestracja | Połączona z API |
-| Dane osobowe i adres w profilu | Pobierane i zapisywane przez API |
-| Zmiana adresu e-mail i hasła w profilu | Obsługiwana wyłącznie po stronie interfejsu |
-| Ulubione | Połączone z API i zapisywane w bazie danych |
-| Punkty lojalnościowe | Połączone z demonstracyjnymi endpointami API |
-| Historia zamówień | Pobierana przez API z danych demonstracyjnych backendu |
-| Koszyk | Połączony z API i zapisywany w bazie danych |
-| Kody promocyjne | Walidowane przez demonstracyjny endpoint API |
-| Składanie zamówień i płatności | Widoki są gotowe, finalizacja nie jest jeszcze podłączona |
-| Resetowanie hasła | Połączone z API |
+| Obszar                                      | Aktualny stan                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------- |
+| Katalog, wyszukiwanie i szczegóły produktów | Połączone z API                                                              |
+| Sprawdzanie dostępności                     | Połączone z demonstracyjnym endpointem API                                   |
+| Logowanie i wylogowanie                     | Połączone z API                                                              |
+| Sesja użytkownika                           | Automatyczne przywracanie i odświeżanie sesji oraz ponawianie żądań po `401` |
+| Rejestracja                                 | Połączona z API                                                              |
+| Dane osobowe i adres w profilu              | Pobierane i zapisywane przez API                                             |
+| Zmiana adresu e-mail i hasła w profilu      | Obsługiwana wyłącznie po stronie interfejsu                                  |
+| Ulubione                                    | Połączone z API i zapisywane w bazie danych                                  |
+| Punkty lojalnościowe                        | Połączone z demonstracyjnymi endpointami API                                 |
+| Historia zamówień                           | Połączona z API i pobierana z bazy danych                                    |
+| Koszyk                                      | Połączony z API i zapisywany w bazie danych                                  |
+| Kody promocyjne                             | Walidowane przez demonstracyjny endpoint API                                 |
+| Składanie zamówień i płatności              | Widoki są gotowe, finalizacja nie jest jeszcze podłączona                    |
+| Resetowanie hasła                           | Połączone z API                                                              |
 
 ## Technologie
 
@@ -134,16 +134,16 @@ Wygenerowanego pliku nie należy edytować ręcznie.
 
 ## Dostępne skrypty
 
-| Polecenie | Działanie |
-| --- | --- |
-| `pnpm dev` | Uruchamia serwer deweloperski |
-| `pnpm build` | Sprawdza typy i tworzy build produkcyjny |
-| `pnpm preview` | Uruchamia lokalny podgląd buildu |
-| `pnpm lint` | Analizuje kod za pomocą Oxlint |
-| `pnpm type-check` | Sprawdza typy TypeScript |
-| `pnpm format` | Formatuje pliki źródłowe |
+| Polecenie           | Działanie                                      |
+| ------------------- | ---------------------------------------------- |
+| `pnpm dev`          | Uruchamia serwer deweloperski                  |
+| `pnpm build`        | Sprawdza typy i tworzy build produkcyjny       |
+| `pnpm preview`      | Uruchamia lokalny podgląd buildu               |
+| `pnpm lint`         | Analizuje kod za pomocą Oxlint                 |
+| `pnpm type-check`   | Sprawdza typy TypeScript                       |
+| `pnpm format`       | Formatuje pliki źródłowe                       |
 | `pnpm format-check` | Sprawdza formatowanie bez modyfikowania plików |
-| `pnpm api:generate` | Generuje typy TypeScript z OpenAPI backendu |
+| `pnpm api:generate` | Generuje typy TypeScript z OpenAPI backendu    |
 
 Przed wysłaniem zmian warto wykonać:
 
