@@ -254,14 +254,36 @@ export default function SearchPage() {
         const categories = countsData.categories;
         const totalCount = countsData.total;
         setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
-        setPriceBounds([countsData.price.min, countsData.price.max]);
-        setCategoryFacets({
-          categories: categories.map((category, index) => ({
+        setPriceBounds((currentBounds) =>
+          currentBounds[0] === countsData.price.min && currentBounds[1] === countsData.price.max
+            ? currentBounds
+            : [countsData.price.min, countsData.price.max]
+        );
+
+        const nextCategories = categories.map((category, index) => ({
             id: index + 1,
             slug: toCategorySlug(category.name),
             name: category.name,
             productCount: category.count,
-          })),
+        }));
+        setCategoryFacets((currentFacets) => {
+          const unchanged =
+            currentFacets.categories.length === nextCategories.length &&
+            currentFacets.categories.every((category, index) => {
+              const nextCategory = nextCategories[index];
+              return (
+                category.id === nextCategory.id &&
+                category.slug === nextCategory.slug &&
+                category.name === nextCategory.name &&
+                category.productCount === nextCategory.productCount
+              );
+            });
+
+          return unchanged
+            ? currentFacets
+            : {
+                categories: nextCategories,
+              };
         });
       }
     });
