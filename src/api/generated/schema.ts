@@ -690,10 +690,25 @@ export interface components {
             /** Unit Price */
             unit_price: number;
         };
+        /** PriceFacetResponse */
+        PriceFacetResponse: {
+            /** Min */
+            min: number;
+            /** Max */
+            max: number;
+        };
         /** ProductAvailabilityResponse */
         ProductAvailabilityResponse: {
             /** Available */
             available: boolean;
+        };
+        /** ProductFacetsResponse */
+        ProductFacetsResponse: {
+            /** Categories */
+            categories: components["schemas"]["CategoryResponse"][];
+            /** Total */
+            total: number;
+            price: components["schemas"]["PriceFacetResponse"];
         };
         /** ProductResponse */
         ProductResponse: {
@@ -1511,8 +1526,8 @@ export interface operations {
                 maxPrice?: number | null;
                 category?: string[] | null;
                 query?: string | null;
-                page?: number | null;
-                pageSize?: number | null;
+                page?: number;
+                pageSize?: number;
             };
             header?: never;
             path?: never;
@@ -1549,8 +1564,8 @@ export interface operations {
                 maxPrice?: number | null;
                 category?: string[] | null;
                 query?: string | null;
-                page?: number | null;
-                pageSize?: number | null;
+                page?: number;
+                pageSize?: number;
             };
             header?: never;
             path?: never;
@@ -1564,10 +1579,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": [
-                        components["schemas"]["CategoryResponse"][],
-                        number
-                    ];
+                    "application/json": components["schemas"]["ProductFacetsResponse"];
                 };
             };
             /** @description Validation Error */
