@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { addCartItem } from '../../api/cart.ts';
+import {
+  getProductAvailability,
+  type ProductAvailabilityResponse,
+} from '../../api/product.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
@@ -26,11 +30,74 @@ export default function AddToCart({ product }: { product: ProductProps }) {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [availableQuantity, setAvailableQuantity] = useState<number | null>(null);
+  const [isAvailabilityLoading, setIsAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const isSizeSelectionRequired = Boolean(product.sizes?.length && !selectedSize);
   const rentalDayCount = getInclusiveDayCount(startDate, endDate);
   const totalPrice = rentalDayCount * quantity * product.price;
+  const isQuantityTooHigh = availableQuantity !== null && quantity > availableQuantity;
+  const canAddToCart =
+    !isSizeSelectionRequired && !isAdding && !isAvailabilityLoading && !isQuantityTooHigh;
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    const loadAvailability = async () => {
+      if (isDateAfter(startDate, endDate) || isDateInPast(startDate)) {
+        setAvailableQuantity(null);
+        setAvailabilityError(null);
+        setIsAvailabilityLoading(false);
+        return;
+      }
+
+      setAvailableQuantity(null);
+      setIsAvailabilityLoading(true);
+      setAvailabilityError(null);
+
+      try {
+        const result = await getProductAvailability(
+          product.slug,
+          formatLocalDate(startDate),
+          formatLocalDate(endDate),
+          selectedSize
+        );
+
+        if (!isCurrent) {
+          return;
+        }
+
+        const availability = result.data as ProductAvailabilityResponse | undefined;
+
+        if (result.error || !availability) {
+          setAvailableQuantity(null);
+          setAvailabilityError('Nie udało się sprawdzić dostępności.');
+          return;
+        }
+
+        setAvailableQuantity(availability.availableQuantity);
+      } catch {
+        if (!isCurrent) {
+          return;
+        }
+
+        setAvailableQuantity(null);
+        setAvailabilityError('Nie udało się sprawdzić dostępności.');
+      } finally {
+        if (isCurrent) {
+          setIsAvailabilityLoading(false);
+        }
+      }
+    };
+
+    void loadAvailability();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [product.slug, selectedSize, startDate, endDate]);
 
   const handleAddToCart = async () => {
     setMessage(null);
@@ -60,6 +127,16 @@ export default function AddToCart({ product }: { product: ProductProps }) {
 
     if (isSizeSelectionRequired) {
       setMessage('Proszę wybrać rozmiar produktu.');
+      setHasError(true);
+      return;
+    }
+
+    if (availableQuantity !== null && quantity > availableQuantity) {
+      setMessage(
+        availableQuantity === 0
+          ? 'Nie ma teraz tego produktu na stanie.'
+          : `Teraz na stanie jest ${availableQuantity} szt.`
+      );
       setHasError(true);
       return;
     }
@@ -103,7 +180,21 @@ export default function AddToCart({ product }: { product: ProductProps }) {
         quantity={quantity}
         onDecrease={() => setQuantity((currentQuantity) => currentQuantity - 1)}
         onIncrease={() => setQuantity((currentQuantity) => currentQuantity + 1)}
+        canIncrease={availableQuantity === null ? true : quantity < availableQuantity}
       />
+      {isAvailabilityLoading ? (
+        <p className="text-center text-sm text-app-textMuted">Sprawdzanie dostępności...</p>
+      ) : availabilityError ? (
+        <p role="status" className="text-center text-sm text-app-textMuted">
+          {availabilityError}
+        </p>
+      ) : availableQuantity !== null ? (
+        <p className={`text-center text-sm ${isQuantityTooHigh ? 'text-app-danger' : 'text-app-textMuted'}`}>
+          {isQuantityTooHigh
+            ? `Za dużo chcesz wziąć — teraz na stanie jest ${availableQuantity} szt.`
+            : `Na ten termin dostępne są ${availableQuantity} szt.`}
+        </p>
+      ) : null}
       {product.sizes && product.sizes.length > 0 && (
         <SizeSelector
           sizes={product.sizes}
@@ -120,7 +211,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
       />
       <ButtonCore
         onClick={handleAddToCart}
-        disabled={isSizeSelectionRequired || isAdding}
+        disabled={!canAddToCart}
         className="my-[1vh] w-full max-w-xl p-[1.5vh] text-base disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isAdding ? (
