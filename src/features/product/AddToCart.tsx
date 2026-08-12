@@ -35,12 +35,72 @@ export default function AddToCart({ product }: { product: ProductProps }) {
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
+  const [sizeAvailability, setSizeAvailability] = useState<Map<string, boolean>>(new Map());
+  const [isSizeAvailabilityLoading, setIsSizeAvailabilityLoading] = useState(false);
   const isSizeSelectionRequired = Boolean(product.sizes?.length && !selectedSize);
   const rentalDayCount = getInclusiveDayCount(startDate, endDate);
   const totalPrice = rentalDayCount * quantity * product.price;
   const isQuantityTooHigh = availableQuantity !== null && quantity > availableQuantity;
   const canAddToCart =
     !isSizeSelectionRequired && !isAdding && !isAvailabilityLoading && !isQuantityTooHigh;
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    const loadSizeAvailability = async () => {
+      if (!product.sizes || product.sizes.length === 0) {
+        setSizeAvailability(new Map());
+        setIsSizeAvailabilityLoading(false);
+        return;
+      }
+
+      if (isDateAfter(startDate, endDate) || isDateInPast(startDate)) {
+        setSizeAvailability(new Map());
+        setIsSizeAvailabilityLoading(false);
+        return;
+      }
+
+      setIsSizeAvailabilityLoading(true);
+
+      try {
+        const availability = new Map<string, boolean>();
+
+        for (const size of product.sizes) {
+          const result = await getProductAvailability(
+            product.slug,
+            formatLocalDate(startDate),
+            formatLocalDate(endDate),
+            size.size
+          );
+
+          if (!isCurrent) {
+            return;
+          }
+
+          const sizeAvail = result.data as ProductAvailabilityResponse | undefined;
+          availability.set(size.size, (sizeAvail?.availableQuantity ?? 0) > 0);
+        }
+
+        if (isCurrent) {
+          setSizeAvailability(availability);
+        }
+      } catch {
+        if (isCurrent) {
+          setSizeAvailability(new Map());
+        }
+      } finally {
+        if (isCurrent) {
+          setIsSizeAvailabilityLoading(false);
+        }
+      }
+    };
+
+    void loadSizeAvailability();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [product.slug, product.sizes, startDate, endDate]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -197,7 +257,10 @@ export default function AddToCart({ product }: { product: ProductProps }) {
       ) : null}
       {product.sizes && product.sizes.length > 0 && (
         <SizeSelector
-          sizes={product.sizes}
+          sizes={product.sizes.map((size) => ({
+            ...size,
+            available: sizeAvailability.get(size.size) ?? true,
+          }))}
           selectedSize={selectedSize}
           onSelect={(size) =>
             setSelectedSize((currentSize) => (currentSize === size ? null : size))
