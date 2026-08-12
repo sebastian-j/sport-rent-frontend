@@ -27,6 +27,7 @@ type PanoramicStatus = 'loading' | 'ready' | 'hidden';
 const LIMIT = 10;
 const INITIAL_MULTIPLIER = 4;
 const INITIAL_LIMIT = INITIAL_MULTIPLIER * LIMIT;
+const HOME_PRODUCTS_LIMIT = 10;
 
 const CATEGORY_CARDS = {
   trailers: {
@@ -169,7 +170,7 @@ export default function HomePage() {
         if (!active) return; // Prevent double fetch in React Strict Mode
 
         if (pageRef.current === 1) {
-          const res = await getProducts({ page: 1, pageSize: INITIAL_LIMIT });
+          const res = await getProducts({ page: 1, pageSize: HOME_PRODUCTS_LIMIT });
           if (!active) return;
 
           const data = res.data || [];
@@ -196,10 +197,8 @@ export default function HomePage() {
           }
 
           setProducts(uniqueProducts);
-          pageRef.current = INITIAL_LIMIT / LIMIT + 1;
-          if (data.length < INITIAL_LIMIT) {
-            setHasMore(false);
-          }
+          pageRef.current = HOME_PRODUCTS_LIMIT  / LIMIT + 1;
+          setHasMore(false);
         } else {
           const res = await getProducts({ page: pageRef.current, pageSize: LIMIT });
           if (!active) return;
