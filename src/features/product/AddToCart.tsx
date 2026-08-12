@@ -191,7 +191,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
       ) : availableQuantity !== null ? (
         <p className={`text-center text-sm ${isQuantityTooHigh ? 'text-app-danger' : 'text-app-textMuted'}`}>
           {isQuantityTooHigh
-            ? `Za dużo chcesz wziąć — teraz na stanie jest ${availableQuantity} szt.`
+            ? `Teraz na stanie jest ${availableQuantity} szt.`
             : `Na ten termin dostępne są ${availableQuantity} szt.`}
         </p>
       ) : null}
