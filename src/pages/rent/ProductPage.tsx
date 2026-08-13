@@ -1,19 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getProductBySlug } from '../../api/product.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import Markdown from '../../components/core/Markdown.tsx';
 import PageHeader from '../../components/core/PageHeader.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { status: authStatus } = useAuth();
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const productList = useMemo(() => (product ? [product] : []), [product]);
+  const setProductList = useCallback<Dispatch<SetStateAction<ProductProps[]>>>(
+    (action) => {
+      setProduct((currentProduct) => {
+        if (!currentProduct) return currentProduct;
+
+        const currentList = [currentProduct];
+        const nextList = typeof action === 'function' ? action(currentList) : action;
+
+        return nextList[0] ?? null;
+      });
+    },
+    []
+  );
+  const { toggleFavorite, pendingFavoriteSlugs, failedFavoriteSlugs } = useFavoriteToggle(
+    productList,
+    setProductList
+  );
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -43,6 +64,7 @@ export default function ProductPage() {
                   ...size,
                   available: Math.random() < 0.5,
                 })) ?? [],
+              isFavorite: data.isFavorite,
             });
           }
         } catch (err) {
@@ -103,7 +125,15 @@ export default function ProductPage() {
             <ProductGallery key={product.id} product={product} />
           </div>
           <div className="flex h-fit w-full flex-col items-center justify-center gap-4 self-start min-[961px]:sticky min-[961px]:top-[110px]">
-            <AddToCart key={product.id} product={product} />
+            <AddToCart
+              key={product.id}
+              product={product}
+              isFavorite={product.isFavorite ?? false}
+              isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+              hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+              hideFavoriteButton={authStatus !== 'authenticated'}
+              onFavoriteToggle={() => void toggleFavorite(product.slug)}
+            />
           </div>
         </div>
         {product.sizes?.some((sizeOption) => sizeOption.description) && (
