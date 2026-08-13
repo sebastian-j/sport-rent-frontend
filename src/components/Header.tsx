@@ -7,21 +7,12 @@ import headerLogo from '../assets/layout/logo_header.webp';
 import headerLogoSmall from '../assets/layout/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
-import { getCategorySearchPath, toCategorySlug } from '../features/search/categoryUtils.ts';
+import useCategories from '../features/category/useCategories.ts';
+import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
 import { AUTH_ROUTES, getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
 import SubsiteSelector from './SubsiteSelector.tsx';
-
-const CATEGORIES = [
-  'Rowery i akcesoria',
-  'Przyczepki rowerowe',
-  'Namioty osobowe',
-  'Sprzęt wodny',
-  'Via ferraty i wspinanie',
-  'Nosidełka turystyczne',
-  'Namioty',
-];
 
 const CATEGORY_GAP_PX = 24;
 
@@ -32,7 +23,8 @@ type HeaderProps = {
 export default function Header({ showCategoryBar = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [visibleCategoryCount, setVisibleCategoryCount] = useState(CATEGORIES.length);
+  const { categories } = useCategories();
+  const [visibleCategoryCount, setVisibleCategoryCount] = useState(categories.length);
   const menuRef = useRef<HTMLDivElement>(null);
   const categoryBarRef = useRef<HTMLDivElement>(null);
   const categoryMeasureRefs = useRef<Array<HTMLSpanElement | null>>([]);
@@ -69,7 +61,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
 
   useLayoutEffect(() => {
     const categoryBar = categoryBarRef.current;
-    if (!categoryBar) return;
+    if (!categoryBar || categories.length === 0) return;
 
     const updateVisibleCategoryCount = () => {
       const styles = getComputedStyle(categoryBar);
@@ -105,7 +97,7 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
     });
 
     return () => resizeObserver.disconnect();
-  }, [showCategoryBar]);
+  }, [showCategoryBar, categories]);
 
   const handleAuthAction = async () => {
     setIsMenuOpen(false);
@@ -261,25 +253,25 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
           ref={categoryBarRef}
           className="relative hidden h-12 flex-row items-center justify-between gap-6 overflow-hidden bg-app-surfaceStrong px-4 text-app-textInverted md:flex"
         >
-          {CATEGORIES.slice(0, visibleCategoryCount).map((item) => (
+          {categories.slice(0, visibleCategoryCount).map((category) => (
             <Link
-              key={item}
-              to={getCategorySearchPath(toCategorySlug(item))}
+              key={category.slug}
+              to={getCategorySearchPath(category.slug)}
               className="shrink-0 whitespace-nowrap hover:underline"
             >
-              {item}
+              {category.name}
             </Link>
           ))}
           <div aria-hidden="true" className="invisible absolute whitespace-nowrap">
-            {CATEGORIES.map((item, index) => (
+            {categories.map((category, index) => (
               <span
-                key={item}
+                key={category.slug}
                 ref={(element) => {
                   categoryMeasureRefs.current[index] = element;
                 }}
                 className="inline-block"
               >
-                {item}
+                {category.name}
               </span>
             ))}
           </div>

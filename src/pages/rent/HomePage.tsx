@@ -1,9 +1,8 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { getRandomCategory } from '../../api/category.ts';
+import useCategories from '../../features/category/useCategories.ts';
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
-import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
 import namiotyImage from '../../assets/categories/namioty.webp';
@@ -13,7 +12,8 @@ import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
-import PanoramicImage, { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
+import PanoramicCarousel from '../../components/PanoramicCarousel.tsx';
+import { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
@@ -21,7 +21,6 @@ import type { ProductProps } from '../../features/product/productProps.ts';
 import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
 import { RENT_ROUTES } from '../../routes.ts';
 
-type PanoramicCategory = components['schemas']['RandomCategoryResponse'];
 type PanoramicStatus = 'loading' | 'ready' | 'hidden';
 
 const LIMIT = 10;
@@ -109,8 +108,13 @@ export default function HomePage() {
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
   const productsRef = useRef<ProductProps[]>([]);
-  const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
-  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
+  const { categories: panoramicCategories, isLoading: isCategoriesLoading, error: categoriesError } =
+    useCategories();
+  const panoramicStatus: PanoramicStatus = isCategoriesLoading
+    ? 'loading'
+    : categoriesError || panoramicCategories.length === 0
+      ? 'hidden'
+      : 'ready';
   const [error, setError] = useState<string | null>(null);
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
@@ -118,45 +122,6 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const pageRef = useRef(1);
-
-  useEffect(() => {
-    let active = true;
-    let categoryImage: HTMLImageElement | null = null;
-
-    const loadPanoramicCategory = async () => {
-      try {
-        const { data, error } = await getRandomCategory();
-
-        if (error) throw error;
-        if (!data) throw new Error('Brak danych losowej kategorii');
-        if (!active) return;
-
-        categoryImage = new Image();
-        categoryImage.onload = () => {
-          if (!active) return;
-
-          setPanoramicCategory(data);
-          setPanoramicStatus('ready');
-        };
-        categoryImage.onerror = () => {
-          if (active) setPanoramicStatus('hidden');
-        };
-        categoryImage.src = data.image;
-      } catch {
-        if (active) setPanoramicStatus('hidden');
-      }
-    };
-
-    void loadPanoramicCategory();
-
-    return () => {
-      active = false;
-      if (categoryImage) {
-        categoryImage.onload = null;
-        categoryImage.onerror = null;
-      }
-    };
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -357,13 +322,10 @@ export default function HomePage() {
           {panoramicStatus === 'loading' ? (
             <PanoramicImagePlaceholder />
           ) : (
-            panoramicCategory && (
-              <PanoramicImage
-                image={panoramicCategory.image}
-                title={panoramicCategory.name}
-                onButtonClick={() => navigate(getCategorySearchPath(panoramicCategory.slug))}
-              />
-            )
+            <PanoramicCarousel
+              categories={panoramicCategories}
+              onCategoryClick={(slug) => navigate(getCategorySearchPath(slug))}
+            />
           )}
         </div>
       )}
