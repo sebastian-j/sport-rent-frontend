@@ -261,10 +261,10 @@ export default function SearchPage() {
         );
 
         const nextCategories = categories.map((category, index) => ({
-            id: index + 1,
-            slug: toCategorySlug(category.name),
-            name: category.name,
-            productCount: category.count,
+          id: index + 1,
+          slug: toCategorySlug(category.name),
+          name: category.name,
+          productCount: category.count,
         }));
         setCategoryFacets((currentFacets) => {
           const unchanged =
