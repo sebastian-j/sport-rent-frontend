@@ -3,9 +3,7 @@ import { api } from './client.ts';
 import type { components, paths } from './generated/schema.ts';
 
 export type OrderDetailResponse = components['schemas']['OrderDetailResponse'];
-export type UserHistoryQuery = NonNullable<
-  paths['/user/history']['get']['parameters']['query']
->;
+export type UserHistoryQuery = NonNullable<paths['/user/history']['get']['parameters']['query']>;
 export const getUser = () => api.GET('/user');
 
 export const getUserHistory = (query: UserHistoryQuery = {}) =>

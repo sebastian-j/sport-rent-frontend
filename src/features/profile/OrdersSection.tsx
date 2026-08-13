@@ -3,11 +3,11 @@ import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
 import { type Order, type OrderStatus } from './orders/orderTypes.ts';
-import PageSelector from '../../components/core/PageSelector.tsx';
 
 const PLACEHOLDER_PULSE_DURATION_SECONDS = 2.4;
 const ORDER_DETAILS_PLACEHOLDER_HEIGHT = 132;
@@ -269,8 +269,8 @@ export default function OrdersSection() {
     })
       .then(({ data, error }) => {
         if (error) {
-            console.error(error);
-            setError('Nie udało się pobrać historii zamówień.');
+          console.error(error);
+          setError('Nie udało się pobrać historii zamówień.');
         } else if (data) {
           const fetchedOrders: Order[] = data.items.map((item) => ({
             id: String(item.id),
@@ -323,11 +323,7 @@ export default function OrdersSection() {
           )}
           {totalPages > 1 && (
             <div className="flex justify-center p-4">
-              <PageSelector
-                pageNumber={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-              />
+              <PageSelector pageNumber={page} totalPages={totalPages} onPageChange={setPage} />
             </div>
           )}
         </div>
