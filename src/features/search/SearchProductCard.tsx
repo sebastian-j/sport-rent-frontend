@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react';
+import { CalendarCheck } from 'lucide-react';
 
 import ButtonCore from '../../components/core/ButtonCore.tsx';
 import FavoriteButton from '../product/FavoriteButton.tsx';
@@ -79,11 +79,11 @@ export default function SearchProductCard({
           </p>
           <ButtonCore
             onClick={onAddToCart}
-            ariaLabel={`Dodaj ${product.name} do koszyka`}
+            ariaLabel={`Zarezerwuj ${product.name}`}
             className="relative z-20 flex items-center justify-center gap-2 px-4 py-3 font-medium"
           >
-            <ShoppingCart size={20} aria-hidden="true" />
-            <span>Dodaj do koszyka</span>
+            <CalendarCheck size={20} aria-hidden="true" />
+            <span>Rezerwuj</span>
           </ButtonCore>
         </div>
       </div>
