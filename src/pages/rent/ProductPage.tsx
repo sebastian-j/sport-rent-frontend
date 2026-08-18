@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getProductBySlug } from '../../api/product.ts';
@@ -18,19 +25,16 @@ export default function ProductPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const productList = useMemo(() => (product ? [product] : []), [product]);
-  const setProductList = useCallback<Dispatch<SetStateAction<ProductProps[]>>>(
-    (action) => {
-      setProduct((currentProduct) => {
-        if (!currentProduct) return currentProduct;
+  const setProductList = useCallback<Dispatch<SetStateAction<ProductProps[]>>>((action) => {
+    setProduct((currentProduct) => {
+      if (!currentProduct) return currentProduct;
 
-        const currentList = [currentProduct];
-        const nextList = typeof action === 'function' ? action(currentList) : action;
+      const currentList = [currentProduct];
+      const nextList = typeof action === 'function' ? action(currentList) : action;
 
-        return nextList[0] ?? null;
-      });
-    },
-    []
-  );
+      return nextList[0] ?? null;
+    });
+  }, []);
   const { toggleFavorite, pendingFavoriteSlugs, failedFavoriteSlugs } = useFavoriteToggle(
     productList,
     setProductList

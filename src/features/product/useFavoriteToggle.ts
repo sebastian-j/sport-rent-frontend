@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
 
