@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { addCartItem } from '../../api/cart.ts';
-import {
-  getProductAvailability,
-  type ProductAvailabilityResponse,
-} from '../../api/product.ts';
+import { getProductAvailability, type ProductAvailabilityResponse } from '../../api/product.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
@@ -249,7 +246,9 @@ export default function AddToCart({ product }: { product: ProductProps }) {
           {availabilityError}
         </p>
       ) : availableQuantity !== null ? (
-        <p className={`text-center text-sm ${isQuantityTooHigh ? 'text-app-danger' : 'text-app-textMuted'}`}>
+        <p
+          className={`text-center text-sm ${isQuantityTooHigh ? 'text-app-danger' : 'text-app-textMuted'}`}
+        >
           {isQuantityTooHigh
             ? `Teraz na stanie jest ${availableQuantity} szt.`
             : `Na ten termin dostępne są ${availableQuantity} szt.`}
