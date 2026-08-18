@@ -11,6 +11,9 @@ type SearchProductCardProps = {
   onAddToCart?: () => void;
   isFavorite?: boolean;
   onFavoriteToggle?: () => void;
+  hideFavoriteButton?: boolean;
+  isFavoriteUpdating?: boolean;
+  hasFavoriteError?: boolean;
 };
 
 export default function SearchProductCard({
@@ -19,6 +22,9 @@ export default function SearchProductCard({
   onAddToCart,
   isFavorite = false,
   onFavoriteToggle,
+  hideFavoriteButton = false,
+  isFavoriteUpdating = false,
+  hasFavoriteError = false,
 }: SearchProductCardProps) {
   const plainDescription = markdownToPlainText(product.description);
 
@@ -31,12 +37,16 @@ export default function SearchProductCard({
         className="absolute inset-0 z-10 rounded-xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-app-surfaceStrong"
       />
 
-      <FavoriteButton
-        productName={product.name}
-        isFavorite={isFavorite}
-        onToggle={onFavoriteToggle}
-        variant="transparent"
-      />
+      {!hideFavoriteButton && (
+        <FavoriteButton
+          productName={product.name}
+          isFavorite={isFavorite}
+          onToggle={onFavoriteToggle}
+          isUpdating={isFavoriteUpdating}
+          hasError={hasFavoriteError}
+          variant="transparent"
+        />
+      )}
 
       <div className="relative w-[clamp(8rem,40%,13rem)] shrink-0 overflow-hidden md:w-60">
         <img

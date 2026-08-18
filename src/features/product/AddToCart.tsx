@@ -14,9 +14,26 @@ import DateRangeFields from './addToCart/DateRangeFields.tsx';
 import QuantitySelector from './addToCart/QuantitySelector.tsx';
 import RentalPriceSummary from './addToCart/RentalPriceSummary.tsx';
 import SizeSelector from './addToCart/SizeSelector.tsx';
+import FavoriteButton from './FavoriteButton.tsx';
 import { type ProductProps } from './productProps';
 
-export default function AddToCart({ product }: { product: ProductProps }) {
+type AddToCartProps = {
+  product: ProductProps;
+  isFavorite?: boolean;
+  onFavoriteToggle?: () => void;
+  isFavoriteUpdating?: boolean;
+  hasFavoriteError?: boolean;
+  hideFavoriteButton?: boolean;
+};
+
+export default function AddToCart({
+  product,
+  isFavorite = false,
+  onFavoriteToggle,
+  isFavoriteUpdating = false,
+  hasFavoriteError = false,
+  hideFavoriteButton = false,
+}: AddToCartProps) {
   const { status: authStatus } = useAuth();
   const { refreshCartStatus } = useCartStatus();
   const navigate = useNavigate();
@@ -92,7 +109,21 @@ export default function AddToCart({ product }: { product: ProductProps }) {
 
   return (
     <ContentPanel className="w-full gap-2 p-4 min-[961px]:px-20">
-      <p className="text-center text-3xl font-semibold text-app-text">{product.price} zł/doba</p>
+      <div className="relative flex w-full items-center justify-center">
+        <p className="text-center text-3xl font-semibold text-app-text">{product.price} zł/doba</p>
+        {!hideFavoriteButton && (
+          <div className="absolute right-0 top-1/2 -translate-y-1/2">
+            <FavoriteButton
+              productName={product.name}
+              isFavorite={isFavorite}
+              onToggle={onFavoriteToggle}
+              isUpdating={isFavoriteUpdating}
+              hasError={hasFavoriteError}
+              layout="inline"
+            />
+          </div>
+        )}
+      </div>
       <DateRangeFields
         startDate={startDate}
         endDate={endDate}
