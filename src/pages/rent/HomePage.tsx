@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getRandomCategory } from '../../api/category.ts';
-import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
 import namiotyImage from '../../assets/categories/namioty.webp';
@@ -12,8 +11,10 @@ import CategoryBar from '../../components/CategoryBar.tsx';
 import CategoryCard from '../../components/CategoryCard.tsx';
 import CategoryCardSlider from '../../components/CategoryCardSlider.tsx';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
-import PanoramicImage, { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
+import PanoramicCarousel from '../../components/PanoramicCarousel.tsx';
+import { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
+import useCategories from '../../features/category/useCategories.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -21,7 +22,6 @@ import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
 import { RENT_ROUTES } from '../../routes.ts';
 
-type PanoramicCategory = components['schemas']['RandomCategoryResponse'];
 type PanoramicStatus = 'loading' | 'ready' | 'hidden';
 
 const LIMIT = 10;
@@ -107,10 +107,11 @@ const HomeProductCard = memo(function HomeProductCard({
 export default function HomePage() {
   const navigate = useNavigate();
   const { status: authStatus } = useAuth();
+  const { categories, isLoading: isCategoriesLoading, error: categoriesError } = useCategories();
   const [products, setProducts] = useState<ProductProps[]>([]);
-  const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
-  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
+  const [panoramicCategories, setPanoramicCategories] = useState<typeof categories>([]);
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -120,42 +121,51 @@ export default function HomePage() {
 
   useEffect(() => {
     let active = true;
-    let categoryImage: HTMLImageElement | null = null;
 
-    const loadPanoramicCategory = async () => {
-      try {
-        const { data, error } = await getRandomCategory();
+    if (isCategoriesLoading) {
+      setPanoramicStatus('loading');
+      return () => {
+        active = false;
+      };
+    }
 
-        if (error) throw error;
-        if (!data) throw new Error('Brak danych losowej kategorii');
+    if (categories.length > 0) {
+      setPanoramicCategories(categories);
+      setPanoramicStatus('ready');
+      return () => {
+        active = false;
+      };
+    }
+
+    if (categoriesError) {
+      setPanoramicStatus('hidden');
+      return () => {
+        active = false;
+      };
+    }
+
+    void getRandomCategory()
+      .then(({ data }) => {
         if (!active) return;
 
-        categoryImage = new Image();
-        categoryImage.onload = () => {
-          if (!active) return;
-
-          setPanoramicCategory(data);
+        if (data) {
+          setPanoramicCategories([data]);
           setPanoramicStatus('ready');
-        };
-        categoryImage.onerror = () => {
-          if (active) setPanoramicStatus('hidden');
-        };
-        categoryImage.src = data.image;
-      } catch {
-        if (active) setPanoramicStatus('hidden');
-      }
-    };
+          return;
+        }
 
-    void loadPanoramicCategory();
+        setPanoramicStatus('hidden');
+      })
+      .catch(() => {
+        if (!active) return;
+
+        setPanoramicStatus('hidden');
+      });
 
     return () => {
       active = false;
-      if (categoryImage) {
-        categoryImage.onload = null;
-        categoryImage.onerror = null;
-      }
     };
-  }, []);
+  }, [categories, categoriesError, isCategoriesLoading]);
 
   useEffect(() => {
     let active = true;
@@ -283,13 +293,10 @@ export default function HomePage() {
           {panoramicStatus === 'loading' ? (
             <PanoramicImagePlaceholder />
           ) : (
-            panoramicCategory && (
-              <PanoramicImage
-                image={panoramicCategory.image}
-                title={panoramicCategory.name}
-                onButtonClick={() => navigate(getCategorySearchPath(panoramicCategory.slug))}
-              />
-            )
+            <PanoramicCarousel
+              categories={panoramicCategories}
+              onCategoryClick={(slug) => navigate(getCategorySearchPath(slug))}
+            />
           )}
         </div>
       )}
