@@ -1,9 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { addFavorite, removeFavorite } from '../../api/favorites.ts';
 import { getRandomCategory } from '../../api/category.ts';
-import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
 import namiotyImage from '../../assets/categories/namioty.webp';
@@ -109,16 +107,65 @@ const HomeProductCard = memo(function HomeProductCard({
 export default function HomePage() {
   const navigate = useNavigate();
   const { status: authStatus } = useAuth();
+  const { categories, isLoading: isCategoriesLoading, error: categoriesError } = useCategories();
   const [products, setProducts] = useState<ProductProps[]>([]);
-  const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
-  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
+  const [panoramicCategories, setPanoramicCategories] = useState<typeof categories>([]);
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const pageRef = useRef(1);
+
+  useEffect(() => {
+    let active = true;
+
+    if (isCategoriesLoading) {
+      setPanoramicStatus('loading');
+      return () => {
+        active = false;
+      };
+    }
+
+    if (categories.length > 0) {
+      setPanoramicCategories(categories);
+      setPanoramicStatus('ready');
+      return () => {
+        active = false;
+      };
+    }
+
+    if (categoriesError) {
+      setPanoramicStatus('hidden');
+      return () => {
+        active = false;
+      };
+    }
+
+    void getRandomCategory()
+      .then(({ data }) => {
+        if (!active) return;
+
+        if (data) {
+          setPanoramicCategories([data]);
+          setPanoramicStatus('ready');
+          return;
+        }
+
+        setPanoramicStatus('hidden');
+      })
+      .catch(() => {
+        if (!active) return;
+
+        setPanoramicStatus('hidden');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [categories, categoriesError, isCategoriesLoading]);
 
   useEffect(() => {
     let active = true;
