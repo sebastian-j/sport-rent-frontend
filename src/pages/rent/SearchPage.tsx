@@ -447,7 +447,7 @@ export default function SearchPage() {
                     <SearchProductCard
                       product={product}
                       onClick={() => navigate(RENT_ROUTES.product(product.slug))}
-                      onAddToCart={() => undefined}
+                      onAddToCart={() => navigate(RENT_ROUTES.product(product.slug))}
                       isFavorite={product.isFavorite ?? false}
                       isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
                       hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
