@@ -1,5 +1,5 @@
-import type { components } from './generated/schema.ts';
 import { api } from './client.ts';
+import type { components } from './generated/schema.ts';
 
 export type CategoryItem = components['schemas']['app__schemas__category__CategoryResponse'];
 

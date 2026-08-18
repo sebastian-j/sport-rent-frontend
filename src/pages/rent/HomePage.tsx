@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import useCategories from '../../features/category/useCategories.ts';
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
@@ -15,6 +14,7 @@ import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import PanoramicCarousel from '../../components/PanoramicCarousel.tsx';
 import { PanoramicImagePlaceholder } from '../../components/PanoramicImage.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
+import useCategories from '../../features/category/useCategories.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
@@ -108,8 +108,11 @@ export default function HomePage() {
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
   const productsRef = useRef<ProductProps[]>([]);
-  const { categories: panoramicCategories, isLoading: isCategoriesLoading, error: categoriesError } =
-    useCategories();
+  const {
+    categories: panoramicCategories,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+  } = useCategories();
   const panoramicStatus: PanoramicStatus = isCategoriesLoading
     ? 'loading'
     : categoriesError || panoramicCategories.length === 0

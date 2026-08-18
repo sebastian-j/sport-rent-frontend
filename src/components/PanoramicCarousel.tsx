@@ -1,9 +1,9 @@
-import { AnimatePresence, motion, type PanInfo, useReducedMotion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion, type PanInfo, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
-import PanoramicImage from './PanoramicImage.tsx';
 import type { CategoryItem } from '../api/category.ts';
+import PanoramicImage from './PanoramicImage.tsx';
 
 type PanoramicCarouselProps = {
   categories: CategoryItem[];
@@ -23,10 +23,7 @@ const SLIDE_VARIANTS = {
 const arrowButtonClassName =
   'absolute top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
 
-export default function PanoramicCarousel({
-  categories,
-  onCategoryClick,
-}: PanoramicCarouselProps) {
+export default function PanoramicCarousel({ categories, onCategoryClick }: PanoramicCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const prefersReducedMotion = useReducedMotion();
@@ -98,9 +95,7 @@ export default function PanoramicCarousel({
           animate="center"
           exit="exit"
           transition={
-            prefersReducedMotion
-              ? { duration: 0 }
-              : { type: 'spring', stiffness: 300, damping: 32 }
+            prefersReducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 32 }
           }
         >
           <PanoramicImage
