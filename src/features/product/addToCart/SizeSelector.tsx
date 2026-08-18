@@ -5,16 +5,25 @@ type ProductSize = NonNullable<ProductProps['sizes']>[number];
 type SizeSelectorProps = {
   sizes: ProductSize[];
   selectedSize: string | null;
+  isLoading?: boolean;
   onSelect: (size: string) => void;
 };
 
-export default function SizeSelector({ sizes, selectedSize, onSelect }: SizeSelectorProps) {
+export default function SizeSelector({
+  sizes,
+  selectedSize,
+  isLoading = false,
+  onSelect,
+}: SizeSelectorProps) {
   return (
     <div className="flex w-full max-w-xl flex-col gap-2">
       <p className="text-base font-semibold text-app-text">Rozmiar</p>
+      {isLoading ? (
+        <p className="text-sm text-app-textMuted">Sprawdzanie dostępności rozmiarów...</p>
+      ) : null}
       <div className="flex flex-wrap gap-2">
         {sizes.map((sizeOption) => {
-          const isAvailable = sizeOption.available !== false;
+          const isAvailable = !isLoading && sizeOption.available !== false;
 
           return (
             <button

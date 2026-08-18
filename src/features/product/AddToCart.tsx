@@ -39,7 +39,11 @@ export default function AddToCart({ product }: { product: ProductProps }) {
   const totalPrice = rentalDayCount * quantity * product.price;
   const isQuantityTooHigh = availableQuantity !== null && quantity > availableQuantity;
   const canAddToCart =
-    !isSizeSelectionRequired && !isAdding && !isAvailabilityLoading && !isQuantityTooHigh;
+    !isSizeSelectionRequired &&
+    !isAdding &&
+    !isAvailabilityLoading &&
+    !isSizeAvailabilityLoading &&
+    !isQuantityTooHigh;
 
   useEffect(() => {
     let isCurrent = true;
@@ -261,6 +265,7 @@ export default function AddToCart({ product }: { product: ProductProps }) {
             available: sizeAvailability.get(size.size) ?? true,
           }))}
           selectedSize={selectedSize}
+          isLoading={isSizeAvailabilityLoading}
           onSelect={(size) =>
             setSelectedSize((currentSize) => (currentSize === size ? null : size))
           }
