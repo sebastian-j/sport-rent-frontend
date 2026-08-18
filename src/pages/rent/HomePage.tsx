@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getRandomCategory } from '../../api/category.ts';
-import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
 import namiotyImage from '../../assets/categories/namioty.webp';
