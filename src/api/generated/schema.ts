@@ -700,6 +700,19 @@ export interface components {
             /** Unit Price */
             unit_price: number;
         };
+        /** PaginatedUserHistoryResponse */
+        PaginatedUserHistoryResponse: {
+            /** Items */
+            items: components["schemas"]["UserHistoryItemResponse"][];
+            /** Page */
+            page: number;
+            /** Pagesize */
+            pageSize: number;
+            /** Total */
+            total: number;
+            /** Totalpages */
+            totalPages: number;
+        };
         /** PriceFacetResponse */
         PriceFacetResponse: {
             /** Min */
@@ -711,6 +724,8 @@ export interface components {
         ProductAvailabilityResponse: {
             /** Available */
             available: boolean;
+            /** Availablequantity */
+            availableQuantity: number;
         };
         /** ProductFacetsResponse */
         ProductFacetsResponse: {
@@ -1666,6 +1681,7 @@ export interface operations {
             query: {
                 start_date: string;
                 end_date: string;
+                size?: string | null;
             };
             header?: never;
             path: {
@@ -1748,7 +1764,10 @@ export interface operations {
     };
     get_user_history_user_history_get: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1761,7 +1780,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserHistoryItemResponse"][];
+                    "application/json": components["schemas"]["PaginatedUserHistoryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

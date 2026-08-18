@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
+import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderCard from './orders/OrderCard.tsx';
@@ -12,6 +13,7 @@ const PLACEHOLDER_PULSE_DURATION_SECONDS = 2.4;
 const ORDER_DETAILS_PLACEHOLDER_HEIGHT = 132;
 const ORDER_DETAILS_EXPAND_DURATION_SECONDS = 0.45;
 const ORDER_DETAILS_CONTENT_FADE_DURATION_SECONDS = 0.2;
+const PAGE_SIZE = 10;
 
 const OrderDetailsPlaceholder = forwardRef<HTMLDivElement, { prefersReducedMotion: boolean }>(
   function OrderDetailsPlaceholder({ prefersReducedMotion }, ref) {
@@ -258,14 +260,19 @@ export default function OrdersSection() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
-    getUserHistory()
+    getUserHistory({
+      page,
+      pageSize: PAGE_SIZE,
+    })
       .then(({ data, error }) => {
         if (error) {
-          setError(error);
+          console.error(error);
+          setError('Nie udało się pobrać historii zamówień.');
         } else if (data) {
-          const fetchedOrders: Order[] = data.map((item) => ({
+          const fetchedOrders: Order[] = data.items.map((item) => ({
             id: String(item.id),
             date: new Date(item.created_at).toLocaleDateString('pl-PL', {
               day: '2-digit',
@@ -275,16 +282,17 @@ export default function OrdersSection() {
             price: item.total,
             status: item.status as OrderStatus,
           }));
-          setOrders(fetchedOrders.reverse());
+          setOrders(fetchedOrders);
+          setTotalPages(data.totalPages);
         }
         setIsLoading(false);
       })
       .catch((error) => {
-        setError(error);
         console.error(error);
+        setError('Nie udało się pobrać historii zamówień.');
         setIsLoading(false);
       });
-  }, []);
+  }, [page]);
 
   return (
     <div className="flex w-full flex-col items-center pt-6 text-app-text md:pt-12">
@@ -312,6 +320,11 @@ export default function OrdersSection() {
           ))}
           {orders.length === 0 && (
             <div className="p-8 text-center text-app-textMuted">Brak zamówień</div>
+          )}
+          {totalPages > 1 && (
+            <div className="flex justify-center p-4">
+              <PageSelector pageNumber={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
           )}
         </div>
       )}
