@@ -2,6 +2,8 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { addFavorite, removeFavorite } from '../../api/favorites.ts';
+import { getRandomCategory } from '../../api/category.ts';
+import type { components } from '../../api/generated/schema.ts';
 import { getProducts } from '../../api/product.ts';
 import ferratyImage from '../../assets/categories/ferraty.webp';
 import namiotyImage from '../../assets/categories/namioty.webp';
@@ -18,6 +20,7 @@ import useCategories from '../../features/category/useCategories.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
 import { RENT_ROUTES } from '../../routes.ts';
 
@@ -70,6 +73,7 @@ const CATEGORY_CARDS = {
 
 type HomeProductCardProps = {
   product: ProductProps;
+  isFavoriteUpdating: boolean;
   hideFavoriteButton: boolean;
   hasFavoriteError: boolean;
   onFavoriteToggle: (slug: string) => void;
@@ -78,6 +82,7 @@ type HomeProductCardProps = {
 
 const HomeProductCard = memo(function HomeProductCard({
   product,
+  isFavoriteUpdating,
   hideFavoriteButton,
   hasFavoriteError,
   onFavoriteToggle,
@@ -91,6 +96,7 @@ const HomeProductCard = memo(function HomeProductCard({
       alt={product.imageAlts?.[0]}
       onClick={() => onProductClick(product.slug)}
       isFavorite={product.isFavorite ?? false}
+      isFavoriteUpdating={isFavoriteUpdating}
       hasFavoriteError={hasFavoriteError}
       favoriteErrorTarget="button"
       hideFavoriteButton={hideFavoriteButton}
@@ -102,22 +108,10 @@ const HomeProductCard = memo(function HomeProductCard({
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const pendingFavoriteSlugsRef = useRef<Set<string>>(new Set());
-  const [failedFavoriteSlugs, setFailedFavoriteSlugs] = useState<Set<string>>(() => new Set());
-  const errorTimeouts = useRef<Map<string, number>>(new Map());
   const { status: authStatus } = useAuth();
   const [products, setProducts] = useState<ProductProps[]>([]);
-  const productsRef = useRef<ProductProps[]>([]);
-  const {
-    categories: panoramicCategories,
-    isLoading: isCategoriesLoading,
-    error: categoriesError,
-  } = useCategories();
-  const panoramicStatus: PanoramicStatus = isCategoriesLoading
-    ? 'loading'
-    : categoriesError || panoramicCategories.length === 0
-      ? 'hidden'
-      : 'ready';
+  const [panoramicCategory, setPanoramicCategory] = useState<PanoramicCategory | null>(null);
+  const [panoramicStatus, setPanoramicStatus] = useState<PanoramicStatus>('loading');
   const [error, setError] = useState<string | null>(null);
 
   const [fetchTrigger, setFetchTrigger] = useState(1);
@@ -235,88 +229,15 @@ export default function HomePage() {
     }
   }, [isIntersecting, isLoading, hasMore]);
 
-  useEffect(() => {
-    productsRef.current = products;
-  }, [products]);
-
-  const toggleFavorite = useCallback(async (productSlug: string) => {
-    if (pendingFavoriteSlugsRef.current.has(productSlug)) return;
-
-    const product = productsRef.current.find((p) => p.slug === productSlug);
-    if (!product) return;
-
-    const isFavorite = product.isFavorite ?? false;
-    const nextIsFavorite = !isFavorite;
-
-    pendingFavoriteSlugsRef.current.add(productSlug);
-    setFailedFavoriteSlugs((currentSlugs) => {
-      if (!currentSlugs.has(productSlug)) return currentSlugs;
-
-      const nextSlugs = new Set(currentSlugs);
-      nextSlugs.delete(productSlug);
-      return nextSlugs;
-    });
-    setProducts((currentProducts) => {
-      const nextProducts = currentProducts.map((currentProduct) =>
-        currentProduct.slug === productSlug
-          ? { ...currentProduct, isFavorite: nextIsFavorite }
-          : currentProduct
-      );
-      productsRef.current = nextProducts;
-      return nextProducts;
-    });
-
-    try {
-      const { error } = isFavorite
-        ? await removeFavorite(productSlug)
-        : await addFavorite(productSlug);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error(
-        `Błąd ${isFavorite ? 'usuwania produktu z' : 'dodawania produktu do'} ulubionych (${productSlug}):`,
-        error
-      );
-      setProducts((currentProducts) => {
-        const nextProducts = currentProducts.map((currentProduct) =>
-          currentProduct.slug === productSlug ? { ...currentProduct, isFavorite } : currentProduct
-        );
-        productsRef.current = nextProducts;
-        return nextProducts;
-      });
-      setFailedFavoriteSlugs((currentSlugs) => new Set(currentSlugs).add(productSlug));
-
-      const previousTimeout = errorTimeouts.current.get(productSlug);
-      if (previousTimeout) window.clearTimeout(previousTimeout);
-
-      const timeout = window.setTimeout(() => {
-        setFailedFavoriteSlugs((currentSlugs) => {
-          const nextSlugs = new Set(currentSlugs);
-          nextSlugs.delete(productSlug);
-          return nextSlugs;
-        });
-        errorTimeouts.current.delete(productSlug);
-      }, 1200);
-
-      errorTimeouts.current.set(productSlug, timeout);
-    } finally {
-      pendingFavoriteSlugsRef.current.delete(productSlug);
-    }
-  }, []);
+  const { toggleFavorite, pendingFavoriteSlugs, failedFavoriteSlugs } = useFavoriteToggle(
+    products,
+    setProducts
+  );
 
   const handleProductClick = useCallback(
     (productSlug: string) => navigate(RENT_ROUTES.product(productSlug)),
     [navigate]
   );
-
-  useEffect(() => {
-    const activeErrorTimeouts = errorTimeouts.current;
-
-    return () => {
-      activeErrorTimeouts.forEach((timeout) => window.clearTimeout(timeout));
-      activeErrorTimeouts.clear();
-    };
-  }, []);
 
   return (
     <div>
@@ -374,6 +295,7 @@ export default function HomePage() {
             <HomeProductCard
               key={product.slug}
               product={product}
+              isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
               hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
               hideFavoriteButton={authStatus !== 'authenticated'}
               onFavoriteToggle={toggleFavorite}
