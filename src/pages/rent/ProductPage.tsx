@@ -66,7 +66,6 @@ export default function ProductPage() {
               sizes:
                 data.sizes?.map((size) => ({
                   ...size,
-                  available: Math.random() < 0.5,
                 })) ?? [],
               isFavorite: data.isFavorite,
             });
