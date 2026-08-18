@@ -9,7 +9,9 @@ import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
@@ -109,6 +111,7 @@ const toProductProps = (product: {
   imageAlts?: string[] | null;
   category?: string | null;
   sizes?: { size: string; description?: string | null }[] | null;
+  isFavorite?: boolean;
 }): ProductProps => ({
   id: product.id,
   name: product.name,
@@ -119,6 +122,7 @@ const toProductProps = (product: {
   imageAlts: product.imageAlts ?? [product.name],
   category: product.category ?? '',
   sizes: product.sizes ?? [],
+  isFavorite: product.isFavorite ?? false,
 });
 
 export default function SearchPage() {
@@ -129,7 +133,7 @@ export default function SearchPage() {
   const [searchResults, setSearchResults] = useState<ProductProps[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
+  const { status: authStatus } = useAuth();
   const prefersReducedMotion = useReducedMotion();
 
   const categorySlugs = useMemo(
@@ -314,6 +318,11 @@ export default function SearchPage() {
     };
   }, []);
 
+  const { toggleFavorite, pendingFavoriteSlugs, failedFavoriteSlugs } = useFavoriteToggle(
+    searchResults,
+    setSearchResults
+  );
+
   return (
     <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 [overflow-anchor:none] sm:p-6 md:p-8 lg:gap-8">
       <ContentPanel className="sticky top-20 hidden h-fit max-h-[calc(100vh-5rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
@@ -412,21 +421,12 @@ export default function SearchPage() {
                     <SearchProductCard
                       product={product}
                       onClick={() => navigate(RENT_ROUTES.product(product.slug))}
-                      onAddToCart={() => navigate(RENT_ROUTES.product(product.slug))}
-                      isFavorite={favoriteProductIds.has(product.id)}
-                      onFavoriteToggle={() =>
-                        setFavoriteProductIds((currentIds) => {
-                          const nextIds = new Set(currentIds);
-
-                          if (nextIds.has(product.id)) {
-                            nextIds.delete(product.id);
-                          } else {
-                            nextIds.add(product.id);
-                          }
-
-                          return nextIds;
-                        })
-                      }
+                      onAddToCart={() => undefined}
+                      isFavorite={product.isFavorite ?? false}
+                      isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+                      hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                      onFavoriteToggle={() => void toggleFavorite(product.slug)}
+                      hideFavoriteButton={authStatus !== 'authenticated'}
                     />
                   </motion.div>
                 ))}
