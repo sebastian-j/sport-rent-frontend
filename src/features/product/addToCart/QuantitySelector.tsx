@@ -4,6 +4,7 @@ type QuantitySelectorProps = {
   quantity: number;
   onDecrease: () => void;
   onIncrease: () => void;
+  canIncrease?: boolean;
 };
 
 const QUANTITY_BUTTON_CLASSES =
@@ -13,6 +14,7 @@ export default function QuantitySelector({
   quantity,
   onDecrease,
   onIncrease,
+  canIncrease = true,
 }: QuantitySelectorProps) {
   return (
     <div className="my-[0.5vh] grid w-full max-w-xl grid-cols-2 items-center gap-x-3">
@@ -31,8 +33,9 @@ export default function QuantitySelector({
         <button
           type="button"
           aria-label="Zwiększ liczbę sztuk"
+          disabled={!canIncrease}
           onClick={onIncrease}
-          className={QUANTITY_BUTTON_CLASSES}
+          className={`${QUANTITY_BUTTON_CLASSES} disabled:opacity-40`}
         >
           <CirclePlus className="h-7 w-7" />
         </button>

@@ -9,7 +9,9 @@ import DualRangeSlider from '../../components/core/DualRangeSlider.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
+import { useAuth } from '../../features/auth/authContext.ts';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
 import { toCategorySlug } from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
@@ -20,8 +22,8 @@ import type { SortDirection } from '../../types/search.ts';
 import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 
 const PAGE_SIZE = 10;
-const MIN_PRICE = 0;
-const MAX_PRICE = 200;
+const DEFAULT_MIN_PRICE = 0;
+const DEFAULT_MAX_PRICE = 200;
 const DEFAULT_SEARCH_ERROR = 'Nie udało się pobrać produktów.';
 
 const SORT_OPTIONS = [
@@ -109,6 +111,7 @@ const toProductProps = (product: {
   imageAlts?: string[] | null;
   category?: string | null;
   sizes?: { size: string; description?: string | null }[] | null;
+  isFavorite?: boolean;
 }): ProductProps => ({
   id: product.id,
   name: product.name,
@@ -119,17 +122,22 @@ const toProductProps = (product: {
   imageAlts: product.imageAlts ?? [product.name],
   category: product.category ?? '',
   sizes: product.sizes ?? [],
+  isFavorite: product.isFavorite ?? false,
 });
 
 export default function SearchPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [totalPages, setTotalPages] = useState(1);
+  const [priceBounds, setPriceBounds] = useState<[number, number]>([
+    DEFAULT_MIN_PRICE,
+    DEFAULT_MAX_PRICE,
+  ]);
   const [categoryFacets, setCategoryFacets] = useState<CategoryFacets>({ categories: [] });
   const [searchResults, setSearchResults] = useState<ProductProps[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favoriteProductIds, setFavoriteProductIds] = useState<Set<number>>(new Set());
+  const { status: authStatus } = useAuth();
   const prefersReducedMotion = useReducedMotion();
 
   const categorySlugs = useMemo(
@@ -154,8 +162,8 @@ export default function SearchPage() {
     setSelectedCategorySlugs,
   } = useProductSearchParams({
     totalPages,
-    minPrice: MIN_PRICE,
-    maxPrice: MAX_PRICE,
+    minPrice: priceBounds[0],
+    maxPrice: priceBounds[1],
     sortFields: SORT_FIELDS,
     defaultSortField: 'name',
     categorySlugs,
@@ -234,8 +242,9 @@ export default function SearchPage() {
       query: searchQuery || null,
       minPrice: appliedMinPrice,
       maxPrice: appliedMaxPrice,
+      category: selectedCategoryNames,
     }),
-    [appliedMaxPrice, appliedMinPrice, searchQuery]
+    [appliedMaxPrice, appliedMinPrice, searchQuery, selectedCategoryNames]
   );
 
   useEffect(() => {
@@ -246,18 +255,39 @@ export default function SearchPage() {
 
       const countsData = countsRes.data;
       if (countsData) {
-        const categories = countsData[0];
-        if (!Array.isArray(categories)) return;
-
-        const totalCount = Number(countsData[1]);
+        const categories = countsData.categories;
+        const totalCount = countsData.total;
         setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
-        setCategoryFacets({
-          categories: categories.map((category, index) => ({
-            id: index + 1,
-            slug: toCategorySlug(category.name),
-            name: category.name,
-            productCount: category.count,
-          })),
+        setPriceBounds((currentBounds) =>
+          currentBounds[0] === countsData.price.min && currentBounds[1] === countsData.price.max
+            ? currentBounds
+            : [countsData.price.min, countsData.price.max]
+        );
+
+        const nextCategories = categories.map((category, index) => ({
+          id: index + 1,
+          slug: toCategorySlug(category.name),
+          name: category.name,
+          productCount: category.count,
+        }));
+        setCategoryFacets((currentFacets) => {
+          const unchanged =
+            currentFacets.categories.length === nextCategories.length &&
+            currentFacets.categories.every((category, index) => {
+              const nextCategory = nextCategories[index];
+              return (
+                category.id === nextCategory.id &&
+                category.slug === nextCategory.slug &&
+                category.name === nextCategory.name &&
+                category.productCount === nextCategory.productCount
+              );
+            });
+
+          return unchanged
+            ? currentFacets
+            : {
+                categories: nextCategories,
+              };
         });
       }
     });
@@ -314,13 +344,18 @@ export default function SearchPage() {
     };
   }, []);
 
+  const { toggleFavorite, pendingFavoriteSlugs, failedFavoriteSlugs } = useFavoriteToggle(
+    searchResults,
+    setSearchResults
+  );
+
   return (
     <div className="mx-auto flex w-full max-w-[1400px] gap-4 p-4 [overflow-anchor:none] sm:p-6 md:p-8 lg:gap-8">
       <ContentPanel className="sticky top-20 hidden h-fit max-h-[calc(100vh-5rem)] w-64 flex-none self-start gap-6 overflow-y-auto lg:flex">
         <DualRangeSlider
           label="Cena"
-          min={MIN_PRICE}
-          max={MAX_PRICE}
+          min={priceBounds[0]}
+          max={priceBounds[1]}
           value={priceRange}
           onChange={setPriceRange}
           onChangeEnd={setAppliedPriceRange}
@@ -413,20 +448,11 @@ export default function SearchPage() {
                       product={product}
                       onClick={() => navigate(RENT_ROUTES.product(product.slug))}
                       onAddToCart={() => undefined}
-                      isFavorite={favoriteProductIds.has(product.id)}
-                      onFavoriteToggle={() =>
-                        setFavoriteProductIds((currentIds) => {
-                          const nextIds = new Set(currentIds);
-
-                          if (nextIds.has(product.id)) {
-                            nextIds.delete(product.id);
-                          } else {
-                            nextIds.add(product.id);
-                          }
-
-                          return nextIds;
-                        })
-                      }
+                      isFavorite={product.isFavorite ?? false}
+                      isFavoriteUpdating={pendingFavoriteSlugs.has(product.slug)}
+                      hasFavoriteError={failedFavoriteSlugs.has(product.slug)}
+                      onFavoriteToggle={() => void toggleFavorite(product.slug)}
+                      hideFavoriteButton={authStatus !== 'authenticated'}
                     />
                   </motion.div>
                 ))}
@@ -500,8 +526,8 @@ export default function SearchPage() {
                     <>
                       <DualRangeSlider
                         label="Cena"
-                        min={MIN_PRICE}
-                        max={MAX_PRICE}
+                        min={priceBounds[0]}
+                        max={priceBounds[1]}
                         value={priceRange}
                         onChange={setPriceRange}
                         onChangeEnd={setAppliedPriceRange}

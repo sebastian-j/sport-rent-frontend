@@ -15,6 +15,7 @@ type FavoriteButtonProps = {
   isUpdating?: boolean;
   hasError?: boolean;
   variant?: 'surface' | 'transparent';
+  layout?: 'overlay' | 'inline';
 };
 
 export default function FavoriteButton({
@@ -24,6 +25,7 @@ export default function FavoriteButton({
   isUpdating = false,
   hasError = false,
   variant = 'surface',
+  layout = 'overlay',
 }: FavoriteButtonProps) {
   return (
     <motion.div
@@ -33,9 +35,9 @@ export default function FavoriteButton({
           ? { duration: 0.4, ease: 'easeInOut' }
           : { type: 'spring', stiffness: 280, damping: 24 }
       }
-      className={`absolute right-3 top-3 z-20 rounded-full ring-2 transition-[box-shadow] duration-300 ${
-        hasError ? 'ring-app-danger' : 'ring-transparent'
-      }`}
+      className={`rounded-full ring-2 transition-[box-shadow] duration-300 ${
+        layout === 'overlay' ? 'absolute right-3 top-3 z-20' : 'relative shrink-0'
+      } ${hasError ? 'ring-app-danger' : 'ring-transparent'}`}
     >
       <motion.button
         type="button"

@@ -260,6 +260,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Categories */
+        get: operations["get_categories_categories_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/favorites": {
         parameters: {
             query?: never;
@@ -565,13 +582,6 @@ export interface components {
             /** Has Items */
             has_items: boolean;
         };
-        /** CategoryResponse */
-        CategoryResponse: {
-            /** Name */
-            name: string;
-            /** Count */
-            count: number;
-        };
         /** ChangePasswordRequest */
         ChangePasswordRequest: {
             /** Current Password */
@@ -703,10 +713,27 @@ export interface components {
             /** Totalpages */
             totalPages: number;
         };
+        /** PriceFacetResponse */
+        PriceFacetResponse: {
+            /** Min */
+            min: number;
+            /** Max */
+            max: number;
+        };
         /** ProductAvailabilityResponse */
         ProductAvailabilityResponse: {
             /** Available */
             available: boolean;
+            /** Availablequantity */
+            availableQuantity: number;
+        };
+        /** ProductFacetsResponse */
+        ProductFacetsResponse: {
+            /** Categories */
+            categories: components["schemas"]["app__schemas__product__CategoryResponse"][];
+            /** Total */
+            total: number;
+            price: components["schemas"]["PriceFacetResponse"];
         };
         /** ProductResponse */
         ProductResponse: {
@@ -750,15 +777,6 @@ export interface components {
         PromoCodeValidationResponse: {
             /** Discount Rate */
             discount_rate?: number | null;
-        };
-        /** RandomCategoryResponse */
-        RandomCategoryResponse: {
-            /** Name */
-            name: string;
-            /** Image */
-            image: string;
-            /** Slug */
-            slug: string;
         };
         /** RegisterAddressRequest */
         RegisterAddressRequest: {
@@ -896,6 +914,22 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** CategoryResponse */
+        app__schemas__category__CategoryResponse: {
+            /** Name */
+            name: string;
+            /** Image */
+            image?: string | null;
+            /** Slug */
+            slug: string;
+        };
+        /** CategoryResponse */
+        app__schemas__product__CategoryResponse: {
+            /** Name */
+            name: string;
+            /** Count */
+            count: number;
         };
     };
     responses: never;
@@ -1372,7 +1406,27 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RandomCategoryResponse"];
+                    "application/json": components["schemas"]["app__schemas__category__CategoryResponse"];
+                };
+            };
+        };
+    };
+    get_categories_categories_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["app__schemas__category__CategoryResponse"][];
                 };
             };
         };
@@ -1577,10 +1631,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": [
-                        components["schemas"]["CategoryResponse"][],
-                        number
-                    ];
+                    "application/json": components["schemas"]["ProductFacetsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1630,6 +1681,7 @@ export interface operations {
             query: {
                 start_date: string;
                 end_date: string;
+                size?: string | null;
             };
             header?: never;
             path: {
