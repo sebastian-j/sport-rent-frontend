@@ -700,10 +700,25 @@ export interface components {
             /** Unit Price */
             unit_price: number;
         };
+        /** PriceFacetResponse */
+        PriceFacetResponse: {
+            /** Min */
+            min: number;
+            /** Max */
+            max: number;
+        };
         /** ProductAvailabilityResponse */
         ProductAvailabilityResponse: {
             /** Available */
             available: boolean;
+        };
+        /** ProductFacetsResponse */
+        ProductFacetsResponse: {
+            /** Categories */
+            categories: components["schemas"]["app__schemas__product__CategoryResponse"][];
+            /** Total */
+            total: number;
+            price: components["schemas"]["PriceFacetResponse"];
         };
         /** ProductResponse */
         ProductResponse: {
@@ -1601,10 +1616,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": [
-                        components["schemas"]["app__schemas__product__CategoryResponse"][],
-                        number
-                    ];
+                    "application/json": components["schemas"]["ProductFacetsResponse"];
                 };
             };
             /** @description Validation Error */
