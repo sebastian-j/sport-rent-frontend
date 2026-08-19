@@ -57,21 +57,25 @@ export default function OrderSummaryPage() {
   const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
   const [isCartLoading, setIsCartLoading] = useState(true);
   const [cartLoadError, setCartLoadError] = useState<string | null>(null);
+  const cartPrice = getOrderInformation(summaryProducts).totalValue;
   const {
     promoCode,
     appliedPromoCode,
-    discountRate,
+    promoDiscount,
     promoCodeError,
     isPromoCodeValidating,
     applyPromoCode,
     changePromoCode,
     removePromoCode,
-  } = usePromo();
-  const cartPrice = getOrderInformation(summaryProducts).totalValue;
+  } = usePromo(cartPrice);
   const paymentPrice = PAYMENT_METHODS.find(
     (method) => method.id === selectedPaymentMethodId
   )?.price;
-  const discount = cartPrice * discountRate;
+  const calculatedDiscount =
+    promoDiscount?.type === 'PERCENTAGE'
+      ? cartPrice * promoDiscount.value
+      : (promoDiscount?.value ?? 0);
+  const discount = Math.min(cartPrice, Math.round(calculatedDiscount * 100) / 100);
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
   const [points, setPoints] = useState(0);
   const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
