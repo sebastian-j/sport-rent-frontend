@@ -596,6 +596,11 @@ export interface components {
             /** New Password */
             new_password: string;
         };
+        /**
+         * DiscountType
+         * @enum {string}
+         */
+        DiscountType: "PERCENTAGE" | "FIXED_AMOUNT";
         /** FavoritesResponse */
         FavoritesResponse: {
             /** Slug */
@@ -775,8 +780,13 @@ export interface components {
         };
         /** PromoCodeValidationResponse */
         PromoCodeValidationResponse: {
-            /** Discount Rate */
-            discount_rate?: number | null;
+            /** Valid */
+            valid: boolean;
+            discount_type?: components["schemas"]["DiscountType"] | null;
+            /** Discount Value */
+            discount_value?: string | null;
+            /** Minimum Order Value */
+            minimum_order_value?: string | null;
         };
         /** RegisterAddressRequest */
         RegisterAddressRequest: {
@@ -823,6 +833,15 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /** SubcategoryResponse */
+        SubcategoryResponse: {
+            /** Name */
+            name: string;
+            /** Image */
+            image?: string | null;
+            /** Slug */
+            slug: string;
         };
         /** UpdateAddressRequest */
         UpdateAddressRequest: {
@@ -923,6 +942,8 @@ export interface components {
             image?: string | null;
             /** Slug */
             slug: string;
+            /** Subcategories */
+            subcategories: components["schemas"]["SubcategoryResponse"][];
         };
         /** CategoryResponse */
         app__schemas__product__CategoryResponse: {

@@ -251,16 +251,30 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       {showCategoryBar && (
         <div
           ref={categoryBarRef}
-          className="relative hidden h-12 flex-row items-center justify-between gap-6 overflow-hidden bg-app-surfaceStrong px-4 text-app-textInverted md:flex"
+          className="relative hidden h-12 flex-row items-center justify-between gap-6 bg-app-surfaceStrong px-4 text-app-textInverted md:flex"
         >
           {categories.slice(0, visibleCategoryCount).map((category) => (
-            <Link
-              key={category.slug}
-              to={getCategorySearchPath(category.slug)}
-              className="shrink-0 whitespace-nowrap hover:underline"
-            >
-              {category.name}
-            </Link>
+            <div key={category.slug} className="group relative shrink-0">
+              <Link
+                to={getCategorySearchPath(category.slug)}
+                className="inline-flex h-12 items-center whitespace-nowrap hover:underline"
+              >
+                {category.name}
+              </Link>
+              {category.subcategories.length > 0 && (
+                <div className="invisible absolute left-0 top-full z-50 min-w-44 pt-0 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul className="overflow-hidden rounded-lg border border-app-border bg-app-surface py-1 text-app-text shadow-lg">
+                    {category.subcategories.map((subcategory) => (
+                      <li key={subcategory.slug}>
+                        <span className="block cursor-default whitespace-nowrap px-4 py-2.5 text-sm hover:bg-app-surfaceSoft">
+                          {subcategory.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           ))}
           <div aria-hidden="true" className="invisible absolute whitespace-nowrap">
             {categories.map((category, index) => (
