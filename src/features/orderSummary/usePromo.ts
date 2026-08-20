@@ -1,13 +1,31 @@
 import { useState } from 'react';
 
 import { validatePromoCode } from '../../api/cart.ts';
+import type { components } from '../../api/generated/schema.ts';
 
-export default function usePromo() {
+type DiscountType = components['schemas']['DiscountType'];
+
+export type PromoDiscount = {
+  type: DiscountType;
+  value: number;
+};
+
+const currencyFormatter = new Intl.NumberFormat('pl-PL', {
+  style: 'currency',
+  currency: 'PLN',
+});
+
+export default function usePromo(orderValue: number) {
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>();
-  const [discountRate, setDiscountRate] = useState(0);
+  const [promoDiscount, setPromoDiscount] = useState<PromoDiscount>();
   const [promoCodeError, setPromoCodeError] = useState<string>();
   const [isPromoCodeValidating, setIsPromoCodeValidating] = useState(false);
+
+  const clearAppliedPromoCode = () => {
+    setAppliedPromoCode(undefined);
+    setPromoDiscount(undefined);
+  };
 
   const applyPromoCode = async () => {
     if (isPromoCodeValidating) return;
@@ -15,7 +33,7 @@ export default function usePromo() {
     const normalizedPromoCode = promoCode.trim().toUpperCase();
 
     if (!normalizedPromoCode) {
-      setDiscountRate(0);
+      clearAppliedPromoCode();
       setPromoCodeError('Wpisz kod promocyjny.');
       return;
     }
@@ -27,24 +45,49 @@ export default function usePromo() {
       const { data, error } = await validatePromoCode({ promo_code: normalizedPromoCode });
 
       if (error || !data) {
-        setDiscountRate(0);
+        clearAppliedPromoCode();
         setPromoCodeError('Nie udało się sprawdzić kodu promocyjnego.');
         return;
       }
 
-      if (data.discount_rate === undefined || data.discount_rate === null) {
-        setDiscountRate(0);
+      if (!data.valid || !data.discount_type || data.discount_value == null) {
+        clearAppliedPromoCode();
         setPromoCodeError('Nieprawidłowy kod promocyjny.');
+        return;
+      }
+
+      const discountValue = Number(data.discount_value);
+      const minimumOrderValue =
+        data.minimum_order_value == null ? undefined : Number(data.minimum_order_value);
+
+      if (
+        !Number.isFinite(discountValue) ||
+        discountValue <= 0 ||
+        (minimumOrderValue !== undefined && !Number.isFinite(minimumOrderValue))
+      ) {
+        clearAppliedPromoCode();
+        setPromoCodeError('Nie udało się odczytać wartości kodu promocyjnego.');
+        return;
+      }
+
+      if (minimumOrderValue !== undefined && orderValue < minimumOrderValue) {
+        clearAppliedPromoCode();
+        setPromoCodeError(
+          `Kod obowiązuje dla zamówień od ${currencyFormatter.format(minimumOrderValue)}.`
+        );
         return;
       }
 
       setPromoCode(normalizedPromoCode);
       setAppliedPromoCode(normalizedPromoCode);
-      setDiscountRate(data.discount_rate);
+      setPromoDiscount({
+        type: data.discount_type,
+        value: discountValue,
+      });
       setPromoCodeError(undefined);
     } catch (error) {
       console.error('Błąd podczas sprawdzania kodu promocyjnego:', error);
-      setDiscountRate(0);
+      clearAppliedPromoCode();
       setPromoCodeError('Nie udało się sprawdzić kodu promocyjnego. Spróbuj ponownie.');
     } finally {
       setIsPromoCodeValidating(false);
@@ -58,15 +101,14 @@ export default function usePromo() {
 
   const removePromoCode = () => {
     setPromoCode('');
-    setAppliedPromoCode(undefined);
-    setDiscountRate(0);
+    clearAppliedPromoCode();
     setPromoCodeError(undefined);
   };
 
   return {
     promoCode,
     appliedPromoCode,
-    discountRate,
+    promoDiscount,
     promoCodeError,
     isPromoCodeValidating,
     applyPromoCode,

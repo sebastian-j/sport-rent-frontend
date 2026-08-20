@@ -596,6 +596,11 @@ export interface components {
             /** New Password */
             new_password: string;
         };
+        /**
+         * DiscountType
+         * @enum {string}
+         */
+        DiscountType: "PERCENTAGE" | "FIXED_AMOUNT";
         /** FavoritesResponse */
         FavoritesResponse: {
             /** Slug */
@@ -775,8 +780,13 @@ export interface components {
         };
         /** PromoCodeValidationResponse */
         PromoCodeValidationResponse: {
-            /** Discount Rate */
-            discount_rate?: number | null;
+            /** Valid */
+            valid: boolean;
+            discount_type?: components["schemas"]["DiscountType"] | null;
+            /** Discount Value */
+            discount_value?: string | null;
+            /** Minimum Order Value */
+            minimum_order_value?: string | null;
         };
         /** RegisterAddressRequest */
         RegisterAddressRequest: {
