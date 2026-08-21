@@ -834,6 +834,15 @@ export interface components {
              */
             email: string;
         };
+        /** SubcategoryResponse */
+        SubcategoryResponse: {
+            /** Name */
+            name: string;
+            /** Image */
+            image?: string | null;
+            /** Slug */
+            slug: string;
+        };
         /** UpdateAddressRequest */
         UpdateAddressRequest: {
             /** First Name */
@@ -933,6 +942,8 @@ export interface components {
             image?: string | null;
             /** Slug */
             slug: string;
+            /** Subcategories */
+            subcategories: components["schemas"]["SubcategoryResponse"][];
         };
         /** CategoryResponse */
         app__schemas__product__CategoryResponse: {
@@ -1587,6 +1598,7 @@ export interface operations {
                 minPrice?: number | null;
                 maxPrice?: number | null;
                 category?: string[] | null;
+                subcategory?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;
@@ -1625,6 +1637,7 @@ export interface operations {
                 minPrice?: number | null;
                 maxPrice?: number | null;
                 category?: string[] | null;
+                subcategory?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;

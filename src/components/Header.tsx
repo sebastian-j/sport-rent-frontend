@@ -8,7 +8,10 @@ import headerLogoSmall from '../assets/layout/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import useCategories from '../features/category/useCategories.ts';
-import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
+import {
+  getCategorySearchPath,
+  getSubcategorySearchPath,
+} from '../features/search/categoryUtils.ts';
 import { AUTH_ROUTES, getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
@@ -251,16 +254,33 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
       {showCategoryBar && (
         <div
           ref={categoryBarRef}
-          className="relative hidden h-12 flex-row items-center justify-between gap-6 overflow-hidden bg-app-surfaceStrong px-4 text-app-textInverted md:flex"
+          className="relative hidden h-12 flex-row items-center justify-between gap-6 bg-app-surfaceStrong px-4 text-app-textInverted md:flex"
         >
           {categories.slice(0, visibleCategoryCount).map((category) => (
-            <Link
-              key={category.slug}
-              to={getCategorySearchPath(category.slug)}
-              className="shrink-0 whitespace-nowrap hover:underline"
-            >
-              {category.name}
-            </Link>
+            <div key={category.slug} className="group relative shrink-0">
+              <Link
+                to={getCategorySearchPath(category.slug)}
+                className="inline-flex h-12 items-center whitespace-nowrap hover:underline"
+              >
+                {category.name}
+              </Link>
+              {category.subcategories.length > 0 && (
+                <div className="invisible absolute left-0 top-full z-50 min-w-44 pt-0 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul className="overflow-hidden rounded-lg border border-app-border bg-app-surface py-1 text-app-text shadow-lg">
+                    {category.subcategories.map((subcategory) => (
+                      <li key={subcategory.slug}>
+                        <Link
+                          to={getSubcategorySearchPath(category.slug, subcategory.slug)}
+                          className="block whitespace-nowrap px-4 py-2.5 text-sm hover:bg-app-surfaceSoft"
+                        >
+                          {subcategory.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           ))}
           <div aria-hidden="true" className="invisible absolute whitespace-nowrap">
             {categories.map((category, index) => (
