@@ -64,13 +64,7 @@ function CategoryIcon({ image, name }: { image?: string | null; name: string }) 
   );
 }
 
-function CategoryBarEntry({
-  item,
-  interactive,
-}: {
-  item: CategoryBarItem;
-  interactive: boolean;
-}) {
+function CategoryBarEntry({ item, interactive }: { item: CategoryBarItem; interactive: boolean }) {
   const content = (
     <>
       <CategoryIcon image={item.image} name={item.name} />
@@ -80,8 +74,7 @@ function CategoryBarEntry({
     </>
   );
 
-  const className =
-    'group flex w-16 shrink-0 flex-col items-center gap-2 md:w-[75px] md:gap-3';
+  const className = 'group flex w-16 shrink-0 flex-col items-center gap-2 md:w-[75px] md:gap-3';
 
   if (!interactive) {
     return <div className={className}>{content}</div>;
@@ -175,7 +168,11 @@ export default function CategoryBar() {
                 : { duration: 0 }
             }
           >
-            <div ref={categoryGroupRef} className={categoryGroupClassName} style={categoryGroupStyle}>
+            <div
+              ref={categoryGroupRef}
+              className={categoryGroupClassName}
+              style={categoryGroupStyle}
+            >
               {items.map((item) => (
                 <CategoryBarEntry key={item.slug} item={item} interactive />
               ))}
