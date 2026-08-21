@@ -303,74 +303,110 @@ export default function SearchPage() {
     sortField,
   ]);
 
-  const countQuery = useMemo<ProductCountQuery>(
+  const facetCountQuery = useMemo<ProductCountQuery>(
     () => ({
       query: searchQuery || null,
       minPrice: appliedMinPrice,
       maxPrice: appliedMaxPrice,
+    }),
+    [appliedMaxPrice, appliedMinPrice, searchQuery]
+  );
+
+  const resultCountQuery = useMemo<ProductCountQuery>(
+    () => ({
+      ...facetCountQuery,
       category: selectedCategoryNames,
       subcategory: selectedSubcategoryNames,
     }),
-    [appliedMaxPrice, appliedMinPrice, searchQuery, selectedCategoryNames, selectedSubcategoryNames]
+    [facetCountQuery, selectedCategoryNames, selectedSubcategoryNames]
   );
 
   useEffect(() => {
     let active = true;
 
-    getCategoriesCount(countQuery).then((countsRes) => {
+    getCategoriesCount(facetCountQuery).then((countsRes) => {
       if (!active) return;
 
       const countsData = countsRes.data;
-      if (countsData) {
-        const categories = countsData.categories;
-        const totalCount = countsData.total;
-        setTotalPages(Math.max(1, Math.ceil(totalCount / PAGE_SIZE)));
-        setPriceBounds((currentBounds) =>
-          currentBounds[0] === countsData.price.min && currentBounds[1] === countsData.price.max
-            ? currentBounds
-            : [countsData.price.min, countsData.price.max]
-        );
+      if (!countsData) return;
 
-        const nextCategories = categories.map((category, index) => {
+      const categories = countsData.categories;
+      setPriceBounds((currentBounds) =>
+        currentBounds[0] === countsData.price.min && currentBounds[1] === countsData.price.max
+          ? currentBounds
+          : [countsData.price.min, countsData.price.max]
+      );
+
+      const countBySlug = new Map(
+        categories.map((category) => {
           const catalogMatch = catalogCategories.find(
             (catalogCategory) =>
               catalogCategory.name === category.name ||
               catalogCategory.slug === toCategorySlug(category.name)
           );
+          const slug = catalogMatch?.slug ?? toCategorySlug(category.name);
 
-          return {
-            id: index + 1,
-            slug: catalogMatch?.slug ?? toCategorySlug(category.name),
-            name: category.name,
-            productCount: category.count,
-          };
-        });
-        setCategoryFacets((currentFacets) => {
-          const unchanged =
-            currentFacets.categories.length === nextCategories.length &&
-            currentFacets.categories.every((category, index) => {
-              const nextCategory = nextCategories[index];
-              return (
-                category.id === nextCategory.id &&
-                category.slug === nextCategory.slug &&
-                category.name === nextCategory.name &&
-                category.productCount === nextCategory.productCount
-              );
-            });
+          return [slug, category.count] as const;
+        })
+      );
 
-          return unchanged
-            ? currentFacets
-            : {
-                categories: nextCategories,
-              };
-        });
-      }
+      const nextCategories =
+        catalogCategories.length > 0
+          ? catalogCategories.map((catalogCategory, index) => ({
+              id: index + 1,
+              slug: catalogCategory.slug,
+              name: catalogCategory.name,
+              productCount: countBySlug.get(catalogCategory.slug) ?? 0,
+            }))
+          : categories.map((category, index) => ({
+              id: index + 1,
+              slug: toCategorySlug(category.name),
+              name: category.name,
+              productCount: category.count,
+            }));
+
+      setCategoryFacets((currentFacets) => {
+        const unchanged =
+          currentFacets.categories.length === nextCategories.length &&
+          currentFacets.categories.every((category, index) => {
+            const nextCategory = nextCategories[index];
+            return (
+              category.id === nextCategory.id &&
+              category.slug === nextCategory.slug &&
+              category.name === nextCategory.name &&
+              category.productCount === nextCategory.productCount
+            );
+          });
+
+        return unchanged
+          ? currentFacets
+          : {
+              categories: nextCategories,
+            };
+      });
     });
 
     return () => {
       active = false;
     };
-  }, [catalogCategories, countQuery]);
+  }, [catalogCategories, facetCountQuery]);
+
+  useEffect(() => {
+    let active = true;
+
+    getCategoriesCount(resultCountQuery).then((countsRes) => {
+      if (!active) return;
+
+      const countsData = countsRes.data;
+      if (!countsData) return;
+
+      setTotalPages(Math.max(1, Math.ceil(countsData.total / PAGE_SIZE)));
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [resultCountQuery]);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>

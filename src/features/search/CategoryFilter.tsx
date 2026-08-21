@@ -30,13 +30,9 @@ export default function CategoryFilter({
   selectedSubcategorySlugs,
   onCategoryFiltersChange,
 }: CategoryFilterProps) {
-  const availableCategorySlugs = new Set(
-    facets.categories
-      .filter((category) => category.productCount > 0)
-      .map((category) => category.slug)
-  );
+  const facetCategorySlugs = new Set(facets.categories.map((category) => category.slug));
   const validSelectedCategorySlugs = selectedCategorySlugs.filter((categorySlug) =>
-    availableCategorySlugs.has(categorySlug)
+    facetCategorySlugs.has(categorySlug)
   );
   const subcategorySlugsByParent = new Map(
     catalogCategories.map((category) => [
@@ -117,19 +113,13 @@ export default function CategoryFilter({
             (catalogEntry) =>
               catalogEntry.slug === category.slug || catalogEntry.name === category.name
           );
-          const isCategoryDisabled = category.productCount === 0;
           const isCategorySelected = validSelectedCategorySlugs.includes(category.slug);
 
           return (
             <div key={category.id} className="flex flex-col gap-2">
-              <label
-                className={`flex items-start gap-2 text-sm ${
-                  isCategoryDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                }`}
-              >
+              <label className="flex cursor-pointer items-start gap-2 text-sm">
                 <input
                   type="checkbox"
-                  disabled={isCategoryDisabled}
                   checked={isCategorySelected}
                   onChange={(event) =>
                     handleCategoryChange(category.slug, event.currentTarget.checked)
@@ -145,13 +135,10 @@ export default function CategoryFilter({
                   {catalogCategory.subcategories.map((subcategory) => (
                     <label
                       key={subcategory.slug}
-                      className={`flex items-start gap-2 text-sm ${
-                        isCategoryDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                      }`}
+                      className="flex cursor-pointer items-start gap-2 text-sm"
                     >
                       <input
                         type="checkbox"
-                        disabled={isCategoryDisabled}
                         checked={validSelectedSubcategorySlugs.includes(subcategory.slug)}
                         onChange={(event) =>
                           handleSubcategoryChange(
