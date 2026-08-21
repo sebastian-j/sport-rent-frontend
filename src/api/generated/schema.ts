@@ -648,7 +648,10 @@ export interface components {
             /** Amount */
             amount: number;
             /** Order Id */
-            order_id: number;
+            order_id: number | null;
+            type: components["schemas"]["LoyaltyTransactionType"];
+            /** Description */
+            description: string | null;
         };
         /** LoyaltyHistoryResponse */
         LoyaltyHistoryResponse: {
@@ -656,12 +659,25 @@ export interface components {
             items: components["schemas"]["LoyaltyHistoryItemResponse"][];
             /** Balance */
             balance: number;
+            /** Page */
+            page: number;
+            /** Pagesize */
+            pageSize: number;
+            /** Total */
+            total: number;
+            /** Totalpages */
+            totalPages: number;
         };
         /** LoyaltyResponse */
         LoyaltyResponse: {
             /** Balance */
             balance: number;
         };
+        /**
+         * LoyaltyTransactionType
+         * @enum {string}
+         */
+        LoyaltyTransactionType: "EARN" | "SPEND" | "REFUND" | "REVERSAL" | "ADJUSTMENT";
         /** OrderDetailResponse */
         OrderDetailResponse: {
             /** Id */
@@ -1572,7 +1588,10 @@ export interface operations {
     };
     get_points_history_loyalty_history_get: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1586,6 +1605,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LoyaltyHistoryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
