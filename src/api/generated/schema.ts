@@ -1598,6 +1598,7 @@ export interface operations {
                 minPrice?: number | null;
                 maxPrice?: number | null;
                 category?: string[] | null;
+                subcategory?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;
@@ -1636,6 +1637,7 @@ export interface operations {
                 minPrice?: number | null;
                 maxPrice?: number | null;
                 category?: string[] | null;
+                subcategory?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;

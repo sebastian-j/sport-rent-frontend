@@ -11,6 +11,7 @@ type ProductSearchParamsOptions<SortField extends string> = {
   sortFields: readonly SortField[];
   defaultSortField: SortField;
   categorySlugs: readonly string[];
+  subcategorySlugs?: readonly string[];
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -22,6 +23,7 @@ export function useProductSearchParams<SortField extends string>({
   sortFields,
   defaultSortField,
   categorySlugs,
+  subcategorySlugs = [],
 }: ProductSearchParamsOptions<SortField>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('query')?.trim() ?? '';
@@ -49,9 +51,13 @@ export function useProductSearchParams<SortField extends string>({
       ? [selectedMinPrice, selectedMaxPrice]
       : [minPrice, maxPrice];
   const availableCategorySlugs = new Set(categorySlugs);
+  const availableSubcategorySlugs = new Set(subcategorySlugs);
   const selectedCategorySlugs = searchParams
     .getAll('category')
     .filter((categorySlug) => availableCategorySlugs.has(categorySlug));
+  const selectedSubcategorySlugs = searchParams
+    .getAll('subcategory')
+    .filter((subcategorySlug) => availableSubcategorySlugs.has(subcategorySlug));
 
   const setPageNumber = (nextPageNumber: number) => {
     setSearchParams((previousSearchParams) => {
@@ -105,18 +111,34 @@ export function useProductSearchParams<SortField extends string>({
     );
   };
 
-  const setSelectedCategorySlugs = (nextSelectedCategorySlugs: readonly string[]) => {
-    const selectedSlugs = new Set(nextSelectedCategorySlugs);
+  const setCategoryAndSubcategorySlugs = (
+    nextSelectedCategorySlugs: readonly string[],
+    nextSelectedSubcategorySlugs: readonly string[]
+  ) => {
+    const selectedCategories = new Set(nextSelectedCategorySlugs);
+    const selectedSubcategories = new Set(nextSelectedSubcategorySlugs);
 
     setSearchParams((previousSearchParams) => {
       const nextSearchParams = new URLSearchParams(previousSearchParams);
       nextSearchParams.delete('category');
+      nextSearchParams.delete('subcategory');
       categorySlugs
-        .filter((categorySlug) => selectedSlugs.has(categorySlug))
+        .filter((categorySlug) => selectedCategories.has(categorySlug))
         .forEach((categorySlug) => nextSearchParams.append('category', categorySlug));
+      subcategorySlugs
+        .filter((subcategorySlug) => selectedSubcategories.has(subcategorySlug))
+        .forEach((subcategorySlug) => nextSearchParams.append('subcategory', subcategorySlug));
       nextSearchParams.set('page', '1');
       return nextSearchParams;
     });
+  };
+
+  const setSelectedCategorySlugs = (nextSelectedCategorySlugs: readonly string[]) => {
+    setCategoryAndSubcategorySlugs(nextSelectedCategorySlugs, selectedSubcategorySlugs);
+  };
+
+  const setSelectedSubcategorySlugs = (nextSelectedSubcategorySlugs: readonly string[]) => {
+    setCategoryAndSubcategorySlugs(selectedCategorySlugs, nextSelectedSubcategorySlugs);
   };
 
   return {
@@ -126,10 +148,13 @@ export function useProductSearchParams<SortField extends string>({
     sortDirection,
     priceRange,
     selectedCategorySlugs,
+    selectedSubcategorySlugs,
     setPageNumber,
     setSortField,
     setSortDirection,
     setPriceRange,
     setSelectedCategorySlugs,
+    setSelectedSubcategorySlugs,
+    setCategoryAndSubcategorySlugs,
   };
 }

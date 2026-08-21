@@ -8,7 +8,7 @@ import headerLogoSmall from '../assets/layout/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import useCategories from '../features/category/useCategories.ts';
-import { getCategorySearchPath } from '../features/search/categoryUtils.ts';
+import { getCategorySearchPath, getSubcategorySearchPath } from '../features/search/categoryUtils.ts';
 import { AUTH_ROUTES, getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';
@@ -266,9 +266,12 @@ export default function Header({ showCategoryBar = true }: HeaderProps) {
                   <ul className="overflow-hidden rounded-lg border border-app-border bg-app-surface py-1 text-app-text shadow-lg">
                     {category.subcategories.map((subcategory) => (
                       <li key={subcategory.slug}>
-                        <span className="block cursor-default whitespace-nowrap px-4 py-2.5 text-sm hover:bg-app-surfaceSoft">
+                        <Link
+                          to={getSubcategorySearchPath(category.slug, subcategory.slug)}
+                          className="block whitespace-nowrap px-4 py-2.5 text-sm hover:bg-app-surfaceSoft"
+                        >
                           {subcategory.name}
-                        </span>
+                        </Link>
                       </li>
                     ))}
                   </ul>

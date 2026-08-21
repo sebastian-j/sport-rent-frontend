@@ -10,10 +10,18 @@ import PageSelector from '../../components/core/PageSelector.tsx';
 import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
+import useCategories from '../../features/category/useCategories.ts';
 import type { ProductProps } from '../../features/product/productProps.ts';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
-import { toCategorySlug } from '../../features/search/categoryUtils.ts';
+import {
+  getParentCategoryNameBySlug,
+  getParentCategorySlugs,
+  getParentSlugBySubcategorySlug,
+  getSubcategoryNameBySlug,
+  getSubcategorySlugs,
+  toCategorySlug,
+} from '../../features/search/categoryUtils.ts';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
@@ -138,14 +146,32 @@ export default function SearchPage() {
   const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { status: authStatus } = useAuth();
+  const { categories: catalogCategories } = useCategories();
   const prefersReducedMotion = useReducedMotion();
 
-  const categorySlugs = useMemo(
-    () =>
-      categoryFacets.categories
-        .filter((category) => category.productCount > 0)
-        .map((category) => category.slug),
-    [categoryFacets]
+  const parentCategoryNameBySlug = useMemo(
+    () => getParentCategoryNameBySlug(catalogCategories),
+    [catalogCategories]
+  );
+  const subcategoryNameBySlug = useMemo(
+    () => getSubcategoryNameBySlug(catalogCategories),
+    [catalogCategories]
+  );
+  const parentSlugBySubcategorySlug = useMemo(
+    () => getParentSlugBySubcategorySlug(catalogCategories),
+    [catalogCategories]
+  );
+  const categorySlugs = useMemo(() => {
+    const parentSlugs = getParentCategorySlugs(catalogCategories);
+    if (parentSlugs.length > 0) return parentSlugs;
+
+    return categoryFacets.categories
+      .filter((category) => category.productCount > 0)
+      .map((category) => category.slug);
+  }, [catalogCategories, categoryFacets]);
+  const subcategorySlugs = useMemo(
+    () => getSubcategorySlugs(catalogCategories),
+    [catalogCategories]
   );
 
   const {
@@ -155,11 +181,12 @@ export default function SearchPage() {
     sortDirection,
     priceRange: appliedPriceRange,
     selectedCategorySlugs,
+    selectedSubcategorySlugs,
     setPageNumber,
     setSortField,
     setSortDirection,
     setPriceRange: setAppliedPriceRange,
-    setSelectedCategorySlugs,
+    setCategoryAndSubcategorySlugs,
   } = useProductSearchParams({
     totalPages,
     minPrice: priceBounds[0],
@@ -167,21 +194,60 @@ export default function SearchPage() {
     sortFields: SORT_FIELDS,
     defaultSortField: 'name',
     categorySlugs,
+    subcategorySlugs,
   });
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
   const selectedCategoryKey = selectedCategorySlugs.join(',');
+  const selectedSubcategoryKey = selectedSubcategorySlugs.join(',');
   const selectedCategoryNames = useMemo(() => {
     if (!selectedCategoryKey) return undefined;
 
     const selectedSlugs = selectedCategoryKey.split(',');
 
     return selectedSlugs.flatMap((selectedSlug) => {
+      const catalogName = parentCategoryNameBySlug.get(selectedSlug);
+      if (catalogName) return [catalogName];
+
       const category = categoryFacets.categories.find(({ slug }) => slug === selectedSlug);
       return category ? [category.name] : [];
     });
-  }, [categoryFacets, selectedCategoryKey]);
+  }, [categoryFacets, parentCategoryNameBySlug, selectedCategoryKey]);
+  const selectedSubcategoryNames = useMemo(() => {
+    if (!selectedSubcategoryKey) return undefined;
+
+    return selectedSubcategoryKey
+      .split(',')
+      .flatMap((selectedSlug) => {
+        const subcategoryName = subcategoryNameBySlug.get(selectedSlug);
+        return subcategoryName ? [subcategoryName] : [];
+      });
+  }, [selectedSubcategoryKey, subcategoryNameBySlug]);
+
+  useEffect(() => {
+    if (catalogCategories.length === 0 || selectedSubcategorySlugs.length === 0) return;
+
+    const missingParentSlugs = selectedSubcategorySlugs
+      .map((subcategorySlug) => parentSlugBySubcategorySlug.get(subcategorySlug))
+      .filter(
+        (parentSlug): parentSlug is string =>
+          parentSlug !== undefined && !selectedCategorySlugs.includes(parentSlug)
+      );
+
+    if (missingParentSlugs.length === 0) return;
+
+    setCategoryAndSubcategorySlugs(
+      [...new Set([...selectedCategorySlugs, ...missingParentSlugs])],
+      selectedSubcategorySlugs
+    );
+  }, [
+    catalogCategories.length,
+    parentSlugBySubcategorySlug,
+    selectedCategorySlugs,
+    selectedSubcategorySlugs,
+    setCategoryAndSubcategorySlugs,
+  ]);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -200,6 +266,7 @@ export default function SearchPage() {
       minPrice: appliedMinPrice,
       maxPrice: appliedMaxPrice,
       category: selectedCategoryNames,
+      subcategory: selectedSubcategoryNames,
       page: pageNumber,
       pageSize: PAGE_SIZE,
     })
@@ -233,6 +300,7 @@ export default function SearchPage() {
     pageNumber,
     searchQuery,
     selectedCategoryNames,
+    selectedSubcategoryNames,
     sortDirection,
     sortField,
   ]);
@@ -243,8 +311,15 @@ export default function SearchPage() {
       minPrice: appliedMinPrice,
       maxPrice: appliedMaxPrice,
       category: selectedCategoryNames,
+      subcategory: selectedSubcategoryNames,
     }),
-    [appliedMaxPrice, appliedMinPrice, searchQuery, selectedCategoryNames]
+    [
+      appliedMaxPrice,
+      appliedMinPrice,
+      searchQuery,
+      selectedCategoryNames,
+      selectedSubcategoryNames,
+    ]
   );
 
   useEffect(() => {
@@ -264,12 +339,20 @@ export default function SearchPage() {
             : [countsData.price.min, countsData.price.max]
         );
 
-        const nextCategories = categories.map((category, index) => ({
-          id: index + 1,
-          slug: toCategorySlug(category.name),
-          name: category.name,
-          productCount: category.count,
-        }));
+        const nextCategories = categories.map((category, index) => {
+          const catalogMatch = catalogCategories.find(
+            (catalogCategory) =>
+              catalogCategory.name === category.name ||
+              catalogCategory.slug === toCategorySlug(category.name)
+          );
+
+          return {
+            id: index + 1,
+            slug: catalogMatch?.slug ?? toCategorySlug(category.name),
+            name: category.name,
+            productCount: category.count,
+          };
+        });
         setCategoryFacets((currentFacets) => {
           const unchanged =
             currentFacets.categories.length === nextCategories.length &&
@@ -295,7 +378,7 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [countQuery]);
+  }, [catalogCategories, countQuery]);
 
   useEffect(() => {
     setPriceRange((currentPriceRange) =>
@@ -363,8 +446,10 @@ export default function SearchPage() {
         />
         <CategoryFilter
           facets={categoryFacets}
+          catalogCategories={catalogCategories}
           selectedCategorySlugs={selectedCategorySlugs}
-          onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+          selectedSubcategorySlugs={selectedSubcategorySlugs}
+          onCategoryFiltersChange={setCategoryAndSubcategorySlugs}
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col gap-4">
@@ -535,8 +620,10 @@ export default function SearchPage() {
                       />
                       <CategoryFilter
                         facets={categoryFacets}
+                        catalogCategories={catalogCategories}
                         selectedCategorySlugs={selectedCategorySlugs}
-                        onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+                        selectedSubcategorySlugs={selectedSubcategorySlugs}
+                        onCategoryFiltersChange={setCategoryAndSubcategorySlugs}
                       />
                     </>
                   ) : (
