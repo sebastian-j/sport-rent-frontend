@@ -8,7 +8,10 @@ import headerLogoSmall from '../assets/layout/logo_header_small.webp';
 import { useAuth } from '../features/auth/authContext.ts';
 import { useCartStatus } from '../features/cart/cartStatusContext.ts';
 import useCategories from '../features/category/useCategories.ts';
-import { getCategorySearchPath, getSubcategorySearchPath } from '../features/search/categoryUtils.ts';
+import {
+  getCategorySearchPath,
+  getSubcategorySearchPath,
+} from '../features/search/categoryUtils.ts';
 import { AUTH_ROUTES, getSectionHomeRoute, RENT_ROUTES } from '../routes.ts';
 import ThemeSelector from './core/ThemeSelector.tsx';
 import SearchBar from './SearchBar.tsx';

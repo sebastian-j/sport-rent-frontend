@@ -217,12 +217,10 @@ export default function SearchPage() {
   const selectedSubcategoryNames = useMemo(() => {
     if (!selectedSubcategoryKey) return undefined;
 
-    return selectedSubcategoryKey
-      .split(',')
-      .flatMap((selectedSlug) => {
-        const subcategoryName = subcategoryNameBySlug.get(selectedSlug);
-        return subcategoryName ? [subcategoryName] : [];
-      });
+    return selectedSubcategoryKey.split(',').flatMap((selectedSlug) => {
+      const subcategoryName = subcategoryNameBySlug.get(selectedSlug);
+      return subcategoryName ? [subcategoryName] : [];
+    });
   }, [selectedSubcategoryKey, subcategoryNameBySlug]);
 
   useEffect(() => {
@@ -313,13 +311,7 @@ export default function SearchPage() {
       category: selectedCategoryNames,
       subcategory: selectedSubcategoryNames,
     }),
-    [
-      appliedMaxPrice,
-      appliedMinPrice,
-      searchQuery,
-      selectedCategoryNames,
-      selectedSubcategoryNames,
-    ]
+    [appliedMaxPrice, appliedMinPrice, searchQuery, selectedCategoryNames, selectedSubcategoryNames]
   );
 
   useEffect(() => {
