@@ -16,6 +16,7 @@ import { useAuth } from '../../features/auth/authContext.ts';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import SuggestedAccessories from '../../features/product/SuggestedAccessories.tsx';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 
 export default function ProductPage() {
@@ -137,6 +138,7 @@ export default function ProductPage() {
               hideFavoriteButton={authStatus !== 'authenticated'}
               onFavoriteToggle={() => void toggleFavorite(product.slug)}
             />
+            <SuggestedAccessories productSlug={product.slug} />
           </div>
         </div>
         {product.sizes?.some((sizeOption) => sizeOption.description) && (
