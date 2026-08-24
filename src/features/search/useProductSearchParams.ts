@@ -12,6 +12,7 @@ type ProductSearchParamsOptions<SortField extends string> = {
   defaultSortField: SortField;
   categorySlugs: readonly string[];
   subcategorySlugs?: readonly string[];
+  manufacturerSlugs?: readonly string[];
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -24,6 +25,7 @@ export function useProductSearchParams<SortField extends string>({
   defaultSortField,
   categorySlugs,
   subcategorySlugs = [],
+  manufacturerSlugs = [],
 }: ProductSearchParamsOptions<SortField>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('query')?.trim() ?? '';
@@ -58,6 +60,10 @@ export function useProductSearchParams<SortField extends string>({
   const selectedSubcategorySlugs = searchParams
     .getAll('subcategory')
     .filter((subcategorySlug) => availableSubcategorySlugs.has(subcategorySlug));
+  const availableManufacturerSlugs = new Set(manufacturerSlugs);
+  const selectedManufacturerSlugs = searchParams
+    .getAll('manufacturer')
+    .filter((manufacturerSlug) => availableManufacturerSlugs.has(manufacturerSlug));
 
   const setPageNumber = (nextPageNumber: number) => {
     setSearchParams((previousSearchParams) => {
@@ -141,6 +147,20 @@ export function useProductSearchParams<SortField extends string>({
     setCategoryAndSubcategorySlugs(selectedCategorySlugs, nextSelectedSubcategorySlugs);
   };
 
+  const setManufacturerSlugs = (nextSelectedManufacturerSlugs: readonly string[]) => {
+    const selectedManufacturers = new Set(nextSelectedManufacturerSlugs);
+
+    setSearchParams((previousSearchParams) => {
+      const nextSearchParams = new URLSearchParams(previousSearchParams);
+      nextSearchParams.delete('manufacturer');
+      manufacturerSlugs
+        .filter((manufacturerSlug) => selectedManufacturers.has(manufacturerSlug))
+        .forEach((manufacturerSlug) => nextSearchParams.append('manufacturer', manufacturerSlug));
+      nextSearchParams.set('page', '1');
+      return nextSearchParams;
+    });
+  };
+
   return {
     query,
     pageNumber,
@@ -149,6 +169,7 @@ export function useProductSearchParams<SortField extends string>({
     priceRange,
     selectedCategorySlugs,
     selectedSubcategorySlugs,
+    selectedManufacturerSlugs,
     setPageNumber,
     setSortField,
     setSortDirection,
@@ -156,5 +177,6 @@ export function useProductSearchParams<SortField extends string>({
     setSelectedCategorySlugs,
     setSelectedSubcategorySlugs,
     setCategoryAndSubcategorySlugs,
+    setManufacturerSlugs,
   };
 }
