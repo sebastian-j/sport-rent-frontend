@@ -363,6 +363,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/manufacturers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Manufacturers */
+        get: operations["get_manufacturers_manufacturers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product": {
         parameters: {
             query?: never;
@@ -678,6 +695,13 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionType: "EARN" | "SPEND" | "REFUND" | "REVERSAL" | "ADJUSTMENT";
+        /** ManufacturerResponse */
+        ManufacturerResponse: {
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+        };
         /** OrderDetailResponse */
         OrderDetailResponse: {
             /** Id */
@@ -774,6 +798,8 @@ export interface components {
             imageAlts: string[];
             /** Category */
             category?: string | null;
+            /** Manufacturer */
+            manufacturer?: string | null;
             /** Sizes */
             sizes?: components["schemas"]["ProductSize"][] | null;
             /**
@@ -1618,6 +1644,26 @@ export interface operations {
             };
         };
     };
+    get_manufacturers_manufacturers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManufacturerResponse"][];
+                };
+            };
+        };
+    };
     get_products_product_get: {
         parameters: {
             query?: {
@@ -1627,6 +1673,7 @@ export interface operations {
                 maxPrice?: number | null;
                 category?: string[] | null;
                 subcategory?: string[] | null;
+                manufacturer?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;
@@ -1666,6 +1713,7 @@ export interface operations {
                 maxPrice?: number | null;
                 category?: string[] | null;
                 subcategory?: string[] | null;
+                manufacturer?: string[] | null;
                 query?: string | null;
                 page?: number;
                 pageSize?: number;
