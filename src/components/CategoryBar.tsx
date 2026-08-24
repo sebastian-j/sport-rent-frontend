@@ -1,45 +1,95 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import avalancheGearIcon from '../assets/categories/avalanche-gear.svg';
-import bikeAccessoriesIcon from '../assets/categories/bike-accessories.svg';
-import bikeTrailerIcon from '../assets/categories/bike-trailer.svg';
-import campingTentIcon from '../assets/categories/camping-tent.svg';
-import canoeIcon from '../assets/categories/canoe.svg';
-import childCarrierIcon from '../assets/categories/child-carrier.svg';
-import cityBikeIcon from '../assets/categories/city-bike.svg';
-import electricBikeIcon from '../assets/categories/electric-bike.svg';
-import gravelBikeIcon from '../assets/categories/gravel-bike.svg';
-import hitchTentIcon from '../assets/categories/hitch-tent.svg';
-import kayakIcon from '../assets/categories/kayak.svg';
-import mountainGearIcon from '../assets/categories/mountain-gear.svg';
-import roofTentIcon from '../assets/categories/roof-tent.svg';
-import snowSledIcon from '../assets/categories/snow-sled.svg';
-import supBoardIcon from '../assets/categories/sup-board.svg';
-import touringSkisIcon from '../assets/categories/touring-skis.svg';
+import type { CategoryItem } from '../api/category.ts';
+import useCategories from '../features/category/useCategories.ts';
+import { getSubcategorySearchPath } from '../features/search/categoryUtils.ts';
 
-const CATEGORIES = [
-  { name: 'Namioty dachowe', icon: roofTentIcon },
-  { name: 'Namioty na hak', icon: hitchTentIcon },
-  { name: 'Sanki śnieżne', icon: snowSledIcon },
-  { name: 'Rowery miejskie', icon: cityBikeIcon },
-  { name: 'Namioty klasyczne', icon: campingTentIcon },
-  { name: 'Przyczepki rowerowe', icon: bikeTrailerIcon },
-  { name: 'E-bike full', icon: electricBikeIcon },
-  { name: 'Rowery gravel', icon: gravelBikeIcon },
-  { name: 'Akcesoria rowerowe', icon: bikeAccessoriesIcon },
-  { name: 'Sprzęt górski', icon: mountainGearIcon },
-  { name: 'Nosidełka turystyczne', icon: childCarrierIcon },
-  { name: 'Narty skiturowe', icon: touringSkisIcon },
-  { name: 'Sprzęt lawinowy', icon: avalancheGearIcon },
-  { name: 'Kanoo', icon: canoeIcon },
-  { name: 'Deski sup', icon: supBoardIcon },
-  { name: 'Kajaki', icon: kayakIcon },
-];
+type CategoryBarItem = {
+  name: string;
+  slug: string;
+  image?: string | null;
+  categorySlug: string;
+};
 
 const SCROLL_SPEED_PX_PER_SECOND = 24;
 
+const normalizeSubcategoryImage = (image?: string | null) => {
+  if (!image) return null;
+
+  // potential TODO - API returns data:image/svg; which browser rejects, SVG data URLs need `image/svg+xml`.
+  if (image.startsWith('data:image/svg;')) {
+    return image.replace('data:image/svg;', 'data:image/svg+xml;');
+  }
+
+  return image;
+};
+
+const getCategoryBarItems = (categories: readonly CategoryItem[]): CategoryBarItem[] => {
+  const items: CategoryBarItem[] = [];
+  const seenSlugs = new Set<string>();
+
+  for (const category of categories) {
+    for (const subcategory of category.subcategories) {
+      if (seenSlugs.has(subcategory.slug)) continue;
+
+      seenSlugs.add(subcategory.slug);
+      items.push({
+        name: subcategory.name,
+        slug: subcategory.slug,
+        image: normalizeSubcategoryImage(subcategory.image),
+        categorySlug: category.slug,
+      });
+    }
+  }
+
+  return items;
+};
+
+function CategoryIcon({ image, name }: { image?: string | null; name: string }) {
+  if (!image) {
+    return <span aria-hidden="true" className="h-8 w-8 md:h-10 md:w-10" />;
+  }
+
+  return (
+    <img
+      src={image}
+      alt=""
+      title={name}
+      aria-hidden="true"
+      className="h-8 w-8 object-contain transition-transform duration-200 group-hover:scale-110 md:h-10 md:w-10"
+      draggable={false}
+    />
+  );
+}
+
+function CategoryBarEntry({ item, interactive }: { item: CategoryBarItem; interactive: boolean }) {
+  const content = (
+    <>
+      <CategoryIcon image={item.image} name={item.name} />
+      <span className="line-clamp-2 px-1 text-center text-[11px] font-medium leading-[14px] md:px-2 md:text-[12px] md:leading-tight">
+        {item.name}
+      </span>
+    </>
+  );
+
+  const className = 'group flex w-16 shrink-0 flex-col items-center gap-2 md:w-[75px] md:gap-3';
+
+  if (!interactive) {
+    return <div className={className}>{content}</div>;
+  }
+
+  return (
+    <Link to={getSubcategorySearchPath(item.categorySlug, item.slug)} className={className}>
+      {content}
+    </Link>
+  );
+}
+
 export default function CategoryBar() {
+  const { categories, isLoading } = useCategories();
+  const items = useMemo(() => getCategoryBarItems(categories), [categories]);
   const viewportRef = useRef<HTMLDivElement>(null);
   const categoryGroupRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -49,7 +99,7 @@ export default function CategoryBar() {
     const viewport = viewportRef.current;
     const categoryGroup = categoryGroupRef.current;
 
-    if (!viewport || !categoryGroup) return;
+    if (!viewport || !categoryGroup || items.length === 0) return;
 
     const updateDimensions = () => {
       const contentWidth = Array.from(categoryGroup.children).reduce(
@@ -70,7 +120,9 @@ export default function CategoryBar() {
     Array.from(categoryGroup.children).forEach((category) => resizeObserver.observe(category));
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [items]);
+
+  if (!isLoading && items.length === 0) return null;
 
   const isOverflowing = dimensions.contentWidth > dimensions.viewportWidth + 1;
   const shouldAnimate = isOverflowing && !prefersReducedMotion;
@@ -81,30 +133,6 @@ export default function CategoryBar() {
     isOverflowing ? 'justify-center' : 'justify-between'
   }`;
   const categoryGroupStyle = { width: groupWidth || '100%' };
-  const categoryItems = CATEGORIES.map((category) => (
-    <div
-      key={category.name}
-      className="group flex w-16 shrink-0 cursor-pointer flex-col items-center gap-2 md:w-[75px] md:gap-3"
-    >
-      <span
-        aria-hidden="true"
-        className="h-8 w-8 bg-app-textNeutral transition-transform duration-200 group-hover:scale-110 md:h-10 md:w-10"
-        style={{
-          WebkitMaskImage: `url(${category.icon})`,
-          maskImage: `url(${category.icon})`,
-          WebkitMaskPosition: 'center',
-          maskPosition: 'center',
-          WebkitMaskRepeat: 'no-repeat',
-          maskRepeat: 'no-repeat',
-          WebkitMaskSize: 'contain',
-          maskSize: 'contain',
-        }}
-      />
-      <span className="line-clamp-2 px-1 text-center text-[11px] font-medium leading-[14px] md:px-2 md:text-[12px] md:leading-tight">
-        {category.name}
-      </span>
-    </div>
-  ));
 
   return (
     <div className="bg-app-surface border-b border-app-borderSoft select-none">
@@ -114,24 +142,50 @@ export default function CategoryBar() {
           prefersReducedMotion && isOverflowing ? 'overflow-x-auto' : 'overflow-hidden'
         }`}
       >
-        <motion.div
-          className="flex w-max min-w-full"
-          animate={{ x: shouldAnimate ? -groupWidth : 0 }}
-          transition={
-            shouldAnimate
-              ? { duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }
-              : { duration: 0 }
-          }
-        >
-          <div ref={categoryGroupRef} className={categoryGroupClassName} style={categoryGroupStyle}>
-            {categoryItems}
+        {isLoading && items.length === 0 ? (
+          <div
+            role="status"
+            aria-label="Ładowanie subkategorii"
+            className="flex h-[68px] animate-pulse justify-between md:h-[82px]"
+          >
+            {Array.from({ length: 8 }, (_, index) => (
+              <div
+                key={index}
+                className="flex w-16 shrink-0 flex-col items-center gap-2 md:w-[75px] md:gap-3"
+              >
+                <span className="h-8 w-8 rounded-full bg-app-borderSoft md:h-10 md:w-10" />
+                <span className="h-3 w-12 rounded bg-app-borderSoft" />
+              </div>
+            ))}
           </div>
-          {isOverflowing && (
-            <div aria-hidden="true" className={categoryGroupClassName} style={categoryGroupStyle}>
-              {categoryItems}
+        ) : (
+          <motion.div
+            className="flex w-max min-w-full"
+            animate={{ x: shouldAnimate ? -groupWidth : 0 }}
+            transition={
+              shouldAnimate
+                ? { duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }
+                : { duration: 0 }
+            }
+          >
+            <div
+              ref={categoryGroupRef}
+              className={categoryGroupClassName}
+              style={categoryGroupStyle}
+            >
+              {items.map((item) => (
+                <CategoryBarEntry key={item.slug} item={item} interactive />
+              ))}
             </div>
-          )}
-        </motion.div>
+            {isOverflowing && (
+              <div aria-hidden="true" className={categoryGroupClassName} style={categoryGroupStyle}>
+                {items.map((item) => (
+                  <CategoryBarEntry key={item.slug} item={item} interactive={false} />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
     </div>
   );
