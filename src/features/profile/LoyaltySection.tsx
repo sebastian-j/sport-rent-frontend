@@ -40,7 +40,7 @@ export default function LoyaltySection() {
         if (!active) return;
 
         if (error) {
-          console.error(error);
+          console.error(error); // TODO: remove before production version
           setHasLoadError(true);
           return;
         }
