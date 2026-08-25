@@ -2,9 +2,11 @@ import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react
 import { useEffect, useState } from 'react';
 
 import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts';
+import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import PointsCard from './loyalty/PointsCard.tsx';
 
+const PAGE_SIZE = 10;
 const LOADING_CARD_IDS = ['loading-card-1', 'loading-card-2', 'loading-card-3'];
 const PLACEHOLDER_REVEAL_DURATION_SECONDS = 0.24;
 const PLACEHOLDER_REVEAL_GAP_SECONDS = 0.02;
@@ -18,24 +20,33 @@ export default function LoyaltySection() {
   const [displayedBalance, setDisplayedBalance] = useState(0);
   const [hasLoadError, setHasLoadError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     let active = true;
 
     async function loadHistory() {
+      setIsLoading(true);
+      setHasLoadError(false);
+
       try {
-        const { data, error } = await getLoyaltyHistory();
+        const { data, error } = await getLoyaltyHistory({
+          page,
+          pageSize: PAGE_SIZE,
+        });
 
         if (!active) return;
 
         if (error) {
-          console.error(error);
+          console.error(error); // TODO: remove before production version
           setHasLoadError(true);
           return;
         }
         setItems(data.items.toSorted((a, b) => b.created_at.localeCompare(a.created_at)));
         setBalance(data.balance);
+        setTotalPages(data.totalPages);
       } catch (error) {
         if (!active) return;
 
@@ -51,7 +62,7 @@ export default function LoyaltySection() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     if (isLoading || hasLoadError) return;
@@ -204,6 +215,11 @@ export default function LoyaltySection() {
                   />
                 </motion.div>
               ))}
+              {totalPages > 1 && (
+                <div className="flex justify-center p-4">
+                  <PageSelector pageNumber={page} totalPages={totalPages} onPageChange={setPage} />
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

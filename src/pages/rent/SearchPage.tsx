@@ -11,6 +11,7 @@ import type { SelectOption } from '../../components/core/Select.tsx';
 import SortToggles from '../../components/core/SortToggles.tsx';
 import { useAuth } from '../../features/auth/authContext.ts';
 import useCategories from '../../features/category/useCategories.ts';
+import useManufacturers from '../../features/manufacturer/useManufacturers.ts';
 import type { ProductProps } from '../../features/product/productProps.ts';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import CategoryFilter, { type CategoryFacets } from '../../features/search/CategoryFilter.tsx';
@@ -22,6 +23,7 @@ import {
   getSubcategorySlugs,
   toCategorySlug,
 } from '../../features/search/categoryUtils.ts';
+import ManufacturerFilter from '../../features/search/ManufacturerFilter.tsx';
 import SearchProductCard from '../../features/search/SearchProductCard.tsx';
 import SearchProductCardPlaceholder from '../../features/search/SearchProductCardPlaceholder.tsx';
 import { useProductSearchParams } from '../../features/search/useProductSearchParams.ts';
@@ -147,6 +149,7 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null);
   const { status: authStatus } = useAuth();
   const { categories: catalogCategories } = useCategories();
+  const { manufacturers } = useManufacturers();
   const prefersReducedMotion = useReducedMotion();
 
   const parentCategoryNameBySlug = useMemo(
@@ -173,6 +176,19 @@ export default function SearchPage() {
     () => getSubcategorySlugs(catalogCategories),
     [catalogCategories]
   );
+  const manufacturerSlugs = useMemo(
+    () => manufacturers.map((manufacturer) => manufacturer.slug),
+    [manufacturers]
+  );
+  const manufacturerNameBySlug = useMemo(() => {
+    const nameBySlug = new Map<string, string>();
+
+    for (const manufacturer of manufacturers) {
+      nameBySlug.set(manufacturer.slug, manufacturer.name);
+    }
+
+    return nameBySlug;
+  }, [manufacturers]);
 
   const {
     query: searchQuery,
@@ -182,11 +198,13 @@ export default function SearchPage() {
     priceRange: appliedPriceRange,
     selectedCategorySlugs,
     selectedSubcategorySlugs,
+    selectedManufacturerSlugs,
     setPageNumber,
     setSortField,
     setSortDirection,
     setPriceRange: setAppliedPriceRange,
     setCategoryAndSubcategorySlugs,
+    setManufacturerSlugs,
   } = useProductSearchParams({
     totalPages,
     minPrice: priceBounds[0],
@@ -195,12 +213,14 @@ export default function SearchPage() {
     defaultSortField: 'name',
     categorySlugs,
     subcategorySlugs,
+    manufacturerSlugs,
   });
   const [appliedMinPrice, appliedMaxPrice] = appliedPriceRange;
   const [priceRange, setPriceRange] = useState<[number, number]>(appliedPriceRange);
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
   const selectedCategoryKey = selectedCategorySlugs.join(',');
   const selectedSubcategoryKey = selectedSubcategorySlugs.join(',');
+  const selectedManufacturerKey = selectedManufacturerSlugs.join(',');
   const selectedCategoryNames = useMemo(() => {
     if (!selectedCategoryKey) return undefined;
 
@@ -222,6 +242,14 @@ export default function SearchPage() {
       return subcategoryName ? [subcategoryName] : [];
     });
   }, [selectedSubcategoryKey, subcategoryNameBySlug]);
+  const selectedManufacturerNames = useMemo(() => {
+    if (!selectedManufacturerKey) return undefined;
+
+    return selectedManufacturerKey.split(',').flatMap((selectedSlug) => {
+      const manufacturerName = manufacturerNameBySlug.get(selectedSlug);
+      return manufacturerName ? [manufacturerName] : [];
+    });
+  }, [manufacturerNameBySlug, selectedManufacturerKey]);
 
   useEffect(() => {
     if (catalogCategories.length === 0 || selectedSubcategorySlugs.length === 0) return;
@@ -265,6 +293,7 @@ export default function SearchPage() {
       maxPrice: appliedMaxPrice,
       category: selectedCategoryNames,
       subcategory: selectedSubcategoryNames,
+      manufacturer: selectedManufacturerNames,
       page: pageNumber,
       pageSize: PAGE_SIZE,
     })
@@ -298,6 +327,7 @@ export default function SearchPage() {
     pageNumber,
     searchQuery,
     selectedCategoryNames,
+    selectedManufacturerNames,
     selectedSubcategoryNames,
     sortDirection,
     sortField,
@@ -317,8 +347,9 @@ export default function SearchPage() {
       ...facetCountQuery,
       category: selectedCategoryNames,
       subcategory: selectedSubcategoryNames,
+      manufacturer: selectedManufacturerNames,
     }),
-    [facetCountQuery, selectedCategoryNames, selectedSubcategoryNames]
+    [facetCountQuery, selectedCategoryNames, selectedManufacturerNames, selectedSubcategoryNames]
   );
 
   useEffect(() => {
@@ -478,6 +509,11 @@ export default function SearchPage() {
           selectedCategorySlugs={selectedCategorySlugs}
           selectedSubcategorySlugs={selectedSubcategorySlugs}
           onCategoryFiltersChange={setCategoryAndSubcategorySlugs}
+        />
+        <ManufacturerFilter
+          manufacturers={manufacturers}
+          selectedManufacturerSlugs={selectedManufacturerSlugs}
+          onManufacturerFiltersChange={setManufacturerSlugs}
         />
       </ContentPanel>
       <div className="flex min-w-0 flex-1 flex-col gap-4">
@@ -652,6 +688,11 @@ export default function SearchPage() {
                         selectedCategorySlugs={selectedCategorySlugs}
                         selectedSubcategorySlugs={selectedSubcategorySlugs}
                         onCategoryFiltersChange={setCategoryAndSubcategorySlugs}
+                      />
+                      <ManufacturerFilter
+                        manufacturers={manufacturers}
+                        selectedManufacturerSlugs={selectedManufacturerSlugs}
+                        onManufacturerFiltersChange={setManufacturerSlugs}
                       />
                     </>
                   ) : (
