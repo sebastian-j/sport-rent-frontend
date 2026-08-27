@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getCart } from '../../api/cart.ts';
 import { getLoyalty } from '../../api/loyalty.ts';
+import { createOrder } from '../../api/orders.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
@@ -25,6 +26,7 @@ import type {
   RecipientDetails,
 } from '../../features/userDetails/userDetailsTypes.ts';
 import { RENT_ROUTES } from '../../routes.ts';
+import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 
 const HEADER_OFFSET_PX = 64;
 const PANEL_VIEWPORT_GAP_PX = 16;
@@ -80,6 +82,8 @@ export default function OrderSummaryPage() {
   const [points, setPoints] = useState(0);
   const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
   const [isPointsLoading, setIsPointsLoading] = useState(true);
+  const [isBuying, setIsBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
 
   const loadSummaryCart = useCallback(async () => {
     setIsCartLoading(true);
@@ -138,6 +142,44 @@ export default function OrderSummaryPage() {
   const handleRemovePromoCode = () => {
     removePromoCode();
     if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
+  };
+
+  const handleBuy = async () => {
+    if (isBuying || selectedPaymentMethodId === undefined) return;
+
+    setIsBuying(true);
+    setBuyError(null);
+
+    try {
+      const { data, error } = await createOrder({
+        used_points: selectedPaymentMethodId === 'points',
+        promo_code: appliedPromoCode || null,
+        address: wantsInvoice
+          ? {
+              first_name: invoiceDetails.firstName,
+              last_name: invoiceDetails.lastName,
+              first_line: invoiceDetails.addressLine1,
+              second_line: invoiceDetails.addressLine2 || null,
+              postal_code: invoiceDetails.postalCode,
+              city: invoiceDetails.city,
+              country: invoiceDetails.country,
+              company: invoiceDetails.company || null,
+              nip: invoiceDetails.nip || null,
+            }
+          : null,
+      });
+
+      if (error || !data) {
+        setBuyError(getErrorMessage(error, 'Nie udało się złożyć zamówienia.'));
+        return;
+      }
+
+      navigate(`${RENT_ROUTES.profile}?section=orders`);
+    } catch (error) {
+      setBuyError(getErrorMessage(error, 'Nie udało się złożyć zamówienia.'));
+    } finally {
+      setIsBuying(false);
+    }
   };
 
   useEffect(() => {
@@ -251,6 +293,9 @@ export default function OrderSummaryPage() {
             paymentPrice={paymentPrice}
             discount={discount}
             canBuy={selectedPaymentMethodId !== undefined && !isCartLoading && !cartLoadError}
+            isBuying={isBuying}
+            buyError={buyError}
+            onBuy={() => void handleBuy()}
           />
         </ContentPanel>
       </div>
