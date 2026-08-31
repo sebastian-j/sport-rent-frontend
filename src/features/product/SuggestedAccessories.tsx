@@ -40,7 +40,7 @@ export default function SuggestedAccessories({ productSlug }: { productSlug: str
             price: accessory.price ?? 0,
             slug: accessory.slug,
             images: accessory.images ?? [],
-            imageAlts: accessory.imageAlts,
+            imageAlts: accessory.imageAlts ?? [],
             category: accessory.category ?? '',
             sizes: accessory.sizes ?? [],
             isFavorite: accessory.isFavorite,
@@ -129,7 +129,9 @@ export default function SuggestedAccessories({ productSlug }: { productSlug: str
               {accessory.images[0] ? (
                 <img
                   src={accessory.images[0]}
-                  alt={accessory.imageAlts[0] ?? accessory.name}
+                  alt={accessory.imageAlts?.[0] ?? accessory.name}
+                  loading="lazy"
+                  decoding="async"
                   className="h-24 w-full object-cover"
                 />
               ) : (
