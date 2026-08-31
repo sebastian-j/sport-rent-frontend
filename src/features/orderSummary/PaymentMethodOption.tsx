@@ -26,8 +26,7 @@ export default function PaymentMethodOption({
   const missingPoints = Math.max(0, pointsRequired - userPoints);
   const isDisabled =
     isPointsPayment && (isUserPointsLoading || userPointsLoadError !== null || missingPoints > 0);
-  const hasPointsStatus =
-    isUserPointsLoading || userPointsLoadError !== null || missingPoints > 0;
+  const hasPointsStatus = isUserPointsLoading || userPointsLoadError !== null || missingPoints > 0;
   const prefersReducedMotion = useReducedMotion();
 
   return (

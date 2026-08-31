@@ -91,7 +91,7 @@ export default function OrderSummaryPage() {
     try {
       const result = await getCart();
       if (result.error || !result.data) {
-          throw new Error('Nie udało się pobrać koszyka.');
+        throw new Error('Nie udało się pobrać koszyka.');
       }
       const cart = result.data.map(mapCartProduct);
       if (cart.length === 0) {
