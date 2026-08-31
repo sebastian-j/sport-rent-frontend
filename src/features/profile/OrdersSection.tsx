@@ -1,13 +1,14 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { getOrderDetails, getUserHistory, type OrderDetailResponse } from '../../api/user.ts';
+import { getOrder, getOrders, type OrderResponse } from '../../api/orders.ts';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice';
+import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 import OrderCard from './orders/OrderCard.tsx';
-import { type Order, type OrderStatus } from './orders/orderTypes.ts';
+import { type Order } from './orders/orderTypes.ts';
 
 const PLACEHOLDER_PULSE_DURATION_SECONDS = 2.4;
 const ORDER_DETAILS_PLACEHOLDER_HEIGHT = 132;
@@ -103,7 +104,7 @@ function OrderTotal({
 }
 
 function OrderDetailsLoader({ orderId }: { orderId: string }) {
-  const [details, setDetails] = useState<OrderDetailResponse | null>(null);
+  const [details, setDetails] = useState<OrderResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -126,10 +127,10 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    getOrderDetails(Number(orderId))
+    getOrder(Number(orderId))
       .then(({ data, error }) => {
         if (error) {
-          setError((error as any)?.detail.msg || 'Nieznany błąd');
+          setError(getErrorMessage(error, 'Nieznany błąd'));
           console.error(error);
         } else if (data) {
           setDetails(data);
@@ -137,7 +138,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
         setIsLoading(false);
       })
       .catch((error) => {
-        setError(error);
+        setError(getErrorMessage(error, 'Nieznany błąd'));
         console.error(error);
         setIsLoading(false);
       });
@@ -195,13 +196,13 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
                     }
               }
             >
-              {details.items.map((item, index) => {
+              {details.instances.map((item, index) => {
                 const startDate = new Date(item.start_date);
                 const endDate = new Date(item.end_date);
                 const diffTime = endDate.getTime() - startDate.getTime();
                 const days = Math.max(1, Math.round(diffTime / (1000 * 3600 * 24)));
-                const dailyPrice = item.unit_price / days;
-                const totalItemPrice = item.quantity * item.unit_price;
+                const dailyPrice = item.price / days;
+                const totalItemPrice = item.quantity * item.price;
 
                 return (
                   <div
@@ -244,7 +245,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
         </AnimatePresence>
         {(isLoading || details) && (
           <OrderTotal
-            total={details?.total ?? null}
+            total={details?.total_price ?? null}
             isLoading={isLoading}
             prefersReducedMotion={prefersReducedMotion ?? false}
           />
@@ -254,42 +255,48 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
   );
 }
 
+function mapOrderToCard(order: OrderResponse): Order {
+  return {
+    id: String(order.id),
+    date: new Date(order.created_at).toLocaleDateString('pl-PL', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }),
+    price: order.total_price,
+    status: order.status,
+  };
+}
+
 export default function OrdersSection() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
-
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
   useEffect(() => {
-    getUserHistory({
+    setIsLoading(true);
+    setError(null);
+
+    getOrders({
       page,
       pageSize: PAGE_SIZE,
     })
       .then(({ data, error }) => {
         if (error) {
           console.error(error);
-          setError('Nie udało się pobrać historii zamówień.');
+          setError(getErrorMessage(error, 'Nie udało się pobrać historii zamówień.'));
         } else if (data) {
-          const fetchedOrders: Order[] = data.items.map((item) => ({
-            id: String(item.id),
-            date: new Date(item.created_at).toLocaleDateString('pl-PL', {
-              day: '2-digit',
-              month: 'long',
-              year: 'numeric',
-            }),
-            price: item.total,
-            status: item.status as OrderStatus,
-          }));
-          setOrders(fetchedOrders);
+          setOrders(data.items.map(mapOrderToCard));
           setTotalPages(data.totalPages);
         }
         setIsLoading(false);
       })
       .catch((error) => {
         console.error(error);
-        setError('Nie udało się pobrać historii zamówień.');
+        setError(getErrorMessage(error, 'Nie udało się pobrać historii zamówień.'));
         setIsLoading(false);
       });
   }, [page]);

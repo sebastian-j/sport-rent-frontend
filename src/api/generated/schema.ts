@@ -806,10 +806,16 @@ export interface components {
         };
         /** OrderInstanceResponse */
         OrderInstanceResponse: {
+            /** Product Id */
+            product_id: number;
             /** Product Name */
             product_name: string;
+            /** Image */
+            image: string | null;
             /** Size */
             size: string | null;
+            /** Quantity */
+            quantity: number;
             /**
              * Start Date
              * Format: date
@@ -854,9 +860,18 @@ export interface components {
             id: number;
             /** User Id */
             user_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
             status: components["schemas"]["OrderStatus"];
+            /** Payment Code */
+            payment_code: string | null;
             /** Total Price */
             total_price: number;
+            /** Discount */
+            discount: number;
             /** Used Points */
             used_points: boolean;
             address: components["schemas"]["OrderAddressRequest"];
@@ -868,6 +883,19 @@ export interface components {
          * @enum {string}
          */
         OrderStatus: "PENDING" | "UNPAID" | "PAID" | "GIVEN_OUT" | "FINISHED" | "CANCELLED";
+        /** PaginatedOrdersResponse */
+        PaginatedOrdersResponse: {
+            /** Items */
+            items: components["schemas"]["OrderResponse"][];
+            /** Page */
+            page: number;
+            /** Pagesize */
+            pageSize: number;
+            /** Total */
+            total: number;
+            /** Totalpages */
+            totalPages: number;
+        };
         /** PaginatedUserHistoryResponse */
         PaginatedUserHistoryResponse: {
             /** Items */
@@ -1789,7 +1817,10 @@ export interface operations {
     };
     get_orders_orders_get: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1802,7 +1833,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponse"][];
+                    "application/json": components["schemas"]["PaginatedOrdersResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
