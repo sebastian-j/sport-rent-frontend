@@ -80,7 +80,7 @@ export default function OrderSummaryPage() {
   const discount = Math.min(cartPrice, Math.round(calculatedDiscount * 100) / 100);
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
   const [points, setPoints] = useState(0);
-  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [pointsLoadError, setPointsLoadError] = useState<string | null>(null);
   const [isPointsLoading, setIsPointsLoading] = useState(true);
   const [isBuying, setIsBuying] = useState(false);
   const [buyError, setBuyError] = useState<string | null>(null);
@@ -91,7 +91,7 @@ export default function OrderSummaryPage() {
     try {
       const result = await getCart();
       if (result.error || !result.data) {
-        throw new Error('Nie udało się pobrać koszyka.');
+          throw new Error('Nie udało się pobrać koszyka.');
       }
       const cart = result.data.map(mapCartProduct);
       if (cart.length === 0) {
@@ -182,38 +182,29 @@ export default function OrderSummaryPage() {
     }
   };
 
-  useEffect(() => {
-    let active = true;
+  const loadPoints = useCallback(async () => {
+    setIsPointsLoading(true);
+    setPointsLoadError(null);
 
-    async function loadPoints() {
-      try {
-        const { data, error } = await getLoyalty();
+    try {
+      const { data, error } = await getLoyalty();
 
-        if (!active) return;
-
-        if (error) {
-          console.error(error);
-          setHasPointsLoadError(true);
-          return;
-        }
-
-        setPoints(data.balance);
-      } catch (error) {
-        if (!active) return;
-
-        console.error(error);
-        setHasPointsLoadError(true);
-      } finally {
-        if (active) setIsPointsLoading(false);
+      if (error || !data) {
+        setPointsLoadError(getErrorMessage(error, 'Nie udało się pobrać liczby punktów.'));
+        return;
       }
+
+      setPoints(data.balance);
+    } catch (error) {
+      setPointsLoadError(getErrorMessage(error, 'Nie udało się pobrać liczby punktów.'));
+    } finally {
+      setIsPointsLoading(false);
     }
-
-    void loadPoints();
-
-    return () => {
-      active = false;
-    };
   }, []);
+
+  useEffect(() => {
+    void loadPoints();
+  }, [loadPoints]);
 
   return (
     <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
@@ -241,7 +232,7 @@ export default function OrderSummaryPage() {
               pointsRequired={pointsRequired}
               userPoints={points}
               isUserPointsLoading={isPointsLoading}
-              hasUserPointsLoadError={hasPointsLoadError}
+              userPointsLoadError={pointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>

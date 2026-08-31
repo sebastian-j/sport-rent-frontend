@@ -9,7 +9,7 @@ type PaymentMethodOptionProps = {
   pointsRequired: number;
   userPoints: number;
   isUserPointsLoading: boolean;
-  hasUserPointsLoadError: boolean;
+  userPointsLoadError: string | null;
   onChange: (methodId: PaymentMethodId) => void;
 };
 
@@ -19,14 +19,15 @@ export default function PaymentMethodOption({
   pointsRequired,
   userPoints,
   isUserPointsLoading,
-  hasUserPointsLoadError,
+  userPointsLoadError,
   onChange,
 }: PaymentMethodOptionProps) {
   const isPointsPayment = method.id === 'points';
   const missingPoints = Math.max(0, pointsRequired - userPoints);
   const isDisabled =
-    isPointsPayment && (isUserPointsLoading || hasUserPointsLoadError || missingPoints > 0);
-  const hasPointsStatus = isUserPointsLoading || hasUserPointsLoadError || missingPoints > 0;
+    isPointsPayment && (isUserPointsLoading || userPointsLoadError !== null || missingPoints > 0);
+  const hasPointsStatus =
+    isUserPointsLoading || userPointsLoadError !== null || missingPoints > 0;
   const prefersReducedMotion = useReducedMotion();
 
   return (
@@ -71,9 +72,9 @@ export default function PaymentMethodOption({
                     className="h-3 w-20 animate-pulse rounded-full bg-app-borderSoft"
                   />
                 </span>
-              ) : hasUserPointsLoadError ? (
+              ) : userPointsLoadError ? (
                 <span role="alert" className="text-sm text-app-danger">
-                  Wystąpił błąd
+                  {userPointsLoadError}
                 </span>
               ) : (
                 missingPoints > 0 && (
