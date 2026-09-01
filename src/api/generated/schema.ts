@@ -667,6 +667,7 @@ export interface components {
         };
         /** CreateOrderRequest */
         CreateOrderRequest: {
+            recipient: components["schemas"]["OrderRecipient"];
             address?: components["schemas"]["OrderAddressRequest"] | null;
             /** Promo Code */
             promo_code?: string | null;
@@ -854,6 +855,13 @@ export interface components {
             /** Unit Price */
             unit_price: number;
         };
+        /** OrderRecipient */
+        OrderRecipient: {
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+        };
         /** OrderResponse */
         OrderResponse: {
             /** Id */
@@ -874,6 +882,7 @@ export interface components {
             discount: number;
             /** Used Points */
             used_points: boolean;
+            recipient: components["schemas"]["OrderRecipient"];
             address: components["schemas"]["OrderAddressRequest"];
             /** Instances */
             instances: components["schemas"]["OrderInstanceResponse"][];
