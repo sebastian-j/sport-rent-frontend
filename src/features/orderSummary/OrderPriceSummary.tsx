@@ -6,6 +6,8 @@ type OrderPriceSummaryProps = {
   paymentPrice?: number;
   discount?: number;
   canBuy?: boolean;
+  isBuying?: boolean;
+  buyError?: string | null;
   onBuy?: () => void;
 };
 
@@ -14,6 +16,8 @@ export default function OrderPriceSummary({
   paymentPrice,
   discount = 0,
   canBuy = true,
+  isBuying = false,
+  buyError = null,
   onBuy,
 }: OrderPriceSummaryProps) {
   const totalPrice = cartPrice + (paymentPrice ?? 0) - discount;
@@ -44,10 +48,16 @@ export default function OrderPriceSummary({
         <span>{formatPrice(totalPrice)}</span>
       </p>
 
+      {buyError && (
+        <p role="alert" className="text-sm text-app-danger">
+          {buyError}
+        </p>
+      )}
+
       <ButtonCore
-        text="Rezerwuję i płacę"
+        text={isBuying ? 'Składanie zamówienia…' : 'Rezerwuję i płacę'}
         onClick={onBuy}
-        disabled={!canBuy}
+        disabled={!canBuy || isBuying}
         className="mt-2 flex h-12 w-full items-center justify-center text-lg font-semibold"
       />
     </div>

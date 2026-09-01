@@ -380,6 +380,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lista zamówień użytkownika */
+        get: operations["get_orders_orders_get"];
+        put?: never;
+        /** Dodanie zamówienia */
+        post: operations["create_order_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Szczegóły zamówienia */
+        get: operations["get_order_orders__order_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product": {
         parameters: {
             query?: never;
@@ -630,6 +665,18 @@ export interface components {
             /** New Password */
             new_password: string;
         };
+        /** CreateOrderRequest */
+        CreateOrderRequest: {
+            recipient: components["schemas"]["OrderRecipient"];
+            address?: components["schemas"]["OrderAddressRequest"] | null;
+            /** Promo Code */
+            promo_code?: string | null;
+            /**
+             * Used Points
+             * @default false
+             */
+            used_points: boolean;
+        };
         /**
          * DiscountType
          * @enum {string}
@@ -719,6 +766,27 @@ export interface components {
             /** Slug */
             slug: string;
         };
+        /** OrderAddressRequest */
+        OrderAddressRequest: {
+            /** First Name */
+            first_name?: string | null;
+            /** Last Name */
+            last_name?: string | null;
+            /** First Line */
+            first_line: string;
+            /** Second Line */
+            second_line?: string | null;
+            /** Postal Code */
+            postal_code: string;
+            /** City */
+            city: string;
+            /** Country */
+            country: string;
+            /** Company */
+            company?: string | null;
+            /** Nip */
+            nip?: string | null;
+        };
         /** OrderDetailResponse */
         OrderDetailResponse: {
             /** Id */
@@ -736,6 +804,31 @@ export interface components {
             discount: number | null;
             /** Items */
             items: components["schemas"]["OrderItemDetailsResponse"][];
+        };
+        /** OrderInstanceResponse */
+        OrderInstanceResponse: {
+            /** Product Id */
+            product_id: number;
+            /** Product Name */
+            product_name: string;
+            /** Image */
+            image: string | null;
+            /** Size */
+            size: string | null;
+            /** Quantity */
+            quantity: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** Price */
+            price: number;
         };
         /** OrderItemDetailsResponse */
         OrderItemDetailsResponse: {
@@ -761,6 +854,56 @@ export interface components {
             end_date: string;
             /** Unit Price */
             unit_price: number;
+        };
+        /** OrderRecipient */
+        OrderRecipient: {
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+        };
+        /** OrderResponse */
+        OrderResponse: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            status: components["schemas"]["OrderStatus"];
+            /** Payment Code */
+            payment_code: string | null;
+            /** Total Price */
+            total_price: number;
+            /** Discount */
+            discount: number;
+            /** Used Points */
+            used_points: boolean;
+            recipient: components["schemas"]["OrderRecipient"];
+            address: components["schemas"]["OrderAddressRequest"];
+            /** Instances */
+            instances: components["schemas"]["OrderInstanceResponse"][];
+        };
+        /**
+         * OrderStatus
+         * @enum {string}
+         */
+        OrderStatus: "PENDING" | "UNPAID" | "PAID" | "GIVEN_OUT" | "FINISHED" | "CANCELLED";
+        /** PaginatedOrdersResponse */
+        PaginatedOrdersResponse: {
+            /** Items */
+            items: components["schemas"]["OrderResponse"][];
+            /** Page */
+            page: number;
+            /** Pagesize */
+            pageSize: number;
+            /** Total */
+            total: number;
+            /** Totalpages */
+            totalPages: number;
         };
         /** PaginatedUserHistoryResponse */
         PaginatedUserHistoryResponse: {
@@ -1677,6 +1820,102 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ManufacturerResponse"][];
+                };
+            };
+        };
+    };
+    get_orders_orders_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOrdersResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_order_orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_order_orders__order_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

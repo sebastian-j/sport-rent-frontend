@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { getCart } from '../../api/cart.ts';
 import { getLoyalty } from '../../api/loyalty.ts';
+import { createOrder } from '../../api/orders.ts';
+import { getUser } from '../../api/user.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
@@ -20,38 +22,32 @@ import PromoCodePanel from '../../features/orderSummary/PromoCodePanel.tsx';
 import RecipientDetailsPanel from '../../features/orderSummary/RecipientDetailsPanel.tsx';
 import SummaryProduct from '../../features/orderSummary/SummaryProduct.tsx';
 import usePromo from '../../features/orderSummary/usePromo.ts';
+import {
+  mapInvoiceDetails,
+  mapRecipientDetails,
+} from '../../features/userDetails/userDetailsMappers.ts';
 import type {
   InvoiceDetails,
   RecipientDetails,
 } from '../../features/userDetails/userDetailsTypes.ts';
 import { RENT_ROUTES } from '../../routes.ts';
+import { getErrorMessage } from '../../utils/getErrorMessage.ts';
 
 const HEADER_OFFSET_PX = 64;
 const PANEL_VIEWPORT_GAP_PX = 16;
 const DESKTOP_BREAKPOINT_PX = 768;
 
-const PROFILE_RECIPIENT_DETAILS: RecipientDetails = {
-  firstName: 'Jan',
-  lastName: 'Kowalski',
-};
-
-const INITIAL_INVOICE_DETAILS: InvoiceDetails = {
-  ...PROFILE_RECIPIENT_DETAILS,
-  company: 'Polar Sport',
-  nip: '123456789',
-  country: 'Polska',
-  city: 'Kraków',
-  addressLine1: 'ul. Kałuży 1',
-  addressLine2: '',
-  postalCode: '30-111',
+type LoadedUserDetails = {
+  recipient: RecipientDetails;
+  invoice: InvoiceDetails;
 };
 
 export default function OrderSummaryPage() {
   const navigate = useNavigate();
   const summaryPanelRef = useRef<HTMLDivElement>(null);
-  const [recipientDetails, setRecipientDetails] =
-    useState<RecipientDetails>(PROFILE_RECIPIENT_DETAILS);
-  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetails>(INITIAL_INVOICE_DETAILS);
+  const [userDetails, setUserDetails] = useState<LoadedUserDetails | null>(null);
+  const [isUserDetailsLoading, setIsUserDetailsLoading] = useState(true);
+  const [userDetailsLoadError, setUserDetailsLoadError] = useState<string | null>(null);
   const [wantsInvoice, setWantsInvoice] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<PaymentMethodId>();
   const [summaryProducts, setSummaryProducts] = useState<CartProduct[]>([]);
@@ -78,8 +74,10 @@ export default function OrderSummaryPage() {
   const discount = Math.min(cartPrice, Math.round(calculatedDiscount * 100) / 100);
   const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
   const [points, setPoints] = useState(0);
-  const [hasPointsLoadError, setHasPointsLoadError] = useState(false);
+  const [pointsLoadError, setPointsLoadError] = useState<string | null>(null);
   const [isPointsLoading, setIsPointsLoading] = useState(true);
+  const [isBuying, setIsBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
 
   const loadSummaryCart = useCallback(async () => {
     setIsCartLoading(true);
@@ -140,58 +138,144 @@ export default function OrderSummaryPage() {
     if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
 
-  useEffect(() => {
-    let active = true;
+  const handleBuy = async () => {
+    if (isBuying || selectedPaymentMethodId === undefined || !userDetails) return;
 
-    async function loadPoints() {
-      try {
-        const { data, error } = await getLoyalty();
+    setIsBuying(true);
+    setBuyError(null);
 
-        if (!active) return;
+    try {
+      const { data, error } = await createOrder({
+        recipient: {
+          first_name: userDetails.recipient.firstName,
+          last_name: userDetails.recipient.lastName,
+        },
+        used_points: selectedPaymentMethodId === 'points',
+        promo_code: appliedPromoCode || null,
+        address: wantsInvoice
+          ? {
+              first_name: userDetails.invoice.firstName,
+              last_name: userDetails.invoice.lastName,
+              first_line: userDetails.invoice.addressLine1,
+              second_line: userDetails.invoice.addressLine2 || null,
+              postal_code: userDetails.invoice.postalCode,
+              city: userDetails.invoice.city,
+              country: userDetails.invoice.country,
+              company: userDetails.invoice.company || null,
+              nip: userDetails.invoice.nip || null,
+            }
+          : null,
+      });
 
-        if (error) {
-          console.error(error);
-          setHasPointsLoadError(true);
-          return;
-        }
-
-        setPoints(data.balance);
-      } catch (error) {
-        if (!active) return;
-
-        console.error(error);
-        setHasPointsLoadError(true);
-      } finally {
-        if (active) setIsPointsLoading(false);
+      if (error || !data) {
+        setBuyError(getErrorMessage(error, 'Nie udało się złożyć zamówienia.'));
+        return;
       }
+
+      navigate(`${RENT_ROUTES.profile}?section=orders`);
+    } catch (error) {
+      setBuyError(getErrorMessage(error, 'Nie udało się złożyć zamówienia.'));
+    } finally {
+      setIsBuying(false);
     }
+  };
 
-    void loadPoints();
+  const loadUserDetails = useCallback(async () => {
+    setIsUserDetailsLoading(true);
+    setUserDetailsLoadError(null);
 
-    return () => {
-      active = false;
-    };
+    try {
+      const { data, error } = await getUser();
+
+      if (error || !data) {
+        setUserDetailsLoadError(getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.'));
+        return;
+      }
+
+      setUserDetails({
+        recipient: mapRecipientDetails(data),
+        invoice: mapInvoiceDetails(data),
+      });
+    } catch (error) {
+      setUserDetailsLoadError(getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.'));
+    } finally {
+      setIsUserDetailsLoading(false);
+    }
   }, []);
+
+  const loadPoints = useCallback(async () => {
+    setIsPointsLoading(true);
+    setPointsLoadError(null);
+
+    try {
+      const { data, error } = await getLoyalty();
+
+      if (error || !data) {
+        setPointsLoadError(getErrorMessage(error, 'Nie udało się pobrać liczby punktów.'));
+        return;
+      }
+
+      setPoints(data.balance);
+    } catch (error) {
+      setPointsLoadError(getErrorMessage(error, 'Nie udało się pobrać liczby punktów.'));
+    } finally {
+      setIsPointsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadUserDetails();
+    void loadPoints();
+  }, [loadUserDetails, loadPoints]);
 
   return (
     <main className="mx-auto w-full max-w-[78rem] px-6 py-6 md:px-8 md:py-12">
       <div className="grid items-start justify-center gap-6 md:grid-cols-[minmax(0,48rem)_minmax(18rem,24rem)] md:gap-8">
         <div className="mx-auto flex w-full max-w-[48rem] flex-col gap-6">
-          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
-            <RecipientDetailsPanel
-              details={recipientDetails}
-              onDetailsChange={setRecipientDetails}
-            />
-          </ContentPanel>
+          {isUserDetailsLoading && (
+            <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+              <p role="status" className="text-center text-app-text">
+                Ładowanie danych użytkownika <LoadingDots />
+              </p>
+            </ContentPanel>
+          )}
+          {userDetailsLoadError && (
+            <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+              <div role="alert" className="flex flex-col gap-3 text-app-danger">
+                <p>{userDetailsLoadError}</p>
+                <button
+                  type="button"
+                  onClick={() => void loadUserDetails()}
+                  className="rounded-lg bg-app-accent px-4 py-2 text-app-textInverted"
+                >
+                  Spróbuj ponownie
+                </button>
+              </div>
+            </ContentPanel>
+          )}
+          {userDetails && (
+            <>
+              <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+                <RecipientDetailsPanel
+                  details={userDetails.recipient}
+                  onDetailsChange={(recipient) =>
+                    setUserDetails((current) => (current ? { ...current, recipient } : current))
+                  }
+                />
+              </ContentPanel>
 
-          <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
-            <InvoiceDetailsPanel
-              enabled={wantsInvoice}
-              details={invoiceDetails}
-              onEnabledChange={setWantsInvoice}
-              onDetailsChange={setInvoiceDetails}
-            />
-          </ContentPanel>
+              <ContentPanel className="w-full p-4 sm:p-6 md:p-8">
+                <InvoiceDetailsPanel
+                  enabled={wantsInvoice}
+                  details={userDetails.invoice}
+                  onEnabledChange={setWantsInvoice}
+                  onDetailsChange={(invoice) =>
+                    setUserDetails((current) => (current ? { ...current, invoice } : current))
+                  }
+                />
+              </ContentPanel>
+            </>
+          )}
 
           <ContentPanel className="w-full px-3 py-4 sm:py-6 md:py-8">
             <PaymentMethodsPanel
@@ -199,7 +283,7 @@ export default function OrderSummaryPage() {
               pointsRequired={pointsRequired}
               userPoints={points}
               isUserPointsLoading={isPointsLoading}
-              hasUserPointsLoadError={hasPointsLoadError}
+              userPointsLoadError={pointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>
@@ -250,7 +334,15 @@ export default function OrderSummaryPage() {
             cartPrice={cartPrice}
             paymentPrice={paymentPrice}
             discount={discount}
-            canBuy={selectedPaymentMethodId !== undefined && !isCartLoading && !cartLoadError}
+            canBuy={
+              selectedPaymentMethodId !== undefined &&
+              !isCartLoading &&
+              !cartLoadError &&
+              userDetails !== null
+            }
+            isBuying={isBuying}
+            buyError={buyError}
+            onBuy={() => void handleBuy()}
           />
         </ContentPanel>
       </div>
