@@ -21,6 +21,13 @@ export const getProductBySlug = (slug: string) =>
     },
   });
 
+export const getProductAccessories = (slug: string) =>
+  api.GET('/product/{product_slug}/accessories', {
+    params: {
+      path: { product_slug: slug },
+    },
+  });
+
 export const getProductAvailability = (
   slug: string,
   startDate: string,
