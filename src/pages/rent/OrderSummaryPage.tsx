@@ -188,9 +188,7 @@ export default function OrderSummaryPage() {
       const { data, error } = await getUser();
 
       if (error || !data) {
-        setUserDetailsLoadError(
-          getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.')
-        );
+        setUserDetailsLoadError(getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.'));
         return;
       }
 
@@ -199,9 +197,7 @@ export default function OrderSummaryPage() {
         invoice: mapInvoiceDetails(data),
       });
     } catch (error) {
-      setUserDetailsLoadError(
-        getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.')
-      );
+      setUserDetailsLoadError(getErrorMessage(error, 'Nie udało się pobrać danych użytkownika.'));
     } finally {
       setIsUserDetailsLoading(false);
     }
