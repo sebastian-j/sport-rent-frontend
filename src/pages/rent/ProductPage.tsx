@@ -64,6 +64,7 @@ export default function ProductPage() {
               images: data.images ?? [],
               imageAlts: data.imageAlts,
               category: data.category ?? '',
+              manufacturer: data.manufacturer,
               sizes:
                 data.sizes?.map((size) => ({
                   ...size,
@@ -120,6 +121,8 @@ export default function ProductPage() {
     );
   }
 
+  const hasSizeDescriptions = product.sizes?.some((sizeOption) => sizeOption.description);
+
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface">
       <PageHeader titleClassName="text-app-text">{product.name}</PageHeader>
@@ -141,11 +144,11 @@ export default function ProductPage() {
             <SuggestedAccessories productSlug={product.slug} />
           </div>
         </div>
-        {product.sizes?.some((sizeOption) => sizeOption.description) && (
+        {hasSizeDescriptions && (
           <section className="text-app-text">
             <h2 className="text-2xl font-semibold">Rozmiary</h2>
             <div className="mt-[2vh] flex flex-col gap-2">
-              {product.sizes.map(
+              {product.sizes?.map(
                 (sizeOption) =>
                   sizeOption.description && (
                     <p key={sizeOption.size} className="text-lg font-semibold">
@@ -153,6 +156,14 @@ export default function ProductPage() {
                     </p>
                   )
               )}
+            </div>
+          </section>
+        )}
+        {product.manufacturer && (
+          <section className={`text-app-text${hasSizeDescriptions ? ' mt-[2vh]' : ''}`}>
+            <h2 className="text-2xl font-semibold">Producent</h2>
+            <div className="mt-[2vh] flex flex-col gap-2">
+              <p className="text-lg font-semibold">{product.manufacturer}</p>
             </div>
           </section>
         )}
