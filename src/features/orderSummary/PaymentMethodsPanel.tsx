@@ -3,19 +3,11 @@ import { PAYMENT_METHODS, type PaymentMethodId } from './paymentMethods.ts';
 
 type PaymentMethodsPanelProps = {
   selectedMethodId?: PaymentMethodId;
-  pointsRequired: number;
-  userPoints: number;
-  isUserPointsLoading: boolean;
-  userPointsLoadError: string | null;
   onMethodChange: (methodId: PaymentMethodId) => void;
 };
 
 export default function PaymentMethodsPanel({
   selectedMethodId,
-  pointsRequired,
-  userPoints,
-  isUserPointsLoading,
-  userPointsLoadError,
   onMethodChange,
 }: PaymentMethodsPanelProps) {
   return (
@@ -29,10 +21,6 @@ export default function PaymentMethodsPanel({
           key={method.id}
           method={method}
           isSelected={selectedMethodId === method.id}
-          pointsRequired={pointsRequired}
-          userPoints={userPoints}
-          isUserPointsLoading={isUserPointsLoading}
-          userPointsLoadError={userPointsLoadError}
           onChange={onMethodChange}
         />
       ))}

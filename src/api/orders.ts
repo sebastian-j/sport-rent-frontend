@@ -7,6 +7,11 @@ export type OrdersQuery = NonNullable<paths['/orders']['get']['parameters']['que
 
 export const createOrder = (body: CreateOrderRequest) => api.POST('/orders', { body });
 
+export const startOrderPayment = (orderId: number) =>
+  api.POST('/orders/{order_id}/payment', {
+    params: { path: { order_id: orderId } },
+  });
+
 export const getOrders = (query: OrdersQuery = {}) =>
   api.GET('/orders', {
     params: { query },

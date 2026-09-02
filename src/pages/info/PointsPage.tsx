@@ -2,6 +2,7 @@ import { Coins, Gift, ShoppingBag } from 'lucide-react';
 
 import PageTitle from '../../components/core/PageTitle.tsx';
 import {
+  MAX_POINTS_PAYMENT_SHARE,
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
 } from '../../features/loyalty/constants.ts';
@@ -13,7 +14,9 @@ export default function PointsPage() {
   const pointsEarnedForExample = Math.floor(
     EXAMPLE_ORDER_TOTAL_IN_PLN / PLN_SPENT_PER_POINT_EARNED
   );
-  const pointsRequiredForExample = EXAMPLE_REWARD_COST_IN_PLN * POINTS_REQUIRED_PER_PLN;
+  const maximumPointsForExample = Math.floor(
+    EXAMPLE_REWARD_COST_IN_PLN * MAX_POINTS_PAYMENT_SHARE * POINTS_REQUIRED_PER_PLN
+  );
 
   return (
     <article>
@@ -21,7 +24,7 @@ export default function PointsPage() {
         <PageTitle>Program lojalnościowy</PageTitle>
         <p>
           Każde zamówienie przybliża Cię do kolejnego wypożyczenia. Zbieraj punkty podczas zakupów,
-          a gdy zgromadzisz ich wystarczająco dużo, opłać nimi całe zamówienie.
+          a po odblokowaniu programu wykorzystuj je do opłacenia maksymalnie 30% zamówienia.
         </p>
       </header>
 
@@ -41,8 +44,8 @@ export default function PointsPage() {
             <Gift className="mb-4" aria-hidden="true" />
             <h3>Płać punktami</h3>
             <p className="mt-3 text-app-textMuted">
-              Każda złotówka wartości zamówienia wymaga {POINTS_REQUIRED_PER_PLN} punktów. Jeśli
-              masz odpowiednie saldo, możesz wykorzystać punkty do opłacenia zamówienia.
+              Każda złotówka rabatu wymaga {POINTS_REQUIRED_PER_PLN} punktów. Punktami możesz pokryć
+              maksymalnie 30% wartości zamówienia.
             </p>
           </div>
         </div>
@@ -64,14 +67,14 @@ export default function PointsPage() {
       </section>
 
       <section>
-        <h2>Ile punktów kosztuje zamówienie?</h2>
+        <h2>Ile punktów można wykorzystać?</h2>
         <p>
-          Cenę zamówienia w złotych mnożymy przez {POINTS_REQUIRED_PER_PLN}. Zamówienie o wartości{' '}
-          {EXAMPLE_REWARD_COST_IN_PLN} zł wymaga więc:
+          Dla zamówienia o wartości {EXAMPLE_REWARD_COST_IN_PLN} zł punktami można pokryć
+          maksymalnie 30%, czyli wykorzystać:
         </p>
         <div className="inline-flex w-fit max-w-full flex-wrap rounded-xl bg-app-surfaceSoft px-6 py-4 text-2xl font-semibold">
-          {EXAMPLE_REWARD_COST_IN_PLN} zł × {POINTS_REQUIRED_PER_PLN} = {pointsRequiredForExample}{' '}
-          punktów
+          {maximumPointsForExample} punktów = {maximumPointsForExample / POINTS_REQUIRED_PER_PLN} zł
+          rabatu
         </div>
       </section>
 
@@ -82,8 +85,9 @@ export default function PointsPage() {
             Zdobyte punkty = wartość zamówienia ÷ {PLN_SPENT_PER_POINT_EARNED}, z zaokrągleniem w
             dół.
           </li>
-          <li>Punkty potrzebne do zapłaty = wartość zamówienia × {POINTS_REQUIRED_PER_PLN}.</li>
-          <li>Zamówienie można opłacić punktami po zgromadzeniu wymaganego salda.</li>
+          <li>1 punkt daje 0,50 zł rabatu.</li>
+          <li>Punktami można pokryć maksymalnie 30% wartości zamówienia.</li>
+          <li>Program można wykorzystać po osiągnięciu 500 zł kwalifikujących wydatków.</li>
         </ul>
       </section>
     </article>
