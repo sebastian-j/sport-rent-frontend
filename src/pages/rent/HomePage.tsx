@@ -21,6 +21,7 @@ import type { ProductProps } from '../../features/product/productProps.ts';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
 import { getCategorySearchPath } from '../../features/search/categoryUtils.ts';
 import { RENT_ROUTES } from '../../routes.ts';
+import { resolveImageUrls } from '../../utils/resolveImageUrl.ts';
 
 type PanoramicStatus = 'loading' | 'ready' | 'hidden';
 
@@ -189,7 +190,7 @@ export default function HomePage() {
             description: product.description ?? '',
             price: product.price ?? 0,
             slug: product.slug,
-            images: product.images ?? [],
+            images: resolveImageUrls(product.images),
             imageAlts: product.imageAlts,
             category: product.category ?? '',
             isFavorite: product.isFavorite,
@@ -220,7 +221,7 @@ export default function HomePage() {
             description: product.description ?? '',
             price: product.price ?? 0,
             slug: product.slug,
-            images: product.images ?? [],
+            images: resolveImageUrls(product.images),
             imageAlts: product.imageAlts,
             category: product.category ?? '',
             isFavorite: product.isFavorite ?? false,

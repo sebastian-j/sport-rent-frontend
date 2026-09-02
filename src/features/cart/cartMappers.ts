@@ -1,5 +1,6 @@
 import type { components } from '../../api/generated/schema.ts';
 import { parseLocalDate } from '../../utils/localDate.ts';
+import { resolveImageUrl } from '../../utils/resolveImageUrl.ts';
 import type { CartProduct } from './cartTypes.ts';
 import type { RentalDate } from './rentalDate.ts';
 
@@ -21,7 +22,7 @@ export function mapCartProduct(product: CartItemResponse): CartProduct {
     slug: product.slug,
     name: product.product_name,
     price: product.price,
-    image: product.image,
+    image: resolveImageUrl(product.image),
     alt: product.alt ?? product.product_name,
     sizes: product.sizes.map(({ size }) => size),
     dates: product.dates.map(mapCartDate),

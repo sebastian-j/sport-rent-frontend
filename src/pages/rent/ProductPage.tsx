@@ -18,6 +18,7 @@ import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
 import SuggestedAccessories from '../../features/product/SuggestedAccessories.tsx';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
+import { resolveImageUrls } from '../../utils/resolveImageUrl.ts';
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -61,7 +62,7 @@ export default function ProductPage() {
               description: data.description ?? '',
               price: data.price ?? 0,
               slug: data.slug,
-              images: data.images ?? [],
+              images: resolveImageUrls(data.images),
               imageAlts: data.imageAlts,
               category: data.category ?? '',
               sizes:
