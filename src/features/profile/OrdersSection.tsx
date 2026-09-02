@@ -240,6 +240,46 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
                   </div>
                 );
               })}
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <section className="rounded-lg border border-app-borderSoft bg-app-surface p-4">
+                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-textMuted">
+                    Dane odbiorcy
+                  </h3>
+                  <p className="font-medium text-app-textStrong">
+                    {details.recipient.first_name} {details.recipient.last_name}
+                  </p>
+                </section>
+
+                <section className="rounded-lg border border-app-borderSoft bg-app-surface p-4">
+                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-textMuted">
+                    Dane adresowe / do faktury
+                  </h3>
+                  <div className="flex flex-col text-sm text-app-text">
+                    {details.address.company && (
+                      <span className="font-semibold text-app-textStrong">
+                        {details.address.company}
+                      </span>
+                    )}
+                    {(details.address.first_name || details.address.last_name) && (
+                      <span>
+                        {[details.address.first_name, details.address.last_name]
+                          .filter(Boolean)
+                          .join(' ')}
+                      </span>
+                    )}
+                    <span>{details.address.first_line}</span>
+                    {details.address.second_line && <span>{details.address.second_line}</span>}
+                    <span>
+                      {details.address.postal_code} {details.address.city}
+                    </span>
+                    <span>{details.address.country}</span>
+                    {details.address.nip && (
+                      <span className="mt-2 text-app-textMuted">NIP: {details.address.nip}</span>
+                    )}
+                  </div>
+                </section>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -265,6 +305,7 @@ function mapOrderToCard(order: OrderResponse): Order {
     }),
     price: order.total_price,
     status: order.status,
+    recipientName: `${order.recipient.first_name} ${order.recipient.last_name}`,
   };
 }
 

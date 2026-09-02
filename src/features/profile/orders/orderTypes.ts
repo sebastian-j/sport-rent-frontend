@@ -14,4 +14,5 @@ export type Order = {
   date: string;
   price: number;
   status: OrderStatus;
+  recipientName: string;
 };
