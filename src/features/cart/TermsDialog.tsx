@@ -70,24 +70,33 @@ export default function TermsDialog({ open, onClose, onAccept }: TermsDialogProp
           </DocumentPanel>
         </div>
 
-        <div className="flex flex-col-reverse gap-3 border-t border-app-borderSoft bg-app-surface p-4 sm:flex-row sm:justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl px-5 py-3 font-semibold text-app-text hover:bg-app-surfaceSoft"
-          >
-            Zamknij
-          </button>
-          <ButtonCore
-            disabled={!hasReachedEnd}
-            onClick={() => {
-              onAccept();
-              onClose();
-            }}
-            className="px-5 py-3"
-          >
-            {hasReachedEnd ? 'Zapoznałem się z regulaminem' : 'Przewiń regulamin do końca'}
-          </ButtonCore>
+        <div className="flex flex-col gap-3 border-t border-app-borderSoft bg-app-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p id="terms-scroll-hint" className="text-sm text-app-textMuted">
+            {hasReachedEnd
+              ? 'Możesz teraz zaakceptować regulamin.'
+              : 'Przewiń regulamin do końca, aby go zaakceptować.'}
+          </p>
+
+          <div className="flex flex-col-reverse gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl px-5 py-3 font-semibold text-app-text hover:bg-app-surfaceSoft"
+            >
+              Zamknij
+            </button>
+            <ButtonCore
+              disabled={!hasReachedEnd}
+              aria-describedby="terms-scroll-hint"
+              onClick={() => {
+                onAccept();
+                onClose();
+              }}
+              className="px-5 py-3"
+            >
+              Akceptuję regulamin
+            </ButtonCore>
+          </div>
         </div>
       </div>
     </dialog>
