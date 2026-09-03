@@ -500,6 +500,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/product/{product_slug}/availability-calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Product Availability Calendar */
+        get: operations["get_product_availability_calendar_product__product_slug__availability_calendar_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user": {
         parameters: {
             query?: never;
@@ -924,6 +941,13 @@ export interface components {
             min: number;
             /** Max */
             max: number;
+        };
+        /** ProductAvailabilityCalendarResponse */
+        ProductAvailabilityCalendarResponse: {
+            /** Unavailabledates */
+            unavailableDates: string[];
+            /** Fullyunavailable */
+            fullyUnavailable: boolean;
         };
         /** ProductAvailabilityResponse */
         ProductAvailabilityResponse: {
@@ -2084,6 +2108,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductAvailabilityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_product_availability_calendar_product__product_slug__availability_calendar_get: {
+        parameters: {
+            query?: {
+                quantity?: number;
+                size?: string | null;
+            };
+            header?: never;
+            path: {
+                product_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductAvailabilityCalendarResponse"];
                 };
             };
             /** @description Validation Error */

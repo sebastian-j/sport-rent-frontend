@@ -8,6 +8,8 @@ export type ProductAvailabilityResponse = {
   available: boolean;
   availableQuantity: number;
 };
+export type ProductAvailabilityCalendarResponse =
+  operations['get_product_availability_calendar_product__product_slug__availability_calendar_get']['responses'][200]['content']['application/json'];
 
 export const getProducts = (query: GetProductsQuery = {}) =>
   api.GET('/product', {
@@ -45,6 +47,21 @@ export const getProductAvailability = (
     },
   });
 };
+
+export const getProductAvailabilityCalendar = (
+  slug: string,
+  quantity: number,
+  size?: string | null
+) =>
+  api.GET('/product/{product_slug}/availability-calendar', {
+    params: {
+      path: { product_slug: slug },
+      query: {
+        quantity,
+        ...(size ? { size } : {}),
+      },
+    },
+  });
 
 export const getCategoriesCount = (params?: ProductCountQuery) => {
   return api.GET('/product/count', {
