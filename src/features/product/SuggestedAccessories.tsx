@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { getProductAccessories } from '../../api/product.ts';
 import ActivityIndicator from '../../components/core/ActivityIndicator.tsx';
 import { RENT_ROUTES } from '../../routes.ts';
+import { resolveImageUrls } from '../../utils/resolveImageUrl.ts';
 import type { ProductProps } from './productProps.ts';
 
 type LoadStatus = 'loading' | 'ready' | 'error';
@@ -39,7 +40,7 @@ export default function SuggestedAccessories({ productSlug }: { productSlug: str
             description: accessory.description ?? '',
             price: accessory.price ?? 0,
             slug: accessory.slug,
-            images: accessory.images ?? [],
+            images: resolveImageUrls(accessory.images),
             imageAlts: accessory.imageAlts ?? [],
             category: accessory.category ?? '',
             sizes: accessory.sizes ?? [],

@@ -30,6 +30,7 @@ import { useProductSearchParams } from '../../features/search/useProductSearchPa
 import { RENT_ROUTES } from '../../routes.ts';
 import type { SortDirection } from '../../types/search.ts';
 import { getErrorMessage } from '../../utils/getErrorMessage.ts';
+import { resolveImageUrls } from '../../utils/resolveImageUrl.ts';
 
 const PAGE_SIZE = 10;
 const DEFAULT_MIN_PRICE = 0;
@@ -128,7 +129,7 @@ const toProductProps = (product: {
   description: product.description ?? '',
   price: product.price ?? 0,
   slug: product.slug,
-  images: product.images ?? [],
+  images: resolveImageUrls(product.images),
   imageAlts: product.imageAlts ?? [product.name],
   category: product.category ?? '',
   sizes: product.sizes ?? [],

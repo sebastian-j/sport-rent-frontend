@@ -7,6 +7,7 @@ import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import { formatPrice } from '../../utils/formatPrice';
 import { getErrorMessage } from '../../utils/getErrorMessage.ts';
+import { resolveImageUrl } from '../../utils/resolveImageUrl.ts';
 import OrderCard from './orders/OrderCard.tsx';
 import { type Order } from './orders/orderTypes.ts';
 
@@ -211,7 +212,7 @@ function OrderDetailsLoader({ orderId }: { orderId: string }) {
                   >
                     <div className="flex items-center gap-4">
                       <img
-                        src={item.image || undefined}
+                        src={resolveImageUrl(item.image) || undefined}
                         alt={item.product_name}
                         className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-app-borderSoft bg-app-surfaceSoft object-cover text-center text-[10px] leading-tight text-app-textMuted"
                       />
