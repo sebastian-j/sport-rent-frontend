@@ -46,6 +46,7 @@ export default function OrderCard({ order, isExpanded, onToggle, children }: Ord
       >
         <span className="min-w-0 text-left">
           <span className="block text-lg [overflow-wrap:anywhere]">Zamówienie #{order.id}</span>
+          <span className="block truncate text-sm text-app-textMuted">{order.recipientName}</span>
         </span>
         <span className="flex min-w-0 items-center justify-between gap-4 text-left lg:block lg:text-center">
           <span className="text-sm">{order.date}</span>
