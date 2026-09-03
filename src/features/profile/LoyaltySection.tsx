@@ -5,8 +5,14 @@ import { getLoyaltyHistory, type LoyaltyHistoryItem } from '../../api/loyalty.ts
 import PageSelector from '../../components/core/PageSelector.tsx';
 import SectionTitle from '../../components/core/SectionTitle.tsx';
 import PointsCard from './loyalty/PointsCard.tsx';
+import PointsFilter, { type PointsFilter as PointsFilterValue } from './loyalty/PointsFilter.tsx';
 
 const PAGE_SIZE = 10;
+
+function filterHistoryItems(items: LoyaltyHistoryItem[], filter: PointsFilterValue) {
+  return items.filter((item) => (filter === 'earned' ? item.amount > 0 : item.amount < 0));
+}
+
 const LOADING_CARD_IDS = ['loading-card-1', 'loading-card-2', 'loading-card-3'];
 const PLACEHOLDER_REVEAL_DURATION_SECONDS = 0.24;
 const PLACEHOLDER_REVEAL_GAP_SECONDS = 0.02;
@@ -22,7 +28,9 @@ export default function LoyaltySection() {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [pointsFilter, setPointsFilter] = useState<PointsFilterValue>('earned');
   const prefersReducedMotion = useReducedMotion();
+  const filteredItems = filterHistoryItems(items, pointsFilter);
 
   useEffect(() => {
     let active = true;
@@ -118,9 +126,17 @@ export default function LoyaltySection() {
           )}
         </p>
       )}
+      <PointsFilter
+        value={pointsFilter}
+        onChange={(nextFilter) => {
+          setPointsFilter(nextFilter);
+          setPage(1);
+        }}
+        disabled={isLoading || hasLoadError}
+      />
       <motion.div
         layout={isLoading ? false : 'size'}
-        className="mx-auto my-6 w-full overflow-hidden rounded-xl border border-app-border lg:my-12 lg:w-[calc(100%-6rem)]"
+        className="mx-auto mb-6 w-full overflow-hidden rounded-xl border border-app-border lg:mb-12 lg:w-[calc(100%-6rem)]"
         aria-busy={isLoading}
         aria-live="polite"
         style={{ transformOrigin: 'top' }}
@@ -202,19 +218,27 @@ export default function LoyaltySection() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.25 }}
             >
-              {items.map((acquisition, index) => (
-                <motion.div
-                  key={acquisition.id}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: -12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <PointsCard
-                    date={new Date(acquisition.created_at).getTime()}
-                    amount={acquisition.amount}
-                  />
-                </motion.div>
-              ))}
+              {filteredItems.length === 0 ? (
+                <p className="p-6 text-center text-app-textMuted">
+                  {pointsFilter === 'earned'
+                    ? 'Brak zdobytych punktów na tej stronie.'
+                    : 'Brak wydanych punktów na tej stronie.'}
+                </p>
+              ) : (
+                filteredItems.map((acquisition, index) => (
+                  <motion.div
+                    key={acquisition.id}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <PointsCard
+                      date={new Date(acquisition.created_at).getTime()}
+                      amount={acquisition.amount}
+                    />
+                  </motion.div>
+                ))
+              )}
               {totalPages > 1 && (
                 <div className="flex justify-center p-4">
                   <PageSelector pageNumber={page} totalPages={totalPages} onPageChange={setPage} />
