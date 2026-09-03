@@ -24,7 +24,7 @@ const TERMS_DATA = {
   last_updated_at: new Date().toUTCString(),
 };
 
-export default function TermsPage() {
+export function TermsContent() {
   return (
     <article>
       <header>
@@ -272,4 +272,8 @@ export default function TermsPage() {
       </section>
     </article>
   );
+}
+
+export default function TermsPage() {
+  return <TermsContent />;
 }
