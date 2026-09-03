@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { getCategories, type CategoryItem } from '../../api/category.ts';
+import { resolveImageUrl } from '../../utils/resolveImageUrl.ts';
 
 type CategoriesState = {
   categories: CategoryItem[];
@@ -21,8 +22,15 @@ const loadCategories = async (): Promise<CategoryItem[]> => {
         throw error ?? new Error('Nie udało się załadować kategorii.');
       }
 
-      cachedCategories = data;
-      return data;
+      cachedCategories = data.map((category) => ({
+        ...category,
+        image: category.image ? resolveImageUrl(category.image) : category.image,
+        subcategories: category.subcategories.map((subcategory) => ({
+          ...subcategory,
+          image: subcategory.image ? resolveImageUrl(subcategory.image) : subcategory.image,
+        })),
+      }));
+      return cachedCategories;
     });
   }
 

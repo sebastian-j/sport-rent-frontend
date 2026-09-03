@@ -8,6 +8,7 @@ import { useAuth } from '../../features/auth/authContext.ts';
 import ProductCard from '../../features/product/ProductCard.tsx';
 import ProductCardGrid from '../../features/product/ProductCardGrid.tsx';
 import { RENT_ROUTES } from '../../routes.ts';
+import { resolveImageUrl } from '../../utils/resolveImageUrl.ts';
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
@@ -76,16 +77,10 @@ export default function FavoritesPage() {
             return;
           }
 
-          const baseUrl = import.meta.env.VITE_API_URL || '';
-
           setFavorites(
             favoritesData.map((item) => ({
               ...item,
-              image: item.image
-                ? item.image.startsWith('http')
-                  ? item.image
-                  : `${baseUrl.replace(/\/$/, '')}/${item.image.replace(/^\//, '')}`
-                : '',
+              image: resolveImageUrl(item.image),
             }))
           );
         } else if (authStatus === 'anonymous' || authStatus === 'error') {

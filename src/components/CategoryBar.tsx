@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import type { CategoryItem } from '../api/category.ts';
 import useCategories from '../features/category/useCategories.ts';
 import { getSubcategorySearchPath } from '../features/search/categoryUtils.ts';
+import { resolveImageUrl } from '../utils/resolveImageUrl.ts';
 
 type CategoryBarItem = {
   name: string;
@@ -14,17 +15,6 @@ type CategoryBarItem = {
 };
 
 const SCROLL_SPEED_PX_PER_SECOND = 24;
-
-const normalizeSubcategoryImage = (image?: string | null) => {
-  if (!image) return null;
-
-  // potential TODO - API returns data:image/svg; which browser rejects, SVG data URLs need `image/svg+xml`.
-  if (image.startsWith('data:image/svg;')) {
-    return image.replace('data:image/svg;', 'data:image/svg+xml;');
-  }
-
-  return image;
-};
 
 const getCategoryBarItems = (categories: readonly CategoryItem[]): CategoryBarItem[] => {
   const items: CategoryBarItem[] = [];
@@ -38,7 +28,7 @@ const getCategoryBarItems = (categories: readonly CategoryItem[]): CategoryBarIt
       items.push({
         name: subcategory.name,
         slug: subcategory.slug,
-        image: normalizeSubcategoryImage(subcategory.image),
+        image: resolveImageUrl(subcategory.image) || null,
         categorySlug: category.slug,
       });
     }

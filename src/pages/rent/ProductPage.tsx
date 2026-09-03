@@ -16,7 +16,9 @@ import { useAuth } from '../../features/auth/authContext.ts';
 import AddToCart from '../../features/product/AddToCart.tsx';
 import ProductGallery from '../../features/product/ProductGallery.tsx';
 import type { ProductProps } from '../../features/product/productProps.ts';
+import SuggestedAccessories from '../../features/product/SuggestedAccessories.tsx';
 import { useFavoriteToggle } from '../../features/product/useFavoriteToggle.ts';
+import { resolveImageUrls } from '../../utils/resolveImageUrl.ts';
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -60,9 +62,10 @@ export default function ProductPage() {
               description: data.description ?? '',
               price: data.price ?? 0,
               slug: data.slug,
-              images: data.images ?? [],
+              images: resolveImageUrls(data.images),
               imageAlts: data.imageAlts,
               category: data.category ?? '',
+              manufacturer: data.manufacturer,
               sizes:
                 data.sizes?.map((size) => ({
                   ...size,
@@ -119,6 +122,8 @@ export default function ProductPage() {
     );
   }
 
+  const hasSizeDescriptions = product.sizes?.some((sizeOption) => sizeOption.description);
+
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col bg-app-surface">
       <PageHeader titleClassName="text-app-text">{product.name}</PageHeader>
@@ -137,13 +142,14 @@ export default function ProductPage() {
               hideFavoriteButton={authStatus !== 'authenticated'}
               onFavoriteToggle={() => void toggleFavorite(product.slug)}
             />
+            <SuggestedAccessories productSlug={product.slug} />
           </div>
         </div>
-        {product.sizes?.some((sizeOption) => sizeOption.description) && (
+        {hasSizeDescriptions && (
           <section className="text-app-text">
             <h2 className="text-2xl font-semibold">Rozmiary</h2>
             <div className="mt-[2vh] flex flex-col gap-2">
-              {product.sizes.map(
+              {product.sizes?.map(
                 (sizeOption) =>
                   sizeOption.description && (
                     <p key={sizeOption.size} className="text-lg font-semibold">
@@ -151,6 +157,14 @@ export default function ProductPage() {
                     </p>
                   )
               )}
+            </div>
+          </section>
+        )}
+        {product.manufacturer && (
+          <section className={`text-app-text${hasSizeDescriptions ? ' mt-[2vh]' : ''}`}>
+            <h2 className="text-2xl font-semibold">Producent</h2>
+            <div className="mt-[2vh] flex flex-col gap-2">
+              <p className="text-lg font-semibold">{product.manufacturer}</p>
             </div>
           </section>
         )}

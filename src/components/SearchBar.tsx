@@ -7,6 +7,7 @@ import type { ProductProps } from '../features/product/productProps.ts';
 import { RENT_ROUTES } from '../routes.ts';
 import { formatPrice } from '../utils/formatPrice.ts';
 import { getErrorMessage } from '../utils/getErrorMessage.ts';
+import { resolveImageUrls } from '../utils/resolveImageUrl.ts';
 
 type SearchBarProps = {
   autoFocus?: boolean;
@@ -68,7 +69,7 @@ export default function SearchBar({
               description: product.description ?? '',
               price: product.price ?? 0,
               slug: product.slug,
-              images: product.images ?? [],
+              images: resolveImageUrls(product.images),
               imageAlts: product.imageAlts,
               category: product.category ?? '',
             }))
