@@ -28,6 +28,7 @@ const MobileDateInput = forwardRef<HTMLButtonElement, MobileDateInputProps>(
 type DatePickerElemProps = {
   selected: Date | null;
   minDate?: Date;
+  filterDate?: (date: Date) => boolean;
   onChange: (date: Date | null) => void;
   placeholder?: string;
   className?: string;
@@ -37,6 +38,7 @@ type DatePickerElemProps = {
 export default function DatePickerElem({
   selected,
   minDate,
+  filterDate,
   onChange,
   placeholder,
   className,
@@ -48,6 +50,7 @@ export default function DatePickerElem({
     <DatePicker
       selected={selected}
       minDate={minDate ?? new Date()}
+      filterDate={filterDate}
       onChange={(date: Date | null) => onChange(date)}
       dateFormat="dd.MM.yyyy"
       calendarClassName="app-datepicker"

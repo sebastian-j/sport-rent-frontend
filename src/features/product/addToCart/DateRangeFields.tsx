@@ -5,6 +5,8 @@ type DateRangeFieldsProps = {
   endDate: Date;
   onStartDateChange: (date: Date) => void;
   onEndDateChange: (date: Date) => void;
+  isStartDateAvailable: (date: Date) => boolean;
+  isEndDateAvailable: (date: Date) => boolean;
 };
 
 const DATE_INPUT_CLASSES =
@@ -15,6 +17,8 @@ export default function DateRangeFields({
   endDate,
   onStartDateChange,
   onEndDateChange,
+  isStartDateAvailable,
+  isEndDateAvailable,
 }: DateRangeFieldsProps) {
   return (
     <div className="grid w-full max-w-xl grid-cols-2 gap-x-3 gap-y-1">
@@ -24,13 +28,15 @@ export default function DateRangeFields({
         selected={startDate}
         onChange={(date) => date && onStartDateChange(date)}
         minDate={new Date()}
+        filterDate={isStartDateAvailable}
         wrapperClassName="w-full min-w-0"
         className={DATE_INPUT_CLASSES}
       />
       <DatePickerElem
         selected={endDate}
         onChange={(date) => date && onEndDateChange(date)}
-        minDate={new Date()}
+        minDate={startDate}
+        filterDate={isEndDateAvailable}
         wrapperClassName="w-full min-w-0"
         className={DATE_INPUT_CLASSES}
       />

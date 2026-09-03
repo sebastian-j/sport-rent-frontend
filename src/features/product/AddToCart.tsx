@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { addCartItem } from '../../api/cart.ts';
-import { getProductAvailability, type ProductAvailabilityResponse } from '../../api/product.ts';
+import {
+  getProductAvailability,
+  getProductAvailabilityCalendar,
+  type ProductAvailabilityCalendarResponse,
+  type ProductAvailabilityResponse,
+} from '../../api/product.ts';
 import ButtonCore from '../../components/core/ButtonCore';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
@@ -51,6 +56,8 @@ export default function AddToCart({
   const [hasError, setHasError] = useState(false);
   const [sizeAvailability, setSizeAvailability] = useState<Map<string, boolean>>(new Map());
   const [isSizeAvailabilityLoading, setIsSizeAvailabilityLoading] = useState(false);
+  const [unavailableDates, setUnavailableDates] = useState<Set<string>>(new Set());
+  const [isCalendarFullyUnavailable, setIsCalendarFullyUnavailable] = useState(false);
   const isSizeSelectionRequired = Boolean(product.sizes?.length && !selectedSize);
   const rentalDayCount = getInclusiveDayCount(startDate, endDate);
   const totalPrice = rentalDayCount * quantity * product.price;
@@ -61,6 +68,48 @@ export default function AddToCart({
     !isAvailabilityLoading &&
     !isSizeAvailabilityLoading &&
     !isQuantityTooHigh;
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    const loadCalendarAvailability = async () => {
+      try {
+        const result = await getProductAvailabilityCalendar(product.slug, quantity, selectedSize);
+        if (!isCurrent) return;
+
+        const availability = result.data as ProductAvailabilityCalendarResponse | undefined;
+        if (result.error || !availability) {
+          setUnavailableDates(new Set());
+          setIsCalendarFullyUnavailable(false);
+          return;
+        }
+
+        setUnavailableDates(new Set(availability.unavailableDates));
+        setIsCalendarFullyUnavailable(availability.fullyUnavailable);
+      } catch {
+        if (isCurrent) {
+          setUnavailableDates(new Set());
+          setIsCalendarFullyUnavailable(false);
+        }
+      }
+    };
+
+    void loadCalendarAvailability();
+    return () => {
+      isCurrent = false;
+    };
+  }, [product.slug, quantity, selectedSize]);
+
+  const isDateAvailable = (date: Date) =>
+    !isCalendarFullyUnavailable && !unavailableDates.has(formatLocalDate(date));
+
+  const firstUnavailableDateAfterStart = [...unavailableDates]
+    .filter((date) => date > formatLocalDate(startDate))
+    .sort()[0];
+
+  const isEndDateAvailable = (date: Date) =>
+    isDateAvailable(date) &&
+    (!firstUnavailableDateAfterStart || formatLocalDate(date) < firstUnavailableDateAfterStart);
 
   useEffect(() => {
     let isCurrent = true;
@@ -265,8 +314,13 @@ export default function AddToCart({
       <DateRangeFields
         startDate={startDate}
         endDate={endDate}
-        onStartDateChange={setStartDate}
+        onStartDateChange={(date) => {
+          setStartDate(date);
+          if (isDateAfter(date, endDate)) setEndDate(date);
+        }}
         onEndDateChange={setEndDate}
+        isStartDateAvailable={isDateAvailable}
+        isEndDateAvailable={isEndDateAvailable}
       />
       <QuantitySelector
         quantity={quantity}
