@@ -43,12 +43,6 @@ export const PAYMENT_METHODS = [
     price: 9.99,
     logos: [traditionalTransferLogo],
   },
-  {
-    id: 'points',
-    name: 'Punkty',
-    price: 0,
-    logos: [],
-  },
 ] as const;
 
 export type PaymentMethodId = (typeof PAYMENT_METHODS)[number]['id'];

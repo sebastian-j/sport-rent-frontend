@@ -415,6 +415,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders/{order_id}/payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start payment for an order */
+        post: operations["start_order_payment_orders__order_id__payment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product": {
         parameters: {
             query?: never;
@@ -689,10 +706,10 @@ export interface components {
             /** Promo Code */
             promo_code?: string | null;
             /**
-             * Used Points
-             * @default false
+             * Points To Spend
+             * @default 0
              */
-            used_points: boolean;
+            points_to_spend: number;
         };
         /**
          * DiscountType
@@ -743,6 +760,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Expires At */
+            expires_at: string | null;
             /** Amount */
             amount: number;
             /** Order Id */
@@ -770,6 +789,12 @@ export interface components {
         LoyaltyResponse: {
             /** Balance */
             balance: number;
+            /** Lifetime Qualifying Spend */
+            lifetime_qualifying_spend: number;
+            /** Redemption Unlocked */
+            redemption_unlocked: boolean;
+            /** Unlock Spend Required */
+            unlock_spend_required: number;
         };
         /**
          * LoyaltyTransactionType
@@ -935,6 +960,32 @@ export interface components {
             /** Totalpages */
             totalPages: number;
         };
+        /** PaymentResponse */
+        PaymentResponse: {
+            /** Id */
+            id: number;
+            /** Order Id */
+            order_id: number;
+            status: components["schemas"]["PaymentStatus"];
+            /** Amount */
+            amount: number;
+            /** Currency */
+            currency: string;
+            /** Redirect Url */
+            redirect_url: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Completed At */
+            completed_at: string | null;
+        };
+        /**
+         * PaymentStatus
+         * @enum {string}
+         */
+        PaymentStatus: "PENDING" | "SUCCEEDED" | "FAILED" | "CANCELLED";
         /** PriceFacetResponse */
         PriceFacetResponse: {
             /** Min */
@@ -1931,6 +1982,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_order_payment_orders__order_id__payment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentResponse"];
                 };
             };
             /** @description Validation Error */

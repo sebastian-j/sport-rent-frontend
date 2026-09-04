@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import PageTitle from '../../components/core/PageTitle.tsx';
 import {
+  MAX_POINTS_PAYMENT_SHARE,
   PLN_SPENT_PER_POINT_EARNED,
   POINTS_REQUIRED_PER_PLN,
 } from '../../features/loyalty/constants.ts';
@@ -85,17 +86,18 @@ export default function FaqPage() {
             </p>
           </FaqItem>
 
-          <FaqItem question="Ile punktów potrzebuję, aby opłacić zamówienie?">
+          <FaqItem question="Ile punktów mogę wykorzystać w zamówieniu?">
             <p>
-              Każda złotówka wartości zamówienia kosztuje {POINTS_REQUIRED_PER_PLN} punktów. Na
-              przykład zamówienie za 75 zł wymaga {75 * POINTS_REQUIRED_PER_PLN} punktów.
+              Jeden punkt daje 0,50 zł rabatu, a punktami można pokryć maksymalnie{' '}
+              {MAX_POINTS_PAYMENT_SHARE * 100}% zamówienia. Dla zamówienia za 75 zł limit wynosi{' '}
+              {Math.floor(75 * MAX_POINTS_PAYMENT_SHARE * POINTS_REQUIRED_PER_PLN)} punktów.
             </p>
           </FaqItem>
 
           <FaqItem question="Kiedy mogę zapłacić punktami?">
             <p>
-              Zamówienie możesz opłacić punktami, gdy Twoje saldo pokrywa jego pełną wartość
-              przeliczoną według aktualnego przelicznika.
+              Punkty możesz wykorzystać po osiągnięciu 500 zł kwalifikujących wydatków. Nie musisz
+              posiadać punktów wystarczających do pokrycia całego dostępnego limitu.
             </p>
           </FaqItem>
 

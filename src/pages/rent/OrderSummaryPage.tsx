@@ -3,15 +3,19 @@ import { useNavigate } from 'react-router-dom';
 
 import { getCart } from '../../api/cart.ts';
 import { getLoyalty } from '../../api/loyalty.ts';
-import { createOrder } from '../../api/orders.ts';
+import { createOrder, startOrderPayment } from '../../api/orders.ts';
 import { getUser } from '../../api/user.ts';
 import ContentPanel from '../../components/core/ContentPanel.tsx';
 import LoadingDots from '../../components/core/LoadingDots.tsx';
 import { getOrderInformation } from '../../features/cart/cartCalculations.ts';
 import { mapCartProduct } from '../../features/cart/cartMappers.ts';
 import type { CartProduct } from '../../features/cart/cartTypes.ts';
-import { POINTS_REQUIRED_PER_PLN } from '../../features/loyalty/constants.ts';
+import {
+  MAX_POINTS_PAYMENT_SHARE,
+  POINTS_REQUIRED_PER_PLN,
+} from '../../features/loyalty/constants.ts';
 import InvoiceDetailsPanel from '../../features/orderSummary/InvoiceDetailsPanel.tsx';
+import LoyaltyPointsPanel from '../../features/orderSummary/LoyaltyPointsPanel.tsx';
 import OrderPriceSummary from '../../features/orderSummary/OrderPriceSummary.tsx';
 import {
   PAYMENT_METHODS,
@@ -72,12 +76,27 @@ export default function OrderSummaryPage() {
       ? cartPrice * promoDiscount.value
       : (promoDiscount?.value ?? 0);
   const discount = Math.min(cartPrice, Math.round(calculatedDiscount * 100) / 100);
-  const pointsRequired = Math.ceil((cartPrice - discount) * POINTS_REQUIRED_PER_PLN);
   const [points, setPoints] = useState(0);
+  const [pointsToSpend, setPointsToSpend] = useState(0);
+  const [lifetimeQualifyingSpend, setLifetimeQualifyingSpend] = useState(0);
+  const [unlockSpendRequired, setUnlockSpendRequired] = useState(500);
+  const [redemptionUnlocked, setRedemptionUnlocked] = useState(false);
   const [pointsLoadError, setPointsLoadError] = useState<string | null>(null);
   const [isPointsLoading, setIsPointsLoading] = useState(true);
   const [isBuying, setIsBuying] = useState(false);
   const [buyError, setBuyError] = useState<string | null>(null);
+  const maximumPointsForOrder = redemptionUnlocked
+    ? Math.min(
+        points,
+        Math.floor((cartPrice - discount) * MAX_POINTS_PAYMENT_SHARE * POINTS_REQUIRED_PER_PLN)
+      )
+    : 0;
+  const pointsDiscount = pointsToSpend / POINTS_REQUIRED_PER_PLN;
+
+  useEffect(
+    () => setPointsToSpend((current) => Math.min(current, maximumPointsForOrder)),
+    [maximumPointsForOrder]
+  );
 
   const loadSummaryCart = useCallback(async () => {
     setIsCartLoading(true);
@@ -135,7 +154,6 @@ export default function OrderSummaryPage() {
 
   const handleRemovePromoCode = () => {
     removePromoCode();
-    if (selectedPaymentMethodId === 'points') setSelectedPaymentMethodId(undefined);
   };
 
   const handleBuy = async () => {
@@ -150,7 +168,7 @@ export default function OrderSummaryPage() {
           first_name: userDetails.recipient.firstName,
           last_name: userDetails.recipient.lastName,
         },
-        used_points: selectedPaymentMethodId === 'points',
+        points_to_spend: pointsToSpend,
         promo_code: appliedPromoCode || null,
         address: wantsInvoice
           ? {
@@ -169,6 +187,27 @@ export default function OrderSummaryPage() {
 
       if (error || !data) {
         setBuyError(getErrorMessage(error, 'Nie udało się złożyć zamówienia.'));
+        return;
+      }
+
+      const paymentResult = await startOrderPayment(data.id);
+      if (paymentResult.error || !paymentResult.data) {
+        setBuyError(
+          getErrorMessage(
+            paymentResult.error,
+            `Zamówienie #${data.id} zostało utworzone, ale nie udało się rozpocząć płatności.`
+          )
+        );
+        return;
+      }
+
+      if (paymentResult.data.redirect_url) {
+        window.location.assign(paymentResult.data.redirect_url);
+        return;
+      }
+
+      if (paymentResult.data.status !== 'SUCCEEDED') {
+        setBuyError('Płatność oczekuje na potwierdzenie.');
         return;
       }
 
@@ -216,6 +255,9 @@ export default function OrderSummaryPage() {
       }
 
       setPoints(data.balance);
+      setLifetimeQualifyingSpend(data.lifetime_qualifying_spend);
+      setUnlockSpendRequired(data.unlock_spend_required);
+      setRedemptionUnlocked(data.redemption_unlocked);
     } catch (error) {
       setPointsLoadError(getErrorMessage(error, 'Nie udało się pobrać liczby punktów.'));
     } finally {
@@ -278,12 +320,22 @@ export default function OrderSummaryPage() {
           )}
 
           <ContentPanel className="w-full px-3 py-4 sm:py-6 md:py-8">
+            <LoyaltyPointsPanel
+              balance={points}
+              pointsToSpend={pointsToSpend}
+              maximumPointsForOrder={maximumPointsForOrder}
+              lifetimeQualifyingSpend={lifetimeQualifyingSpend}
+              unlockSpendRequired={unlockSpendRequired}
+              redemptionUnlocked={redemptionUnlocked}
+              isLoading={isPointsLoading}
+              loadError={pointsLoadError}
+              onPointsChange={setPointsToSpend}
+            />
+
+            <div className="my-6 border-t border-app-borderSoft" />
+
             <PaymentMethodsPanel
               selectedMethodId={selectedPaymentMethodId}
-              pointsRequired={pointsRequired}
-              userPoints={points}
-              isUserPointsLoading={isPointsLoading}
-              userPointsLoadError={pointsLoadError}
               onMethodChange={setSelectedPaymentMethodId}
             />
           </ContentPanel>
@@ -333,7 +385,7 @@ export default function OrderSummaryPage() {
           <OrderPriceSummary
             cartPrice={cartPrice}
             paymentPrice={paymentPrice}
-            discount={discount}
+            discount={discount + pointsDiscount}
             canBuy={
               selectedPaymentMethodId !== undefined &&
               !isCartLoading &&
