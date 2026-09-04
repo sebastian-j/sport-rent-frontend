@@ -21,6 +21,7 @@ export default function CartPage() {
   const {
     products,
     updateRentalDate,
+    updateRentalDateRange,
     updateQuantity,
     updateSize,
     removeRentalDate,
@@ -151,6 +152,9 @@ export default function CartPage() {
                           onSizeChange={(dateId, size) => updateSize(product.slug, dateId, size)}
                           onDateChange={(dateId, field, value) =>
                             updateRentalDate(product.slug, dateId, field, value)
+                          }
+                          onDateRangeChange={(dateId, startDate, endDate) =>
+                            updateRentalDateRange(product.slug, dateId, startDate, endDate)
                           }
                           onRemoveDate={(dateId) => removeRentalDate(product.slug, dateId)}
                           onAddDate={() => addRentalDate(product.slug)}

@@ -246,6 +246,17 @@ export function useCart() {
     value: Date | null
   ) => changeDate(productSlug, dateId, { [field]: value });
 
+  const updateRentalDateRange = (
+    productSlug: string,
+    dateId: number,
+    startDate: Date,
+    endDate: Date | null
+  ) =>
+    changeDate(productSlug, dateId, {
+      start_date: startDate,
+      end_date: endDate,
+    });
+
   const updateQuantity = (productSlug: string, dateId: number, quantity: number) =>
     changeDate(productSlug, dateId, { quantity });
 
@@ -321,6 +332,7 @@ export function useCart() {
     mergeTargetId,
     retry: loadCart,
     updateRentalDate,
+    updateRentalDateRange,
     updateQuantity,
     updateSize,
     removeRentalDate,

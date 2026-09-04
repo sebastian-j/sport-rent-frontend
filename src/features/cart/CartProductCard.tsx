@@ -14,6 +14,7 @@ type CartProductCardProps = {
   onQuantityChange: (dateId: number, quantity: number) => void;
   onSizeChange: (dateId: number, size: string) => void;
   onDateChange: (dateId: number, field: DateField, value: Date | null) => void;
+  onDateRangeChange: (dateId: number, startDate: Date, endDate: Date | null) => void;
   onRemoveDate: (dateId: number) => void;
   onAddDate: () => void;
   onRemoveProduct: () => void;
@@ -28,6 +29,7 @@ export default function CartProductCard({
   onQuantityChange,
   onSizeChange,
   onDateChange,
+  onDateRangeChange,
   onRemoveDate,
   onAddDate,
   onRemoveProduct,
@@ -59,12 +61,16 @@ export default function CartProductCard({
               key={date.uiKey}
               ref={getRentalDateRef?.(date.id)}
               date={date}
+              productSlug={product.slug}
               productName={product.name}
               productSizes={product.sizes}
               onQuantityChange={(quantity) => onQuantityChange(date.id, quantity)}
               onSizeChange={(size) => onSizeChange(date.id, size)}
               onStartDateChange={(value) => onDateChange(date.id, 'start_date', value)}
               onEndDateChange={(value) => onDateChange(date.id, 'end_date', value)}
+              onDateRangeChange={(startDate, endDate) =>
+                onDateRangeChange(date.id, startDate, endDate)
+              }
               onRemove={() => onRemoveDate(date.id)}
               removeDisabled={actionsDisabled}
               isMergeTarget={date.id === mergeTargetId}

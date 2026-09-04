@@ -4,16 +4,19 @@ import { forwardRef } from 'react';
 
 import DatePickerElem from '../../components/core/DatePickerElem.tsx';
 import Select from '../../components/core/Select.tsx';
+import { useProductAvailabilityCalendar } from '../product/useProductAvailabilityCalendar.ts';
 import { isRentalDateValid, type RentalDate } from './rentalDate.ts';
 
 type ProductRentalDateProps = {
   date: RentalDate;
+  productSlug: string;
   productName: string;
   productSizes: string[];
   onQuantityChange: (quantity: number) => void;
   onSizeChange: (size: string) => void;
   onStartDateChange: (date: Date | null) => void;
   onEndDateChange: (date: Date | null) => void;
+  onDateRangeChange: (startDate: Date, endDate: Date | null) => void;
   onRemove: () => void;
   removeDisabled?: boolean;
   isMergeTarget?: boolean;
@@ -24,12 +27,14 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
   function ProductRentalDate(
     {
       date,
+      productSlug,
       productName,
       productSizes,
       onQuantityChange,
       onSizeChange,
       onStartDateChange,
       onEndDateChange,
+      onDateRangeChange,
       onRemove,
       removeDisabled = false,
       isMergeTarget = false,
@@ -38,6 +43,11 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
     ref
   ) {
     const requiresSize = productSizes.length > 0;
+    const { isDateAvailable, isEndDateAvailable } = useProductAvailabilityCalendar({
+      productSlug,
+      quantity: date.quantity,
+      size: date.size,
+    });
 
     return (
       <motion.div
@@ -127,7 +137,20 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
         <div className="col-span-2 flex min-w-0 items-center gap-2 md:w-auto md:flex-1 lg:gap-4">
           <DatePickerElem
             selected={date.start_date}
-            onChange={onStartDateChange}
+            onChange={(newStartDate) => {
+              if (
+                newStartDate &&
+                date.end_date &&
+                (newStartDate.getTime() > date.end_date.getTime() ||
+                  !isEndDateAvailable(date.end_date, newStartDate))
+              ) {
+                onDateRangeChange(newStartDate, null);
+                return;
+              }
+
+              onStartDateChange(newStartDate);
+            }}
+            filterDate={isDateAvailable}
             placeholder="Data początkowa"
             className="px-2 text-sm xl:px-4 xl:text-lg"
             wrapperClassName="md:w-auto md:flex-1"
@@ -137,6 +160,8 @@ const ProductRentalDate = forwardRef<HTMLDivElement, ProductRentalDateProps>(
           <DatePickerElem
             selected={date.end_date}
             onChange={onEndDateChange}
+            minDate={date.start_date ?? new Date()}
+            filterDate={(candidateDate) => isEndDateAvailable(candidateDate, date.start_date)}
             placeholder="Data końcowa"
             className="px-2 text-sm xl:px-4 xl:text-lg"
             wrapperClassName="md:w-auto md:flex-1"
